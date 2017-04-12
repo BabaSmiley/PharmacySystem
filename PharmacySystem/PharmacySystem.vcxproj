@@ -157,6 +157,7 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="Store.cpp" />
     <ClCompile Include="StringUtils.cpp" />
     <ClCompile Include="User.cpp" />
   </ItemGroup>
