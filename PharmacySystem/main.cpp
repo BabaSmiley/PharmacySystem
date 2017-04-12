@@ -42,7 +42,14 @@ int main() {
 		cout << "jonathan is not a user." << endl;
 	}
 
-
+	//Test adding user
+	User *newUser = dbm->addUser("jose2", "siracha", false);
+	if (newUser != nullptr) {
+		cout << "User was created!" << endl;
+		cout << "User: " << newUser->getUserID() << ". Type: " << newUser->getUserType();
+	} else {
+		cout << "New user was not created. Jose may already exist." << endl;
+	}
 
 
 

@@ -24,9 +24,10 @@ public:
 	User* getUser(string username, string password);
 
 	/* Create and add a user to the database
-		Returns: returns the User object if it was successfully added to the database.
+		Returns: returns the User object if it was successfully added to the database. 
+				 Will return nullptr if a username already exists for `username` in the database.
 	*/
-	User* addUser(string username, string password, bool isEmployee);
+	User* addUser(string username, string password, UserType userType);
 
 private:
 	sqlite3 *db;

@@ -1,6 +1,16 @@
 #include "DatabaseManager.h"
 using namespace std;
 
+/* Helper Functions*/
+template<typename T>
+string quotesql(const T& sql) {
+	std::stringstream ss;
+	ss << sql;
+	return string("'") + ss.str() + string("'");
+}
+
+
+/* DatabaseManager */
 DatabaseManager::DatabaseManager(const char *filename) {
 
 	/* Attempt to open connection to file */
@@ -30,7 +40,7 @@ User* DatabaseManager::getUser(string username, string password) {
 	sqlite3_stmt *stmt;
 	User *result = nullptr;
 
-	string sql = stringbuilder() << "select Id, IsEmployee from Account where Username='" << username << "' and Password='" << password << "'";
+	string sql = "select Id, IsEmployee from Account where Username=" + quotesql(username) + " and Password=" + quotesql(password);
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 
 		if (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -49,10 +59,30 @@ User* DatabaseManager::getUser(string username, string password) {
 /* Create and add a user to the database
 Returns: returns the User object if it was successfully added to the database.
 */
-User* DatabaseManager::addUser(string username, string password, bool isEmployee) {
+User* DatabaseManager::addUser(string username, string password, UserType userType) {
 	//...
-	return nullptr;
+	sqlite3_stmt *stmt;
+	User *newUser = nullptr;
+
+	//TODO: check if username is already taken -> return nullptr
+
+	int isEmployee = (userType==Employee) ? 1 : 0;
+	string sql = "insert into Account (Username, Password, IsEmployee) values (" + quotesql(username) + ", " + quotesql(password) + ", " + quotesql(isEmployee) + ")";
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			int id = (int)sqlite3_last_insert_rowid(db);
+			newUser = new User(id, username, userType);
+		}
+	}
+	sqlite3_finalize(stmt);
+
+	return newUser;
 }
+
+
+
+
 
 
 vector<vector<string>> DatabaseManager::query(const char *sql) {
