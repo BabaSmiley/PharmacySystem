@@ -6,29 +6,15 @@
 using namespace std;
 
 
-int main() {
+void testDatabaseUser(DatabaseManager *dbm) {
 
-	DatabaseManager *dbm = new DatabaseManager(DatabaseConstants::DatabaseName);
-	
-	/*
-	const char * sql_query = "select * from stores where id=1";
-	vector<vector<string>> some = dbm->query(sql_query);
-
-	for (int i = 0; i < some.size(); i++) {
-		for (int j = 0; j < some[i].size(); j++) {
-			cout << some[i][j] << " ";
-		}
-		cout << endl;
-	}
-	*/
-
-	//Test users
 	User *validEmployeeUser = dbm->getUser("jon", "testpass");
 	if (validEmployeeUser != nullptr) {
 		cout << "jon is a user." << endl;
 		cout << "id: " << validEmployeeUser->getUserID() << endl;
 		cout << "isEmployee: " << validEmployeeUser->isEmployee() << endl;
-	} else {
+	}
+	else {
 		cout << "jon is not a user." << endl;
 	}
 
@@ -43,15 +29,47 @@ int main() {
 	}
 
 	//Test adding user
-	User *newUser = dbm->addUser("jose2", "siracha", false);
+	User *newUser = dbm->addUser("jose2", "siracha", Employee);
 	if (newUser != nullptr) {
 		cout << "User was created!" << endl;
 		cout << "User: " << newUser->getUserID() << ". Type: " << newUser->getUserType();
-	} else {
+	}
+	else {
 		cout << "New user was not created. Jose may already exist." << endl;
 	}
+}
 
 
+bool testCreateStore(DatabaseManager *dbm) {
+	//Test Create
+	Store *newStore = dbm->createStore("123 Alley", "NewTown", "NY", 34592, 199);
+	if (newStore) {
+		cout << endl << "New store created" << endl;
+		cout << "ID: " << newStore->getId() << endl;
+		cout << "Address: " << newStore->getAddress() << endl;
+		cout << "City/State: " << newStore->getCity() << "/" << newStore->getState() << " " << newStore->getZipCode() << endl;
+		cout << "Priority: " << newStore->getPriorityLevel() << endl;
+		return true;
+	}
+	else {
+		cout << "Could not create new Store." << endl;
+		return false;
+	}
+}
+
+
+
+
+int main() {
+
+	DatabaseManager *dbm = new DatabaseManager(DatabaseConstants::DatabaseName);	
+	//testDatabaseUser(dbm);
+	//testCreateStore(dbm);
+
+	///TEST DELETE STORE
+
+
+	
 
 	return 0;
 }

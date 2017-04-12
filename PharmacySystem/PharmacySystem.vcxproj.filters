@@ -16,6 +16,9 @@
     <Filter Include="Source Files\SQLite3">
       <UniqueIdentifier>{dfec4c87-bc98-41b3-ae2a-9c17855f5860}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\DB Models">
+      <UniqueIdentifier>{d63b63fd-e0b6-41b3-ab25-234c31b2c23a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -24,13 +27,7 @@
     <ClCompile Include="sqlite3.c">
       <Filter>Source Files\SQLite3</Filter>
     </ClCompile>
-    <ClCompile Include="User.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="StringUtils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Store.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BatchProcesses.cpp">
@@ -41,6 +38,12 @@
     </ClCompile>
     <ClCompile Include="Constants.h">
       <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Store.cpp">
+      <Filter>Source Files\DB Models</Filter>
+    </ClCompile>
+    <ClCompile Include="User.cpp">
+      <Filter>Source Files\DB Models</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
