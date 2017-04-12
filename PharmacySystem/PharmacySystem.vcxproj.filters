@@ -24,9 +24,6 @@
     <ClCompile Include="sqlite3.c">
       <Filter>Source Files\SQLite3</Filter>
     </ClCompile>
-    <ClCompile Include="Constants.hpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="User.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -39,12 +36,21 @@
     <ClCompile Include="BatchProcesses.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DatabaseManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Constants.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sqlite3.h">
       <Filter>Source Files\SQLite3</Filter>
     </ClInclude>
     <ClInclude Include="main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DatabaseManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,13 +3,13 @@ using namespace std;
 
 class Store {
 public:
-	string getAddress() { return Address; }
+	string getAddress() { return address; }
 
 private:
-	int Id;
-	string Address;
-	string City;
-	string State;
-	int ZipCode;
-	int PriorityLevel;
+	int id;
+	string address;
+	string city;
+	string state;
+	int zipCode;
+	int priorityLevel;
 };
