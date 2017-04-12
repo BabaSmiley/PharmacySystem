@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BatchProcesses.cpp" />
     <ClCompile Include="Constants.hpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="sqlite3.c">
