@@ -76,7 +76,7 @@ private:
 					shouldRepeat = false; //end if successful
 				}
 				else {
-					cout << "Invalid command." << endl << endl;
+					cout << "[!] Invalid command." << endl << endl;
 
 					printInitialText();
 					promptForInput(); //re-prompt for input
@@ -116,7 +116,29 @@ private:
 	}
 
 	void displayRegisterScreen() throw(const char*) {
+		string userType;
+		string username;
+		string password;
 
+		cout << endl << "Type \"employee\" to register as an employee, or \"customer\" to register as a customer" << endl;
+		userType = getInput();
+		cout << "To create an account please enter a username:" << endl;
+		username = getInput("username");
+		cout << "Please choose a password for your account:" << endl;
+		password = getInput("password");
+
+		if (userType == "customer") {
+			User *newUser = DatabaseManager::shared()->createUser(username, password, Customer);
+			cout << "Customer account has been created." << endl;
+			authorizedUser = newUser;
+		}
+		else if (userType == "employee") {
+			//TODO: more complicated logic
+			//cout << "Employee account has been created." << endl;
+		}
+		else {
+			throw "Invalid command.";
+		}
 	}
     
 };

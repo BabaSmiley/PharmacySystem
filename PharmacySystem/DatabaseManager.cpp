@@ -14,7 +14,8 @@ DatabaseManager::DatabaseManager() {
 	
 	/* Attempt to open connection to file */
 	int returnCode = sqlite3_open(DatabaseConstants::DatabaseName, &db);
-
+	
+	/* MARK - disabled for now
 	if (returnCode) {
 		cout << "Failed to open database: " << sqlite3_errmsg(db);
 		//TODO: throw error here
@@ -22,6 +23,7 @@ DatabaseManager::DatabaseManager() {
 	else {
 		cout << "Successfully connected to database." << endl;
 	}
+	*/
 }
 
 DatabaseManager::~DatabaseManager() {
@@ -60,8 +62,7 @@ User* DatabaseManager::getUser(string username, string password) {
 /* Create and add a user to the database
 Returns: returns the User object if it was successfully added to the database.
 */
-User* DatabaseManager::addUser(string username, string password, UserType userType) {
-	//...
+User* DatabaseManager::createUser(string username, string password, UserType userType) {
 	sqlite3_stmt *stmt;
 	User *newUser = nullptr;
 

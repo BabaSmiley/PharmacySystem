@@ -32,7 +32,7 @@ public:
 		Returns: returns the User object if it was successfully added to the database. 
 				 Will return nullptr if a username already exists for `username` in the database.
 	*/
-	User* addUser(string username, string password, UserType userType);
+	User* createUser(string username, string password, UserType userType);
 
 
 	/* Delete a store from the database

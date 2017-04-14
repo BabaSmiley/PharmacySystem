@@ -1,5 +1,9 @@
 ﻿  main.cpp
-c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\loginregistration.cpp(96): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
-c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\loginregistration.cpp(119): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\loginregistration.cpp(95): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\loginregistration.cpp(118): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+  LoginRegistration.cpp
+c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\loginregistration.cpp(95): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\loginregistration.cpp(118): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+  Generating Code...
   PharmacySystem.vcxproj -> C:\Users\Jon Cardasis\Desktop\PharmacySystem\Debug\PharmacySystem.exe
   PharmacySystem.vcxproj -> C:\Users\Jon Cardasis\Desktop\PharmacySystem\Debug\PharmacySystem.pdb (Full PDB)
