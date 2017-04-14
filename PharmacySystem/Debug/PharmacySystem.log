@@ -1,5 +1,8 @@
-﻿  main.cpp
-c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\loginregistration.cpp(95): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
-c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\loginregistration.cpp(118): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+﻿  BatchProcesses.cpp
+  LINK : C:\Users\Jon Cardasis\Desktop\PharmacySystem\Debug\PharmacySystem.exe not found or not built by the last incremental link; performing full link
+User.obj : warning LNK4020: a type record in 'c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\debug\vc140.pdb' is corrupted; some symbols and types may not be accessible from the debugger
+StringUtils.obj : warning LNK4020: a type record in 'c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\debug\vc140.pdb' is corrupted; some symbols and types may not be accessible from the debugger
+sqlite3.obj : warning LNK4020: a type record in 'c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\debug\vc140.pdb' is corrupted; some symbols and types may not be accessible from the debugger
+Constants.obj : warning LNK4020: a type record in 'c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\debug\vc140.pdb' is corrupted; some symbols and types may not be accessible from the debugger
   PharmacySystem.vcxproj -> C:\Users\Jon Cardasis\Desktop\PharmacySystem\Debug\PharmacySystem.exe
   PharmacySystem.vcxproj -> C:\Users\Jon Cardasis\Desktop\PharmacySystem\Debug\PharmacySystem.pdb (Full PDB)
