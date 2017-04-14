@@ -9,12 +9,11 @@ string quotesql(const T& sql) {
 	return string("'") + ss.str() + string("'");
 }
 
-
 /* DatabaseManager */
-DatabaseManager::DatabaseManager(const char *filename) {
-
+DatabaseManager::DatabaseManager() {
+	
 	/* Attempt to open connection to file */
-	int returnCode = sqlite3_open(filename, &db);
+	int returnCode = sqlite3_open(DatabaseConstants::DatabaseName, &db);
 
 	if (returnCode) {
 		cout << "Failed to open database: " << sqlite3_errmsg(db);

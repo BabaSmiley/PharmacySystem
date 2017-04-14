@@ -154,6 +154,7 @@
     <ClCompile Include="BatchProcesses.cpp" />
     <ClCompile Include="Constants.h" />
     <ClCompile Include="DatabaseManager.cpp" />
+    <ClCompile Include="LoginRegistration.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="sqlite3.c">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -162,6 +163,7 @@
     <ClCompile Include="Store.cpp" />
     <ClCompile Include="StringUtils.cpp" />
     <ClCompile Include="User.cpp" />
+    <ClCompile Include="Utils\ASCIIBlockM.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DatabaseManager.h" />

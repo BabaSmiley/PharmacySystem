@@ -19,6 +19,9 @@
     <Filter Include="Source Files\DB Models">
       <UniqueIdentifier>{d63b63fd-e0b6-41b3-ab25-234c31b2c23a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{7057c8db-8063-41c8-be96-e4a64c50b9ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -44,6 +47,12 @@
     </ClCompile>
     <ClCompile Include="User.cpp">
       <Filter>Source Files\DB Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\ASCIIBlockM.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginRegistration.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

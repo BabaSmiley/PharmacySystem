@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "Constants.h"
 #include "DatabaseManager.h"
+#include "LoginRegistration.cpp"
 using namespace std;
 
 
@@ -62,13 +62,16 @@ bool testCreateStore(DatabaseManager *dbm) {
 
 int main() {
 
-	DatabaseManager *dbm = new DatabaseManager(DatabaseConstants::DatabaseName);	
+	DatabaseManager *dbm = DatabaseManager::shared();
 	//testDatabaseUser(dbm);
 	//testCreateStore(dbm);
 
+	LoginRegistration lr;
+	lr.displayScreen();
+
 	///TEST DELETE STORE
 
-
+	
 	
 
 	return 0;

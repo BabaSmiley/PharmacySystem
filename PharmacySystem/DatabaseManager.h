@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include "sqlite3.h"
+#include "Constants.h"
 
 /* Import DB Models */
 #include "User.cpp"
@@ -13,12 +14,14 @@ class DatabaseManager
 {
 public:
 
-	/* Constructor for creating a Manager object for a SQLite3 database
-		Paramater filename: a string for the name of the database file relative to this class
+	/* A singleton instance of the database manager
+		The DatabaseManager handles all connections to the database
 	*/
-	DatabaseManager(const char *filename);
-
-	~DatabaseManager();
+	static DatabaseManager *shared() {
+		//if (!sharedInstance)
+		DatabaseManager *sharedInstance = new DatabaseManager();
+		return sharedInstance;
+	}
 
 	/* Get a user from the database if they exist.
 		Returns: Returns a User object if a user exists in the database for the credentials. Or else returns `nullptr`.
@@ -47,10 +50,14 @@ public:
 	*/
 	Store* getStore(int storeId);
 
-
-
 private:
+	//static DatabaseManager *sharedInstance;
 	sqlite3 *db;
+
+	/* Constructor for creating a Manager object for a SQLite3 database */
+	DatabaseManager();
+
+	~DatabaseManager();
 
 	void closeDatabase();
 	vector<vector<string>> query(const char *sql);
