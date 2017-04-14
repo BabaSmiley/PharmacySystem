@@ -30,7 +30,7 @@ public:
 
 	/// Returns true if the user is an employee
 	bool isEmployee() {
-		if (userID == Employee)
+		if (userType == Employee)
 			return true;
 		return false;
 	}

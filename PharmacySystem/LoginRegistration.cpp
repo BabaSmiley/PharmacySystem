@@ -145,8 +145,22 @@ private:
 			}
 		}
 		else if (userType == "employee") {
-			//TODO: more complicated logic
-			//cout << "Employee account has been created." << endl;
+			string employeeUsername;
+			string employeePassword;
+
+			cout << "Enter an existing employee's credentials to create the account:" << endl;
+			employeeUsername = getInput("employee username");
+			employeePassword = getInput("employee password");
+
+			User *employee = DatabaseManager::shared()->getUser(employeeUsername, employeePassword);
+			if (employee == nullptr || !employee->isEmployee()) {
+				throw "Employee Credentials Incorrect";
+			}
+
+			// Employee credentials are valid
+			User *newEmployeeUser = DatabaseManager::shared()->createUser(username, password, Employee);
+			cout << "Employee account has been created." << endl;
+			authorizedUser = newEmployeeUser;
 		}
 	}
     

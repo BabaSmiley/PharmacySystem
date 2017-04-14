@@ -100,15 +100,12 @@ int main() {
 	LoginRegistration lr;
 	lr.displayScreen();
 
-	clearWindowsConsole();
+	//clearWindowsConsole();
 
 	User *user = lr.getAuthorizedUser();
 	cout << "Logged in as: " << user->getUserID() << " " << user->getUsername() << endl;
 	string booleanText = user->isEmployee() ? "true" : "false";
 	cout << "Is an employee: " << booleanText << endl;
 	
-	
-
-
 	return 0;
 }
