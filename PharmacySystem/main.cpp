@@ -58,7 +58,10 @@ bool testCreateStore(DatabaseManager *dbm) {
 }
 
 
-
+/// Will clear the windows console
+void clearWindowsConsole() {
+	system("cls");
+}
 
 int main() {
 
@@ -69,10 +72,14 @@ int main() {
 	LoginRegistration lr;
 	lr.displayScreen();
 
-	///TEST DELETE STORE
+	clearWindowsConsole();
 
-	
-	
+	User *user = lr.getAuthorizedUser();
+	cout << "Logged in as: " << user->getUserID() << " " << user->getUsername() << endl;
+	string booleanText = user->isEmployee() ? "true" : "false";
+	cout << "Is an employee: " << booleanText << endl;
+
+	///TEST DELETE STORE
 
 	return 0;
 }

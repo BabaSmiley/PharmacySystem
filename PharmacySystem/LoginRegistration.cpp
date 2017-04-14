@@ -122,6 +122,12 @@ private:
 
 		cout << endl << "Type \"employee\" to register as an employee, or \"customer\" to register as a customer" << endl;
 		userType = getInput();
+
+		if (userType != "customer" && userType != "employee") {
+			//Guard protecttion in case user enters invalid type of user
+			throw "Invalid command.";
+		}
+
 		cout << "To create an account please enter a username:" << endl;
 		username = getInput("username");
 		cout << "Please choose a password for your account:" << endl;
@@ -129,15 +135,18 @@ private:
 
 		if (userType == "customer") {
 			User *newUser = DatabaseManager::shared()->createUser(username, password, Customer);
-			cout << "Customer account has been created." << endl;
-			authorizedUser = newUser;
+			
+			if (!newUser) {
+				throw "A user may already exist for this username. Try again.";
+			}
+			else {
+				cout << "Customer account has been created." << endl;
+				authorizedUser = newUser;
+			}
 		}
 		else if (userType == "employee") {
 			//TODO: more complicated logic
 			//cout << "Employee account has been created." << endl;
-		}
-		else {
-			throw "Invalid command.";
 		}
 	}
     
