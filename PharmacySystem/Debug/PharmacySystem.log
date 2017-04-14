@@ -1,5 +1,16 @@
-﻿  main.cpp
-c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\loginregistration.cpp(95): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
-c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\loginregistration.cpp(118): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
-  PharmacySystem.vcxproj -> C:\Users\Jon Cardasis\Desktop\PharmacySystem\Debug\PharmacySystem.exe
-  PharmacySystem.vcxproj -> C:\Users\Jon Cardasis\Desktop\PharmacySystem\Debug\PharmacySystem.pdb (Full PDB)
+﻿  ASCIIBlockM.cpp
+  User.cpp
+  StringUtils.cpp
+  Store.cpp
+  main.cpp
+c:\users\travis\documents\github\pharmacysystem\pharmacysystem\loginregistration.cpp(95): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+c:\users\travis\documents\github\pharmacysystem\pharmacysystem\loginregistration.cpp(118): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+  LoginRegistration.cpp
+c:\users\travis\documents\github\pharmacysystem\pharmacysystem\loginregistration.cpp(95): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+c:\users\travis\documents\github\pharmacysystem\pharmacysystem\loginregistration.cpp(118): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+  DatabaseManager.cpp
+  Constants.h
+  BatchProcesses.cpp
+  Generating Code...
+  sqlite3.c
+  PharmacySystem.vcxproj -> C:\Users\Travis\Documents\GitHub\PharmacySystem\Debug\PharmacySystem.exe
