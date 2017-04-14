@@ -9,6 +9,10 @@ string quotesql(const T& sql) {
 	return string("'") + ss.str() + string("'");
 }
 
+string sqlToString(const unsigned char* str) {
+	return string(reinterpret_cast<const char*>(str));
+}
+
 /* DatabaseManager */
 DatabaseManager::DatabaseManager() {
 	
@@ -84,18 +88,35 @@ User* DatabaseManager::createUser(string username, string password, UserType use
 
 /// Stores ///
 
-void DatabaseManager::deleteStore(int storeId) {
-	return; //TODO
+bool DatabaseManager::deleteStore(Store *store) {
+	
+	// Preliminary check if the store exists
+	Store *dbStore = getStore(store->getId());
+	if (dbStore == nullptr || *store != *dbStore) {
+		return false;
+	}
+
+	sqlite3_stmt *stmt;
+	bool result = false;
+	string sql = "delete from Store where Id=" + quotesql(store->getId());
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			result = true;
+		}
+	}
+	sqlite3_finalize(stmt);
+
+	return result;
 }
 
-Store* DatabaseManager::createStore(string address, string city, string state, int zipCode, int priorityLevel) {
+Store* DatabaseManager::createStore(int id, string address, string city, string state, int zipCode, int priorityLevel) {
 	sqlite3_stmt *stmt;
 	Store *newStore = nullptr;
 	
-	string sql = "insert into Store (Address, City, State, ZipCode, PriorityLevel) values (" + quotesql(address) + "," + quotesql(city) + ","+ quotesql(state) + "," + quotesql(zipCode) + "," + quotesql(priorityLevel) + ")";
+	string sql = "insert into Store (Id, Address, City, State, ZipCode, PriorityLevel) values (" + quotesql(id) + "," + quotesql(address) + "," + quotesql(city) + ","+ quotesql(state) + "," + quotesql(zipCode) + "," + quotesql(priorityLevel) + ")";
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
-			int id = (int)sqlite3_last_insert_rowid(db);
 			newStore = new Store(id, address, city, state, zipCode, priorityLevel);
 		}
 	}
@@ -105,7 +126,26 @@ Store* DatabaseManager::createStore(string address, string city, string state, i
 }
 
 Store* DatabaseManager::getStore(int storeId) {
-	return nullptr; //TODO
+	sqlite3_stmt *stmt;
+	Store *result = nullptr;
+
+	string sql = "select Id, Address, City, State, ZipCode, PriorityLevel from Store where Id=" + quotesql(storeId);
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+
+		if (sqlite3_step(stmt) == SQLITE_ROW) {
+			int id            = sqlite3_column_int(stmt, 0);
+			string address    = sqlToString(sqlite3_column_text(stmt, 1));
+			string city       = sqlToString(sqlite3_column_text(stmt, 2));
+			string state      = sqlToString(sqlite3_column_text(stmt, 3));
+			int zipCode       = sqlite3_column_int(stmt, 4);
+			int priorityLevel = sqlite3_column_int(stmt, 5);
+
+			result = new Store(id, address, city, state, zipCode, priorityLevel);
+		}
+	}
+	sqlite3_finalize(stmt);
+
+	return result;
 }
 
 

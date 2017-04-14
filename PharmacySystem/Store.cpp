@@ -1,4 +1,5 @@
 #include <string>
+#include <iostream>
 using namespace std;
 
 struct Store {
@@ -24,6 +25,28 @@ public:
 	int getZipCode() { return zipCode; }
 
 	int getPriorityLevel() { return priorityLevel; }
+
+	bool operator == (const Store& s) {
+		if (id == s.id && address == s.address && city == s.city &&
+			state == s.state && zipCode == s.zipCode && priorityLevel == s.priorityLevel)
+			return true;
+		return false;
+	}
+
+	bool operator != (const Store& s) {
+		if (*this == s)
+			return false;
+		return true;
+	}
+
+	void printDescription() {
+		cout << "Id: " << id << endl;
+		cout << "Address: " << address << endl;
+		cout << "City: " << city << endl;
+		cout << "State: " << state << endl;
+		cout << "ZipCode: " << zipCode << endl;
+		cout << "PriorityLevel: " << priorityLevel << endl;
+	}
 
 private:
 	int id;

@@ -40,9 +40,11 @@ void testDatabaseUser(DatabaseManager *dbm) {
 }
 
 
+
+
 bool testCreateStore(DatabaseManager *dbm) {
 	//Test Create
-	Store *newStore = dbm->createStore("123 Alley", "NewTown", "NY", 34592, 199);
+	Store *newStore = dbm->createStore(13, "123 Alley", "NewTown", "NY", 34592, 199);
 	if (newStore) {
 		cout << endl << "New store created" << endl;
 		cout << "ID: " << newStore->getId() << endl;
@@ -57,6 +59,26 @@ bool testCreateStore(DatabaseManager *dbm) {
 	}
 }
 
+bool testGetStore(DatabaseManager *dbm) {
+	Store *existingStore = dbm->getStore(13);
+	if (existingStore == nullptr) {
+		cout << "Store which should exist for id=1 does not." << endl;
+		return false;
+	}
+
+	Store *doesNotExist = dbm->getStore(-1);
+	if (doesNotExist != nullptr) {
+		cout << "Store which shouldnt exist, does" << endl;
+		return false;
+	}
+	return true;
+}
+
+bool testDeleteStore(DatabaseManager *dbm) {
+	Store *s = dbm->getStore(13);
+	return dbm->deleteStore(s);
+}
+
 
 /// Will clear the windows console
 void clearWindowsConsole() {
@@ -69,6 +91,12 @@ int main() {
 	//testDatabaseUser(dbm);
 	//testCreateStore(dbm);
 
+	///STORE DB FUNCTIONALITY
+	//cout << testCreateStore(dbm) << endl;
+	//cout << testGetStore(dbm) << endl;
+	//cout << testDeleteStore(dbm) << endl;
+
+	
 	LoginRegistration lr;
 	lr.displayScreen();
 
@@ -78,8 +106,9 @@ int main() {
 	cout << "Logged in as: " << user->getUserID() << " " << user->getUsername() << endl;
 	string booleanText = user->isEmployee() ? "true" : "false";
 	cout << "Is an employee: " << booleanText << endl;
+	
+	
 
-	///TEST DELETE STORE
 
 	return 0;
 }

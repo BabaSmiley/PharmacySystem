@@ -36,14 +36,16 @@ public:
 
 
 	/* Delete a store from the database
-		Parameter storeId: the id of the store to delete from the database
+		Parameter store: A store object representing the store to delete in the database.
+		  All fields in store must match database exactly for it to be deleted.
+		Returns: returns true if `store` is an exact match in the database and was able to successfully delete it
 	*/
-	void deleteStore(int storeId);
+	bool deleteStore(Store *store);
 
 	/* Creates and stores parameters in stores database
 		Returns: returns a Store object representing a DB Store model
 	*/
-	Store* createStore(string address, string city, string state, int zipCode, int priorityLevel);
+	Store* createStore(int id, string address, string city, string state, int zipCode, int priorityLevel);
 
 	/* Get a store from the database
 		Returns: returns a filled in Store object, or nullptr if no store was found for `storeId`
