@@ -9,6 +9,7 @@
 /* Import DB Models */
 #include "User.cpp"
 #include "Store.cpp"
+#include "Item.cpp"
 
 class DatabaseManager
 {
@@ -51,6 +52,23 @@ public:
 		Returns: returns a filled in Store object, or nullptr if no store was found for `storeId`
 	*/
 	Store* getStore(int storeId);
+
+	/* Delete an item from the database
+		Parameter item: An item object representing the item to delete in the database.
+		  Do not delete from sales and item data stores.
+		Returns: Returns true if `item` is an exact match in the database and was able to successfully delete it
+	*/
+	bool deleteItem(int itemId);
+
+	/* Creates and stores parameters in items database
+		Returns: Returns an item object representing a DB Item model
+	*/
+	Item* createItem(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, long onOrderQty);
+
+	/* Gets an item from the database
+		Returns: Returns a filled in Item object, or nullptr if no item was found for `itemId`
+	*/
+	Item* getItem(int itemId);
 
 private:
 	//static DatabaseManager *sharedInstance;

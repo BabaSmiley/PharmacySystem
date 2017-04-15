@@ -148,6 +148,73 @@ Store* DatabaseManager::getStore(int storeId) {
 	return result;
 }
 
+/// Items ///
+
+bool DatabaseManager::deleteItem(int itemId) {
+	Item *dbItem = getItem(itemId);
+	if (dbItem == nullptr || itemId != dbItem->getId()) {
+		return false;
+	}
+
+	sqlite3_stmt *stmt;
+	bool result = false;
+	string sql = "DELETE FROM Item WHERE Id = " + quotesql(itemId);
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			result = true;
+		}
+	}
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
+Item* DatabaseManager::createItem(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, long onOrderQty) {
+	sqlite3_stmt *stmt;
+	Item *newItem = nullptr;
+
+	string sql = "INSERT INTO Item (Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, onOrderQty) VALUES (" + quotesql(id) + "," + quotesql(name) + "," + quotesql(description) + "," + quotesql(price) + "," + quotesql(dosage) + "," + quotesql(vendorId) + "," + quotesql(expectedDeliveryDate) + "," + quotesql(whRefillLevel) + "," + quotesql(whRefillQty) + "," + quotesql(whLevel) + "," + quotesql(onOrderQty) + ")";
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			newItem = new Item(id, name, description, price, dosage, vendorId, expectedDeliveryDate, whRefillLevel, whRefillQty, whLevel, onOrderQty);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return newItem;
+}
+
+Item* DatabaseManager::getItem(int itemId) {
+	sqlite3_stmt *stmt;
+	Item *result = nullptr;
+
+	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, onOrderQty FROM Item WHERE Id = " + quotesql(itemId);
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_ROW) {
+			int id = sqlite3_column_int(stmt, 0);
+			string name = sqlToString(sqlite3_column_text(stmt, 1));
+			string description = sqlToString(sqlite3_column_text(stmt, 2));
+			int price = sqlite3_column_int(stmt, 3);
+			string dosage = sqlToString(sqlite3_column_text(stmt, 4));
+			int vendorId = sqlite3_column_int(stmt, 5);
+			string expectedDeliveryDate = sqlToString(sqlite3_column_text(stmt, 6));
+			long whRefillLevel = sqlite3_column_int(stmt, 7);
+			long whRefillQty = sqlite3_column_int(stmt, 8);
+			long whLevel = sqlite3_column_int(stmt, 9);
+			long onOrderQty = sqlite3_column_int(stmt, 10);
+
+			result = new Item(id, name, description, price, dosage, vendorId, expectedDeliveryDate, whRefillLevel, whRefillQty, whLevel, onOrderQty);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
 
 
 vector<vector<string>> DatabaseManager::query(const char *sql) {

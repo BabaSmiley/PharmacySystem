@@ -1,2 +1,13 @@
-﻿  PharmacySystem.vcxproj -> C:\Users\ssere\Documents\GitHub\PharmacySystem\Debug\PharmacySystem.exe
+﻿  Item.cpp
+  DatabaseManager.cpp
+  Generating Code...
+  Compiling...
+  main.cpp
+c:\users\ssere\documents\github\pharmacysystem\pharmacysystem\loginregistration.cpp(95): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+c:\users\ssere\documents\github\pharmacysystem\pharmacysystem\loginregistration.cpp(118): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+  BatchProcesses.cpp
+  Generating Code...
+  Skipping... (no relevant changes detected)
+  ASCIIBlockM.cpp
+  PharmacySystem.vcxproj -> C:\Users\ssere\Documents\GitHub\PharmacySystem\Debug\PharmacySystem.exe
   PharmacySystem.vcxproj -> C:\Users\ssere\Documents\GitHub\PharmacySystem\Debug\PharmacySystem.pdb (Full PDB)
