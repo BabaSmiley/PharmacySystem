@@ -215,6 +215,66 @@ Item* DatabaseManager::getItem(int itemId) {
 	return result;
 }
 
+/// Prescriptions ///
+
+bool DatabaseManager::deletePrescription(int prescriptionId) {
+	Prescription *dbPrescription = getPrescription(prescriptionId);
+	if (dbPrescription == nullptr || prescriptionId != dbPrescription->getId()) {
+		return false;
+	}
+
+	sqlite3_stmt *stmt;
+	bool result = false;
+	string sql = "DELETE FROM Prescription WHERE Id = " + quotesql(prescriptionId);
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			result = true;
+		}
+	}
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
+Prescription* DatabaseManager::createPrescription(int id, string date, int customerId, int storeId) {
+	sqlite3_stmt *stmt;
+	Prescription *newPrescription = nullptr;
+
+	string sql = "INSERT INTO Prescription (Id, Date, CustomerId, StoreId) VALUES (" + quotesql(id) + "," + quotesql(date) + "," + quotesql(customerId) + "," + quotesql(storeId) + ")";
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			newPrescription = new Prescription(id, date, customerId, storeId);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return newPrescription;
+}
+
+Prescription* DatabaseManager::getPrescription(int prescriptionId) {
+	sqlite3_stmt *stmt;
+	Prescription *result = nullptr;
+
+	string sql = "SELECT Id, Date, CustomerId, StoreId FROM Prescription WHERE Id = " + quotesql(prescriptionId);
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_ROW) {
+			int id = sqlite3_column_int(stmt, 0);
+			string date = sqlToString(sqlite3_column_text(stmt, 1));
+			int customerId = sqlite3_column_int(stmt, 2);
+			int storeId = sqlite3_column_int(stmt, 3);
+
+			result = new Prescription(id, date, customerId, storeId);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
 
 
 vector<vector<string>> DatabaseManager::query(const char *sql) {

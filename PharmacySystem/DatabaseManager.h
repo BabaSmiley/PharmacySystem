@@ -10,6 +10,7 @@
 #include "User.cpp"
 #include "Store.cpp"
 #include "Item.cpp"
+#include "Prescription.cpp"
 
 class DatabaseManager
 {
@@ -54,7 +55,7 @@ public:
 	Store* getStore(int storeId);
 
 	/* Delete an item from the database
-		Parameter item: An item object representing the item to delete in the database.
+		Parameter item id: An item id representing the item to delete in the database.
 		  Do not delete from sales and item data stores.
 		Returns: Returns true if `item` is an exact match in the database and was able to successfully delete it
 	*/
@@ -69,6 +70,22 @@ public:
 		Returns: Returns a filled in Item object, or nullptr if no item was found for `itemId`
 	*/
 	Item* getItem(int itemId);
+
+	/* Delete a prescription from the database
+		Parameter prescription id: A prescription id representing the prescription to delete in the database.
+		Returns: Returns true if `prescription` is an exact match in the database and was able to successfully delete it
+	*/
+	bool deletePrescription(int prescriptionId);
+
+	/* Creates and stores parameters in prescription database
+		Returns: Returns a prescription object representing a DB Prescription model
+	*/
+	Prescription* createPrescription(int id, string date, int customerId, int storeId);
+
+	/* Gets a prescription from the database
+		Returns: Returns a filled in Prescription object, or nullptr if no prescription was found for `prescriptionId`
+	*/
+	Prescription* getPrescription(int prescriptionId);
 
 private:
 	//static DatabaseManager *sharedInstance;

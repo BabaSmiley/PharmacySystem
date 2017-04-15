@@ -114,6 +114,42 @@ bool testDeleteItem(DatabaseManager *dbm) {
 	return dbm->deleteItem(24);
 }
 
+bool testCreatePrescription(DatabaseManager *dbm) {
+	Prescription *newPrescription = dbm->createPrescription(17, "2017-04-20", 9, 1);
+	if (newPrescription) {
+		cout << endl << "New prescription created" << endl;
+		cout << "Id: " << newPrescription->getId() << endl;
+		cout << "Date: " << newPrescription->getDate() << endl;
+		cout << "Customer: " << newPrescription->getCustomerId() << endl;
+		cout << "Store: " << newPrescription->getStoreId() << endl;
+		return true;
+	}
+	else {
+		cout << "Could not create prescription" << endl;
+		return false;
+	}
+}
+
+bool testGetPrescription(DatabaseManager *dbm) {
+	Prescription *existingPrescription = dbm->getPrescription(17);
+	if (existingPrescription == nullptr) {
+		cout << "Prescription which should exist for id=17 does not" << endl;
+		return false;
+	}
+
+	Prescription *doesNotExist = dbm->getPrescription(-1);
+	if (doesNotExist != nullptr) {
+		cout << "Prescription which shouldnt exist does" << endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool testDeletePrescription(DatabaseManager *dbm) {
+	return dbm->deletePrescription(17);
+}
+
 
 /// Will clear the windows console
 void clearWindowsConsole() {
@@ -135,6 +171,11 @@ int main() {
 	//cout << testCreateItem(dbm) << endl;
 	//cout << testDeleteItem(dbm) << endl;
 	//cout << testGetItem(dbm) << endl;
+
+	///PRESCRIPTION DB FUNCTIONALITY
+	//cout << testCreatePrescription(dbm) << endl;
+	//cout << testDeletePrescription(dbm) << endl;
+	//cout << testGetPrescription(dbm) << endl;
 
 	
 	LoginRegistration lr;
