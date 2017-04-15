@@ -79,6 +79,41 @@ bool testDeleteStore(DatabaseManager *dbm) {
 	return dbm->deleteStore(s);
 }
 
+bool testCreateItem(DatabaseManager *dbm) {
+	Item *newItem = dbm->createItem(24, "Drug 1", "Test drug", 15, "all day erryday", 10, "2017-04-20", 500, 500, 500, 100);
+	if (newItem) {
+		cout << endl << "New item created" << endl;
+		cout << "ID: " << newItem->getId() << endl;
+		cout << "Name: " << newItem->getName() << endl;
+		cout << "Description: " << newItem->getDescription() << endl;
+		return true;
+	}
+	else {
+		cout << "Could not create item." << endl;
+		return false;
+	}
+}
+
+bool testGetItem(DatabaseManager *dbm) {
+	Item *existingItem = dbm->getItem(24);
+	if (existingItem == nullptr) {
+		cout << "Item which should exist for id=24 does not" << endl;
+		return false;
+	}
+
+	Item *doesNotExist = dbm->getItem(-1);
+	if (doesNotExist != nullptr) {
+		cout << "Item which shouldnt exist does" << endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool testDeleteItem(DatabaseManager *dbm) {
+	return dbm->deleteItem(24);
+}
+
 
 /// Will clear the windows console
 void clearWindowsConsole() {
@@ -95,6 +130,11 @@ int main() {
 	//cout << testCreateStore(dbm) << endl;
 	//cout << testGetStore(dbm) << endl;
 	//cout << testDeleteStore(dbm) << endl;
+
+	///ITEM DB FUNCTIONALITY
+	//cout << testCreateItem(dbm) << endl;
+	//cout << testDeleteItem(dbm) << endl;
+	//cout << testGetItem(dbm) << endl;
 
 	
 	LoginRegistration lr;
