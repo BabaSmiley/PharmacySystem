@@ -78,7 +78,6 @@ private:
 				else {
 					cout << "[!] Invalid command." << endl << endl;
 
-					printInitialText();
 					promptForInput(); //re-prompt for input
 				}
 			}

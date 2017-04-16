@@ -1,6 +1,28 @@
-﻿  main.cpp
-c:\users\ssere\documents\github\pharmacysystem\pharmacysystem\item.cpp(27): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
-c:\users\ssere\documents\github\pharmacysystem\pharmacysystem\loginregistration.cpp(95): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
-c:\users\ssere\documents\github\pharmacysystem\pharmacysystem\loginregistration.cpp(118): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
-  PharmacySystem.vcxproj -> C:\Users\ssere\Documents\GitHub\PharmacySystem\Debug\PharmacySystem.exe
-  PharmacySystem.vcxproj -> C:\Users\ssere\Documents\GitHub\PharmacySystem\Debug\PharmacySystem.pdb (Full PDB)
+﻿  User.cpp
+  StringUtils.cpp
+  Prescription.cpp
+  main.cpp
+c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\item.cpp(27): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\loginregistration.cpp(95): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\loginregistration.cpp(118): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+  LoginRegistration.cpp
+c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\item.cpp(27): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\loginregistration.cpp(95): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\loginregistration.cpp(118): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+  Item.cpp
+c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\item.cpp(27): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+  Inventory.cpp
+  DatabaseManager.cpp
+c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\item.cpp(27): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+  Constants.h
+  Generating Code...
+  Compiling...
+  BatchProcesses.cpp
+c:\users\jon cardasis\desktop\pharmacysystem\pharmacysystem\item.cpp(27): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+  Generating Code...
+  Skipping... (no relevant changes detected)
+  ASCIIBlockM.cpp
+  Store.cpp
+  LINK : C:\Users\Jon Cardasis\Desktop\PharmacySystem\Debug\PharmacySystem.exe not found or not built by the last incremental link; performing full link
+  PharmacySystem.vcxproj -> C:\Users\Jon Cardasis\Desktop\PharmacySystem\Debug\PharmacySystem.exe
+  PharmacySystem.vcxproj -> C:\Users\Jon Cardasis\Desktop\PharmacySystem\Debug\PharmacySystem.pdb (Full PDB)
