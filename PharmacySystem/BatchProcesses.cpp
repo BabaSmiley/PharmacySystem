@@ -6,7 +6,7 @@ using namespace std;
 #include "DatabaseManager.h"
 
 //Where stores are created and deleted in the database
-void createDeleteStore(ofstream &batchLog, int sequenceNo) {
+void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int sequenceNo) {
 	batchLog << "=====Create/Delete Store=====";
 
 	ifstream input("adddeletestore.txt");
@@ -123,7 +123,7 @@ Where stores request inventory from the warehouse.
 Note: there is no estimated date. Instantly deduct quantities from the warehouse
 and add them to the stores
 */
-void inventoryToStoreRequest(ofstream &batchLog, int sequenceNoStoreUpdate, int sequenceNoStoreAdd, int sequenceOnlineReq, int sequenceNoBatchRev) {
+void inventoryToStoreRequest(DatabaseManager *dbm, ofstream &batchLog, int sequenceNoStoreUpdate, int sequenceNoStoreAdd, int sequenceOnlineReq, int sequenceNoBatchRev) {
 	batchLog << "=====Inventory To Store Request=====";
 
 	//Code to combine all 3 record files into one file
@@ -162,7 +162,7 @@ void inventoryToStoreRequest(ofstream &batchLog, int sequenceNoStoreUpdate, int 
 }
 
 //Where warehouse item quantities are replenished
-void inventoryReceivedAtWarehouse(ofstream &batchLog, int sequenceNo) {
+void inventoryReceivedAtWarehouse(DatabaseManager *dbm, ofstream &batchLog, int sequenceNo) {
 	batchLog << "=====Inventory Received at Warehouse=====";
 
 	ifstream input("itemreceived.txt");
@@ -191,14 +191,14 @@ void inventoryReceivedAtWarehouse(ofstream &batchLog, int sequenceNo) {
 }
 
 //Where warehouse items are requested from the vendors
-void inventoryGeneration() {
+void inventoryGeneration(DatabaseManager *dbm) {
 	ofstream output("vendororder.txt");
 
 	//TODO: ITERATE THROUGH ALL WAREHOUSE ITEMS AND REORDER ITEMS THAT ARE BELOW REORDER QUANTITIES
 }
 
 //Where items are added/changed/deleted from the database
-void updateItemData(ofstream &batchLog, int sequenceNo) {
+void updateItemData(DatabaseManager *dbm, ofstream &batchLog, int sequenceNo) {
 	batchLog << "=====Update Item Data=====";
 
 	ifstream input("items.txt");
@@ -206,14 +206,14 @@ void updateItemData(ofstream &batchLog, int sequenceNo) {
 }
 
 //Calculate sales for specified items
-void yearlySales(ofstream &batchLog, int sequenceNo) {
+void yearlySales(DatabaseManager *dbm, ofstream &batchLog, int sequenceNo) {
 	batchLog << "=====Yearly Sales=====";
 
 	ifstream input("reports.txt");
 	int trailerCount = 0;
 }
 
-void runBatchSequence() {
+void runBatchSequence(DatabaseManager *dbm) {
 	ofstream batchLog("batchLog.txt");
 	ifstream sequenceNos("sequence.txt");
 	int sequenceNo1, sequenceNo2, sequenceNo3, sequenceNo4;
@@ -228,22 +228,22 @@ void runBatchSequence() {
 	this will contain the sequence numbers to be checked with the incoming files.
 	*/
 	sequenceNos >> sequenceNo1;
-	updateItemData(batchLog, sequenceNo1);
+	updateItemData(dbm, batchLog, sequenceNo1);
 
 	sequenceNos >> sequenceNo1;
-	createDeleteStore(batchLog, sequenceNo1);
+	createDeleteStore(dbm, batchLog, sequenceNo1);
 
 	sequenceNos >> sequenceNo1;
-	inventoryReceivedAtWarehouse(batchLog, sequenceNo1);
+	inventoryReceivedAtWarehouse(dbm, batchLog, sequenceNo1);
 
 	sequenceNos >> sequenceNo1;
 	sequenceNos >> sequenceNo2;
 	sequenceNos >> sequenceNo3;
 	sequenceNos >> sequenceNo4;
-	inventoryToStoreRequest(batchLog, sequenceNo1, sequenceNo2, sequenceNo3, sequenceNo4);
+	inventoryToStoreRequest(dbm, batchLog, sequenceNo1, sequenceNo2, sequenceNo3, sequenceNo4);
 
-	inventoryGeneration();
+	inventoryGeneration(dbm);
 
 	sequenceNos >> sequenceNo1;
-	yearlySales(batchLog, sequenceNo1);
+	yearlySales(dbm, batchLog, sequenceNo1);
 }
