@@ -29,7 +29,7 @@ int main() {
 
 	DatabaseManager *dbm = DatabaseManager::shared();
 
-	runTests(dbm);
+	//runTests(dbm);
 
 	
 	LoginRegistration lr;

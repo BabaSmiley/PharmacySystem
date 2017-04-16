@@ -212,7 +212,7 @@ void runTests(DatabaseManager *dbm) {
 
 	///ITEM DB FUNCTIONALITY
 	//cout << testCreateItem(dbm) << endl;
-	cout << testUpdateItem(dbm) << endl;
+	//cout << testUpdateItem(dbm) << endl;
 	//cout << testDeleteItem(dbm) << endl;
 	//cout << testGetItem(dbm) << endl;
 
