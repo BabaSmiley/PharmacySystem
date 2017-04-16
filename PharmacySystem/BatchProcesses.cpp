@@ -30,7 +30,7 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int sequenceNo)
 		trailerCount++;
 
 		if (line[0] == 'A') {
-			//TODO: ADD STORE HERE. MUST CHECK FOR ALREADY EXISTING STORE
+			//TODO: ADD STORE HERE. MUST CHECK FOR ALREADY EXISTING STORE 4/16
 			int controlCount = 0;
 			getline(input, line);
 
