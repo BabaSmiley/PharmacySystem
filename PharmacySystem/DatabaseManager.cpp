@@ -165,14 +165,13 @@ Store* DatabaseManager::getStore(int storeId) {
 }
 
 vector<Store*> DatabaseManager::getStores(unsigned int count) {
+	sqlite3_stmt *stmt;
 	vector<Store*> stores;
 
 	string limitingSQL = "";
 	if (count != NULL && count > 0) {
-		limitingSQL = " limit " + count;
+		limitingSQL = " limit " + to_string(count);
 	}
-
-	sqlite3_stmt *stmt;
 
 	string sql = "select Id, Address, City, State, ZipCode, PriorityLevel from Store" + limitingSQL;
 

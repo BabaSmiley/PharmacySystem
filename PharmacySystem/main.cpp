@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <stdexcept> // Used for out_of_range error
 #include "DatabaseManager.h"
 #include "LoginRegistration.cpp"
 #include "User.cpp"
@@ -16,7 +17,7 @@ void printHelp(UserType type) {
 	cout << "#########################" << endl;
 	cout << "Available Commands:" << endl;
 	// General all-user commands
-	cout << "'list stores' : Will list all available stores." << endl;
+	cout << "'list stores {number of stores}' : Will list all available stores. Optionally can state the number of stores to show" << endl;
 
 	// User specific commands
 	if (type == Employee) {
@@ -34,8 +35,8 @@ void printHelp(UserType type) {
 	cout << "#########################" << endl;
 }
 
-void printStores(DatabaseManager *dbm) {
-	vector<Store*> stores = dbm->getStores();
+void printStores(DatabaseManager *dbm, unsigned int count = NULL) {
+	vector<Store*> stores = dbm->getStores(count);
 	cout << "Stores:" << endl;
 	for (Store* store : stores) {
 		cout << "[id " << store->getId() << "] " << store->getAddress() << " " << store->getCity() << ", " << store->getState() << " " << store->getZipCode() << endl;
@@ -63,32 +64,46 @@ int main() {
 	
 	/* Take User Online Input For Commands */
 	cout << "Enter a command to begin. Or type 'help' to get a list of available commands." << endl << endl;
-	string input;
+	string userInput;
 	bool shouldEndProgram = false;
 	
-	while (!shouldEndProgram){
-		input = getInput();
-		transform(input.begin(), input.end(), input.begin(), ::tolower); //Convert input to all lowercase
-
-		if (input == "logout") {
-			cout << "Logged out of system." << endl;
-			shouldEndProgram = true;
-		}
-		else if (input == "list stores") {
-			printStores(dbm);
-		}
-		else if (input == "help") {
-			printHelp(user->getUserType());
-		}
-		else if (input == "view history") {
-			if (user->isEmployee()) {
-
+	while (!shouldEndProgram) {
+		userInput = getInput();
+		transform(userInput.begin(), userInput.end(), userInput.begin(), ::tolower); //Convert input to all lowercase
+		vector<string> input = splitString(userInput, " ");
+		
+		try { //try for out-of-range input exceptions
+			if ("logout" == input.at(0)) {
+				cout << "Logged out of system." << endl;
+				shouldEndProgram = true;
 			}
-			else { //is customer
+			else if ("help" == input.at(0)) {
+				printHelp(user->getUserType());
+			}
+			else if ("list stores" == input.at(0) + " " + input.at(1)) {
+				if (input.size() > 2) {
+					unsigned int count = (unsigned int)stoi(input.at(2));
+					cout << "count: " << count << endl;
+					printStores(dbm, count);
+				} else {
+					printStores(dbm);
+				}
+			}
+			else if ("view history" == input.at(0) + " " + input.at(1)) {
+				if (user->isEmployee()) {
 
+				}
+				else { //is customer
+
+				}
+			}
+			else {
+				throw exception("User command not recognized in main.");
 			}
 		}
-		else {
+		catch (const exception& err) {
+			// Catch any out_of_range errors, etc.
+			cerr << "Caught exception: " << err.what() << endl; //DEBUG
 			cout << "Invalid command. Type 'help' for a list of available commands." << endl;
 		}
 	}
