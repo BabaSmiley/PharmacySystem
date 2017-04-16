@@ -24,7 +24,7 @@ public:
 
 	string getDescription() { return description; }
 
-	float getPrice() { return price; }
+	int getPrice() { return price; }
 
 	string getDosage() { return dosage; }
 

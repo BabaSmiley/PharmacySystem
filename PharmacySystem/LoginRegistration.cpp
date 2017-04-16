@@ -6,27 +6,18 @@
 //  Copyright © 2017 Jonathan Cardasis. All rights reserved.
 //
 
+#pragma once
 #include <iostream>
 #include <string>
 #include "Utils/ASCIIBlockM.cpp"
+#include "CommandUtils.cpp"
 #include "DatabaseManager.h"
 #include "User.cpp"
 using namespace std;
 
 class LoginRegistration {
 public:
-    
-    string getInput(string preceeedingString="") { //TODO: move to general class
-        string input;
-        if(preceeedingString != "") {
-            cout << preceeedingString << " > ";
-        } else {
-            cout << "> ";
-        }
-        cin >> input;
-        return input;
-    }
-    
+        
     /*Displays login/registration screen and begins taking user input
     */
 	void displayScreen() {

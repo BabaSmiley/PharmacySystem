@@ -164,7 +164,8 @@
       </PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="Store.cpp" />
-    <ClCompile Include="StringUtils.cpp" />
+    <ClCompile Include="CommandUtils.cpp" />
+    <ClCompile Include="Tests\DatabaseManagerTests.cpp" />
     <ClCompile Include="User.cpp" />
     <ClCompile Include="Utils\ASCIIBlockM.cpp" />
   </ItemGroup>
