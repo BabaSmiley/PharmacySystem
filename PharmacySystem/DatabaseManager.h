@@ -50,6 +50,11 @@ public:
 	*/
 	Store* createStore(int id, string address, string city, string state, int zipCode, int priorityLevel);
 
+	/* Updates and stores parameters in stores database
+		Returns: Returns an updated store object representing a DB Store model
+	*/
+	Store* updateStore(int id, string address, string city, string state, int zipCode, int priorityLevel);
+
 	/* Get a store from the database
 		Returns: returns a filled in Store object, or nullptr if no store was found for `storeId`
 	*/
@@ -66,6 +71,11 @@ public:
 		Returns: Returns an item object representing a DB Item model
 	*/
 	Item* createItem(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, long onOrderQty);
+
+	/* Updates and stores parameters in items database
+		Returns: Returns an item object representing a DB Item model
+	*/
+	Item* updateItem(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, long onOrderQty);
 
 	/* Gets an item from the database
 		Returns: Returns a filled in Item object, or nullptr if no item was found for `itemId`

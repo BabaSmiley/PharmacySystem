@@ -171,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DatabaseManager.h" />
+    <ClInclude Include="DatabaseManagerTests.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="sqlite3.h" />
   </ItemGroup>

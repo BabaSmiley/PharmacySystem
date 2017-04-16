@@ -125,6 +125,22 @@ Store* DatabaseManager::createStore(int id, string address, string city, string 
 	return newStore;
 }
 
+Store* DatabaseManager::updateStore(int id, string address, string city, string state, int zipCode, int priorityLevel) {
+	sqlite3_stmt *stmt;
+	Store *updatingStore = nullptr;
+
+	string sql = "UPDATE Store SET Id = " + quotesql(id) + ", Address = " + quotesql(address) + ", City = " + quotesql(city) + ", State = " + quotesql(state) + ", ZipCode = " + quotesql(zipCode) + ", PriorityLevel = " + quotesql(priorityLevel) + " WHERE Id = " + quotesql(id);
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			updatingStore = new Store(id, address, city, state, zipCode, priorityLevel);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return updatingStore;
+}
+
 Store* DatabaseManager::getStore(int storeId) {
 	sqlite3_stmt *stmt;
 	Store *result = nullptr;
@@ -184,6 +200,22 @@ Item* DatabaseManager::createItem(int id, string name, string description, int p
 	sqlite3_finalize(stmt);
 
 	return newItem;
+}
+
+Item* DatabaseManager::updateItem(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, long onOrderQty) {
+	sqlite3_stmt *stmt;
+	Item* updatingItem = nullptr;
+
+	string sql = "UPDATE Item SET Id = " + quotesql(id) + ", Name = " + quotesql(name) + ", Description = " + quotesql(description) + ", Price = " + quotesql(price) + ", Dosage = " + quotesql(dosage) + ", VendorId = " + quotesql(vendorId) + ", ExpectedDeliveryDate = " + quotesql(expectedDeliveryDate) + ", WhRefillLevel = " + quotesql(whRefillLevel) + ", WhRefillQty = " + quotesql(whRefillQty) + ", WhLevel = " + quotesql(whLevel) + ", onOrderQty = " + quotesql(onOrderQty) + " WHERE Id = " + quotesql(id);
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			updatingItem = new Item(id, name, description, price, dosage, vendorId, expectedDeliveryDate, whRefillLevel, whRefillQty, whLevel, onOrderQty);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return updatingItem;
 }
 
 Item* DatabaseManager::getItem(int itemId) {
