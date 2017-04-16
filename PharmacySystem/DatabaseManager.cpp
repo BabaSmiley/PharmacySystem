@@ -164,6 +164,41 @@ Store* DatabaseManager::getStore(int storeId) {
 	return result;
 }
 
+vector<Store*> DatabaseManager::getStores(unsigned int count) {
+	vector<Store*> stores;
+
+	string limitingSQL = "";
+	if (count != NULL && count > 0) {
+		limitingSQL = " limit " + count;
+	}
+
+	sqlite3_stmt *stmt;
+
+	string sql = "select Id, Address, City, State, ZipCode, PriorityLevel from Store" + limitingSQL;
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		int cols = sqlite3_column_count(stmt);
+
+		while (sqlite3_step(stmt) == SQLITE_ROW) {
+			Store *store;
+
+			int id = sqlite3_column_int(stmt, 0);
+			string address = sqlToString(sqlite3_column_text(stmt, 1));
+			string city = sqlToString(sqlite3_column_text(stmt, 2));
+			string state = sqlToString(sqlite3_column_text(stmt, 3));
+			int zipCode = sqlite3_column_int(stmt, 4);
+			int priorityLevel = sqlite3_column_int(stmt, 5);
+
+			store = new Store(id, address, city, state, zipCode, priorityLevel);
+			stores.push_back(store);
+		}
+	}
+	sqlite3_finalize(stmt);
+
+	return stores;
+}
+
+
 /// Items ///
 
 bool DatabaseManager::deleteItem(int itemId) {

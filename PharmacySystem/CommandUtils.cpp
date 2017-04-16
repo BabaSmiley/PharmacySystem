@@ -12,6 +12,6 @@ static string getInput(string preceeedingString = "") {
 	else {
 		std::cout << "> ";
 	}
-	std::cin >> input;
+	std::getline(std::cin, input); //Will get entire line
 	return input;
 }

@@ -16,6 +16,7 @@ void printHelp(UserType type) {
 	cout << "#########################" << endl;
 	cout << "Available Commands:" << endl;
 	// General all-user commands
+	cout << "'list stores' : Will list all available stores." << endl;
 
 	// User specific commands
 	if (type == Employee) {
@@ -31,6 +32,15 @@ void printHelp(UserType type) {
 	cout << endl << "'help' : Will print this usage statement." << endl;
 	cout << "'logout' : Will log out of the system and close the program." << endl;
 	cout << "#########################" << endl;
+}
+
+void printStores(DatabaseManager *dbm) {
+	vector<Store*> stores = dbm->getStores();
+	cout << "Stores:" << endl;
+	for (Store* store : stores) {
+		cout << "[id " << store->getId() << "] " << store->getAddress() << " " << store->getCity() << ", " << store->getState() << " " << store->getZipCode() << endl;
+	}
+	cout << endl;
 }
 
 
@@ -63,6 +73,9 @@ int main() {
 		if (input == "logout") {
 			cout << "Logged out of system." << endl;
 			shouldEndProgram = true;
+		}
+		else if (input == "list stores") {
+			printStores(dbm);
 		}
 		else if (input == "help") {
 			printHelp(user->getUserType());

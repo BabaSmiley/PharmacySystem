@@ -60,8 +60,14 @@ public:
 	*/
 	Store* getStore(int storeId);
 
+	/* Gets all stores stored in the database
+		Paramater count: the number of stores to return. Returns historically, oldest first.
+		Returns: A vector of Store objects representing all stores in the database
+	*/
+	vector<Store*> getStores(unsigned int count = NULL);
+
 	/* Delete an item from the database
-		Parameter item id: An item id representing the item to delete in the database.
+		Parameter itemId: An item id representing the item to delete in the database.
 		  Do not delete from sales and item data stores.
 		Returns: Returns true if `item` is an exact match in the database and was able to successfully delete it
 	*/
