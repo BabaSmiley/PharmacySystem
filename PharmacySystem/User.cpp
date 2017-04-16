@@ -1,6 +1,7 @@
 #ifndef USER_H
 #define USER_H
 
+#include <iostream>
 #include <string>
 using namespace std;
 
@@ -38,6 +39,13 @@ public:
 	/// Returns the username of the user
 	string getUsername() {
 		return username;
+	}
+
+	void printDescription() {
+		cout << "UserID: " << userID << endl;
+		cout << "Username: " << username << endl;
+		string type = (userType == Employee) ? "Employee" : "Customer";
+		cout << "UserType: " << type << endl;
 	}
 
 private:
