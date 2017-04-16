@@ -3,6 +3,7 @@
 #include "DatabaseManager.h"
 #include "LoginRegistration.cpp"
 #include "User.cpp"
+#include "DatabaseManagerTests.h"
 using namespace std;
 
 /// Will clear the windows console
@@ -27,6 +28,8 @@ void printHelp(UserType type) {
 int main() {
 
 	DatabaseManager *dbm = DatabaseManager::shared();
+
+	runTests(dbm);
 
 	
 	LoginRegistration lr;

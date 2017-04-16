@@ -186,6 +186,22 @@ Item* DatabaseManager::createItem(int id, string name, string description, int p
 	return newItem;
 }
 
+Item* DatabaseManager::updateItem(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, long onOrderQty) {
+	sqlite3_stmt *stmt;
+	Item* updatingItem = nullptr;
+
+	string sql = "UPDATE Item SET Id = " + quotesql(id) + ", Name = " + quotesql(name) + ", Description = " + quotesql(description) + ", Price = " + quotesql(price) + ", Dosage = " + quotesql(dosage) + ", VendorId = " + quotesql(vendorId) + ", ExpectedDeliveryDate = " + quotesql(expectedDeliveryDate) + ", WhRefillLevel = " + quotesql(whRefillLevel) + ", WhRefillQty = " + quotesql(whRefillQty) + ", WhLevel = " + quotesql(whLevel) + ", onOrderQty = " + quotesql(onOrderQty) + " WHERE Id = " + quotesql(id);
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			updatingItem = new Item(id, name, description, price, dosage, vendorId, expectedDeliveryDate, whRefillLevel, whRefillQty, whLevel, onOrderQty);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return updatingItem;
+}
+
 Item* DatabaseManager::getItem(int itemId) {
 	sqlite3_stmt *stmt;
 	Item *result = nullptr;

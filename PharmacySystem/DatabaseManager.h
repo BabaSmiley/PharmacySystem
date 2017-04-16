@@ -67,6 +67,11 @@ public:
 	*/
 	Item* createItem(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, long onOrderQty);
 
+	/* Updates and stores parameters in items database
+		Returns: Returns an item object representing a DB Item model
+	*/
+	Item* updateItem(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, long onOrderQty);
+
 	/* Gets an item from the database
 		Returns: Returns a filled in Item object, or nullptr if no item was found for `itemId`
 	*/

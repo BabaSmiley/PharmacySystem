@@ -91,6 +91,21 @@ bool testCreateItem(DatabaseManager *dbm) {
 	}
 }
 
+bool testUpdateItem(DatabaseManager *dbm) {
+	Item *updatingItem = dbm->updateItem(24, "Drug 1", "Test drug update", 15, "8 days a week", 10, "2017-04-20", 500, 500, 500, 101);
+	if (updatingItem) {
+		cout << endl << "Item updated" << endl;
+		cout << "ID: " << updatingItem->getId() << endl;
+		cout << "Name: " << updatingItem->getName() << endl;
+		cout << "Description: " << updatingItem->getDescription() << endl;
+		return true;
+	}
+	else {
+		cout << "Could not update item." << endl;
+		return false;
+	}
+}
+
 bool testGetItem(DatabaseManager *dbm) {
 	Item *existingItem = dbm->getItem(24);
 	if (existingItem == nullptr) {
@@ -187,26 +202,27 @@ bool testDeleteInventory(DatabaseManager *dbm) {
 
 
 void runTests(DatabaseManager *dbm) {
-	testDatabaseUser(dbm);
-	testCreateStore(dbm);
+	//testDatabaseUser(dbm);
+	//testCreateStore(dbm);
 
 	///STORE DB FUNCTIONALITY
-	cout << testCreateStore(dbm) << endl;
-	cout << testGetStore(dbm) << endl;
-	cout << testDeleteStore(dbm) << endl;
+	//cout << testCreateStore(dbm) << endl;
+	//cout << testGetStore(dbm) << endl;
+	//cout << testDeleteStore(dbm) << endl;
 
 	///ITEM DB FUNCTIONALITY
-	cout << testCreateItem(dbm) << endl;
-	cout << testDeleteItem(dbm) << endl;
-	cout << testGetItem(dbm) << endl;
+	//cout << testCreateItem(dbm) << endl;
+	cout << testUpdateItem(dbm) << endl;
+	//cout << testDeleteItem(dbm) << endl;
+	//cout << testGetItem(dbm) << endl;
 
 	///PRESCRIPTION DB FUNCTIONALITY
-	cout << testCreatePrescription(dbm) << endl;
-	cout << testDeletePrescription(dbm) << endl;
-	cout << testGetPrescription(dbm) << endl;
+	//cout << testCreatePrescription(dbm) << endl;
+	//cout << testDeletePrescription(dbm) << endl;
+	//cout << testGetPrescription(dbm) << endl;
 
 	///INVENTORY DB FUNCTIONALITY
-	cout << testCreateInventory(dbm) << endl;
-	cout << testDeleteInventory(dbm) << endl;
-	cout << testGetInventory(dbm) << endl;
+	//cout << testCreateInventory(dbm) << endl;
+	//cout << testDeleteInventory(dbm) << endl;
+	//cout << testGetInventory(dbm) << endl;
 }
