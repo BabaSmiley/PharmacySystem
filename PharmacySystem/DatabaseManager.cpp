@@ -125,6 +125,22 @@ Store* DatabaseManager::createStore(int id, string address, string city, string 
 	return newStore;
 }
 
+Store* DatabaseManager::updateStore(int id, string address, string city, string state, int zipCode, int priorityLevel) {
+	sqlite3_stmt *stmt;
+	Store *updatingStore = nullptr;
+
+	string sql = "UPDATE Store SET Id = " + quotesql(id) + ", Address = " + quotesql(address) + ", City = " + quotesql(city) + ", State = " + quotesql(state) + ", ZipCode = " + quotesql(zipCode) + ", PriorityLevel = " + quotesql(priorityLevel) + " WHERE Id = " + quotesql(id);
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			updatingStore = new Store(id, address, city, state, zipCode, priorityLevel);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return updatingStore;
+}
+
 Store* DatabaseManager::getStore(int storeId) {
 	sqlite3_stmt *stmt;
 	Store *result = nullptr;

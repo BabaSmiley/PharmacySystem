@@ -56,6 +56,22 @@ bool testCreateStore(DatabaseManager *dbm) {
 	}
 }
 
+bool testUpdateStore(DatabaseManager *dbm) {
+	Store *updatingStore = dbm->updateStore(13, "123 Alley", "NewTown", "MI", 48138, 199);
+	if (updatingStore) {
+		cout << endl << "Store updated" << endl;
+		cout << "ID: " << updatingStore->getId() << endl;
+		cout << "Address: " << updatingStore->getAddress() << endl;
+		cout << "City/State: " << updatingStore->getCity() << ", " << updatingStore->getState() << " " << updatingStore->getZipCode() << endl;
+		cout << "Priority: " << updatingStore->getPriorityLevel() << endl;
+		return true;
+	}
+	else {
+		cout << "Could not update store" << endl;
+		return false;
+	}
+}
+
 bool testGetStore(DatabaseManager *dbm) {
 	Store *existingStore = dbm->getStore(13);
 	if (existingStore == nullptr) {
@@ -207,6 +223,7 @@ void runTests(DatabaseManager *dbm) {
 
 	///STORE DB FUNCTIONALITY
 	//cout << testCreateStore(dbm) << endl;
+	//cout << testUpdateStore(dbm) << endl;
 	//cout << testGetStore(dbm) << endl;
 	//cout << testDeleteStore(dbm) << endl;
 
