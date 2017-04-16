@@ -150,6 +150,44 @@ bool testDeletePrescription(DatabaseManager *dbm) {
 	return dbm->deletePrescription(17);
 }
 
+bool testCreateInventory(DatabaseManager *dbm) {
+	Inventory *newInventory = dbm->createInventory(1, 24, 500, 1000, 500, 500);
+	if (newInventory) {
+		cout << endl << "New inventory created" << endl;
+		cout << "Store: " << newInventory->getStoreId() << endl;
+		cout << "Item: " << newInventory->getItemId() << endl;
+		cout << "Item Level: " << newInventory->getItemLevel() << endl;
+		cout << "Max Level: " << newInventory->getMaxLevel() << endl;
+		cout << "Refill Level: " << newInventory->getRefillLevel() << endl;
+		cout << "Refill Quantity: " << newInventory->getRefillQuantity() << endl;
+		return true;
+	}
+	else {
+		cout << "Could not create inventory" << endl;
+		return false;
+	}
+}
+
+bool testGetInventory(DatabaseManager *dbm) {
+	Inventory *existingInventory = dbm->getInventory(1, 24);
+	if (existingInventory == nullptr) {
+		cout << "Inventory which should exist for storeId=1 and itemId=24 does not" << endl;
+		return false;
+	}
+
+	Inventory *doesNotExist = dbm->getInventory(-1, -1);
+	if (doesNotExist != nullptr) {
+		cout << "Inventory which shouldnt exist does" << endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool testDeleteInventory(DatabaseManager *dbm) {
+	return dbm->deleteInventory(1, 24);
+}
+
 
 /// Will clear the windows console
 void clearWindowsConsole() {
@@ -176,6 +214,11 @@ int main() {
 	//cout << testCreatePrescription(dbm) << endl;
 	//cout << testDeletePrescription(dbm) << endl;
 	//cout << testGetPrescription(dbm) << endl;
+
+	///INVENTORY DB FUNCTIONALITY
+	//cout << testCreateInventory(dbm) << endl;
+	//cout << testDeleteInventory(dbm) << endl;
+	//cout << testGetInventory(dbm) << endl;
 
 	
 	LoginRegistration lr;

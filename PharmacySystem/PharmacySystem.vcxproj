@@ -154,6 +154,7 @@
     <ClCompile Include="BatchProcesses.cpp" />
     <ClCompile Include="Constants.h" />
     <ClCompile Include="DatabaseManager.cpp" />
+    <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="LoginRegistration.cpp" />
     <ClCompile Include="main.cpp" />

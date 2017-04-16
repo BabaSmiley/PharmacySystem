@@ -11,6 +11,7 @@
 #include "Store.cpp"
 #include "Item.cpp"
 #include "Prescription.cpp"
+#include "Inventory.cpp"
 
 class DatabaseManager
 {
@@ -86,6 +87,22 @@ public:
 		Returns: Returns a filled in Prescription object, or nullptr if no prescription was found for `prescriptionId`
 	*/
 	Prescription* getPrescription(int prescriptionId);
+
+	/* Delete an inventory entry from the database
+		Parameter item id, store id: An item id and a store id representing the inventory entry to delete in the database
+		Returns: Returns true if `inventory` is an exact match in the database and was able to successfully delete it
+	*/
+	bool deleteInventory(int storeId, int itemId);
+
+	/* Creates and stores parameters in inventory database
+		Returns: Returns an inventory object representing a DB Inventory model
+	*/
+	Inventory* createInventory(int storeId, int itemId, long itemLevel, long maxLevel, long refillLevel, long refillQuantity);
+
+	/* Gets an inventory entry from the database
+		Returns: Returns a filled in Inventory object, or nullptr if no inventory was found for `storeId` and `itemId`
+	*/
+	Inventory* getInventory(int storeId, int itemId);
 
 private:
 	//static DatabaseManager *sharedInstance;

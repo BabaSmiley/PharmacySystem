@@ -275,6 +275,68 @@ Prescription* DatabaseManager::getPrescription(int prescriptionId) {
 	return result;
 }
 
+/// Inventory ///
+
+bool DatabaseManager::deleteInventory(int storeId, int itemId) {
+	Inventory *dbInventory = getInventory(storeId, itemId);
+	if (dbInventory == nullptr || storeId != dbInventory->getStoreId() || itemId != dbInventory->getItemId()) {
+		return false;
+	}
+
+	sqlite3_stmt *stmt;
+	bool result = false;
+	string sql = "DELETE FROM Inventory WHERE StoreId = " + quotesql(storeId) + " AND ItemId = " + quotesql(itemId);
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			result = true;
+		}
+	}
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
+Inventory* DatabaseManager::createInventory(int storeId, int itemId, long itemLevel, long maxLevel, long refillLevel, long refillQuantity) {
+	sqlite3_stmt *stmt;
+	Inventory *newInventory = nullptr;
+
+	string sql = "INSERT INTO Inventory (StoreId, ItemId, ItemLevel, MaxLevel, RefillLevel, RefillQuantity) VALUES (" + quotesql(storeId) + "," + quotesql(itemId) + "," + quotesql(itemLevel) + "," + quotesql(maxLevel) + "," + quotesql(refillLevel) + "," + quotesql(refillQuantity) + ")";
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			newInventory = new Inventory(storeId, itemId, itemLevel, maxLevel, refillLevel, refillQuantity);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return newInventory;
+}
+
+Inventory* DatabaseManager::getInventory(int storeId, int itemId) {
+	sqlite3_stmt *stmt;
+	Inventory *result = nullptr;
+
+	string sql = "SELECT StoreId, ItemId, ItemLevel, MaxLevel, RefillLevel, RefillQuantity FROM Inventory WHERE StoreId = " + quotesql(storeId) + " AND ItemId = " + quotesql(itemId);
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_ROW) {
+			int storeId = sqlite3_column_int(stmt, 0);
+			int itemId = sqlite3_column_int(stmt, 1);
+			long itemLevel = sqlite3_column_int(stmt, 2);
+			long maxLevel = sqlite3_column_int(stmt, 3);
+			long refillLevel = sqlite3_column_int(stmt, 4);
+			long refillQuantity = sqlite3_column_int(stmt, 5);
+
+			result = new Inventory(storeId, itemId, itemLevel, maxLevel, refillLevel, refillQuantity);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
 
 
 vector<vector<string>> DatabaseManager::query(const char *sql) {

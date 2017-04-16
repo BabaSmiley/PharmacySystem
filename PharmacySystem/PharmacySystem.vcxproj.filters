@@ -60,6 +60,9 @@
     <ClCompile Include="Prescription.cpp">
       <Filter>Source Files\DB Models</Filter>
     </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>Source Files\DB Models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sqlite3.h">
