@@ -3,7 +3,15 @@ using namespace std;
 #include <fstream>
 #include <string>
 #include <vector>
+#include <string>
 #include "DatabaseManager.h"
+
+string ZeroFillNumber(string str, int digits) {
+	while (str.size() < digits)
+		str = "0" + str;
+
+	return str;
+}
 
 //Where stores are created and deleted in the database
 void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int sequenceNo) {
@@ -11,7 +19,9 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int sequenceNo)
 
 	ifstream input("adddeletestore.txt");
 	ofstream outInvToStoreReq("createstoreitems.txt");
-	ofstream outInvRecAtWarehour("deletestoreitems.txt");
+	int InvToStoreReqCounter = 0;
+	ofstream outInvRecAtWarehouse("deletestoreitems.txt");
+	int InvRecAtWarehouseCounter = 0;
 	string line;
 	int trailerCount = 0;
 
@@ -24,13 +34,23 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int sequenceNo)
 		return;
 	}
 
+	//TODO: WRITE HEADERS FOR outInvToStoreReq and outInvRecAtWarehouse
+
 	getline(input, line);
 
 	while (line[0] != 'T') {
 		trailerCount++;
 
 		if (line[0] == 'A') {
-			//TODO: ADD STORE HERE. MUST CHECK FOR ALREADY EXISTING STORE 4/16
+			string storeID = line.substr(1, 5);
+			string storeAddress = line.substr(6, 20);
+			string storeCity = line.substr(26, 20);
+			string storeState = line.substr(46, 2);
+			string storeZip = line.substr(48, 9);
+			string StorePriority = line.substr(57, 2);
+
+			//|action code 'A' or 'D'|store id|street address|city name|state|zip code|store priority level|
+			dbm->createStore(stoi(storeID), storeAddress, storeCity, storeState, stoi(storeZip), stoi(StorePriority));
 			int controlCount = 0;
 			getline(input, line);
 
@@ -38,7 +58,14 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int sequenceNo)
 				if (line[0] == 'D')
 					batchLog << "Unexpected delete store during store-item creation. Skipping.";
 				else if (line[0] == 'I') {
-					//TODO: ADD ITEM TO STORE
+					string ICode = line.substr(1, 9);
+					string IdefaultQty = line.substr(10, 10);
+					string IReorderLevel = line.substr(20, 10);
+					string IReorderQty = line.substr(30, 10);
+					//|action code 'I'|item code|store default quantity|store reorder level|store reorder quantity|
+					dbm->createInventory(stoi(storeID), stoi(ICode), stoi(IdefaultQty), 100000, stoi(IReorderLevel), stoi(IReorderQty));
+					outInvToStoreReq << "A" + storeID + StorePriority + ICode + IReorderQty << endl;
+					InvToStoreReqCounter++;
 					controlCount++;
 				}
 
@@ -47,7 +74,8 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int sequenceNo)
 			}
 		}
 		else if (line[0] == 'D') {
-			//TODO: DELETE STORE, WRITE FILE TO PASS INTO INVENTORY RECEIVED
+			//|action code 'A' or 'D'|store id|street address|city name|state|zip code|store priority level|
+			//TODO: DELETE STORE AND WRITE ALL ITEM QUANTITIES TO THE DELETESTOREITEMS.txt
 		}
 
 		getline(input, line);
@@ -56,6 +84,12 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int sequenceNo)
 	if (stoi(line.substr(2, 4)) != trailerCount)
 		batchLog << "adddeletestore.txt trailer mismatch. Expected" + line.substr(2, 4)
 			+ " got " + to_string(trailerCount);
+
+	outInvToStoreReq << "T ";
+	outInvToStoreReq << ZeroFillNumber(to_string(InvToStoreReqCounter), 4);
+
+	outInvRecAtWarehouse << "T "; //This block of code writes the trailer for invtostore request batch (zero fill the trailer)
+	outInvRecAtWarehouse << ZeroFillNumber(to_string(InvRecAtWarehouseCounter), 4);
 }
 
 /*
@@ -127,7 +161,7 @@ void inventoryToStoreRequest(DatabaseManager *dbm, ofstream &batchLog, int seque
 	batchLog << "=====Inventory To Store Request=====";
 
 	//Code to combine all 3 record files into one file
-	vector<string> records = getRecords(batchLog, sequenceNoStoreAdd, "storeadd.txt");
+	vector<string> records = getRecords(batchLog, sequenceNoStoreAdd, "createstoreitems.txt");
 	vector<string> tmp;
 	tmp = getRecords(batchLog, sequenceOnlineReq, "onlinerequest.txt");
 	records.insert(records.begin(), tmp.begin(), tmp.end());
