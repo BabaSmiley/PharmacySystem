@@ -429,7 +429,7 @@ vector<Inventory*> DatabaseManager::getStoreInventory(int storeId) {
 	sqlite3_stmt *stmt;
 	vector<Inventory*> result;
 
-	string sql = "";
+	string sql = "SELECT StoreId, ItemId, ItemLevel, MaxLevel, RefillLevel, RefillQuantity FROM Inventory WHERE StoreId = " + quotesql(storeId);
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		while (sqlite3_step(stmt) == SQLITE_ROW) {
