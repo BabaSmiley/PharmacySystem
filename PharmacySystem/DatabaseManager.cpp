@@ -469,7 +469,7 @@ vector<Review*> DatabaseManager::getReviews(int storeId) {
 			int storeId = sqlite3_column_int(stmt, 1);
 			int rating = sqlite3_column_int(stmt, 2);
 			string text = sqlToString(sqlite3_column_text(stmt, 3));
-			string date = sqlToString(sqlite3_column_text(stmt, 3));
+			string date = sqlToString(sqlite3_column_text(stmt, 4));
 
 			review = new Review(accountId, storeId, rating, text, date);
 
