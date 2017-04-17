@@ -11,6 +11,7 @@
 #include "Store.cpp"
 #include "Item.cpp"
 #include "Prescription.cpp"
+#include "Purchase.cpp"
 #include "Inventory.cpp"
 #include "Review.cpp"
 
@@ -105,6 +106,16 @@ public:
 		Returns: Returns a filled in Prescription object, or nullptr if no prescription was found for `prescriptionId`
 	*/
 	Prescription* getPrescription(int prescriptionId);
+
+	/* Gets an array of prescriptions for a given customers prescription history
+		Returns: All prescriptions a customer has ever purchased
+	*/
+	vector<Prescription*> getPrescriptionHistory(int customerId);
+	 
+	/* Gets an array of purchases contained in a prescription
+		Returns: All purchases inside of a given prescription
+	*/
+	vector<Purchase*> getPurchases(Prescription *prescription);
 
 	/* Delete an inventory entry from the database
 		Parameter item id, store id: An item id and a store id representing the inventory entry to delete in the database

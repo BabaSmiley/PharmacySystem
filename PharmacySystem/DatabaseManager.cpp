@@ -380,6 +380,54 @@ Prescription* DatabaseManager::getPrescription(int prescriptionId) {
 	return result;
 }
 
+vector<Prescription*> DatabaseManager::getPrescriptionHistory(int customerId) {
+	sqlite3_stmt *stmt;
+	vector<Prescription*> prescriptions;
+
+	string sql = "select Id, Date, StoreId from Prescription where CustomerId = " + quotesql(customerId);
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+
+		while (sqlite3_step(stmt) == SQLITE_ROW) {
+			int id = sqlite3_column_int(stmt, 0);
+			string date = sqlToString(sqlite3_column_text(stmt, 1));
+			int storeId = sqlite3_column_int(stmt, 2);
+
+			Prescription *prescription = new Prescription(id, date, customerId, storeId);
+			prescriptions.push_back(prescription);
+		}
+	}
+	sqlite3_finalize(stmt);
+
+	return prescriptions;
+}
+
+/// Purchase ///
+
+vector<Purchase*> DatabaseManager::getPurchases(Prescription *prescription) {
+	sqlite3_stmt *stmt;
+	vector<Purchase*> purchases;
+	int prescriptionId = prescription->getId();
+
+	string sql = "select ItemId, Quantity, SalePrice from Purchase where PrescriptionId = " + quotesql(prescriptionId);
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+
+		while (sqlite3_step(stmt) == SQLITE_ROW) {
+			int itemId = sqlite3_column_int(stmt, 0);
+			int quantity = sqlite3_column_int(stmt, 1);
+			int salePrice = sqlite3_column_int(stmt, 2);
+
+			Purchase *purchase = new Purchase(prescriptionId, itemId, quantity, salePrice);
+			purchases.push_back(purchase);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return purchases;
+}
+
 /// Inventory ///
 
 bool DatabaseManager::deleteInventory(int storeId, int itemId) {
