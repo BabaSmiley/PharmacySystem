@@ -46,7 +46,21 @@ void printStores(DatabaseManager *dbm, unsigned int count = NULL) {
 }
 
 void printStoreReviews(DatabaseManager *dbm, Store *store) {
-	
+	vector<Review*> reviews = dbm->getReviews(store->getId());
+
+	cout << "Store Reviews:" << endl;
+	if (reviews.size() == 0) {
+		cout << "No reviews available for this store." << endl;
+	}
+	for (Review *review : reviews) {
+		User *reviewer = dbm->getUser(review->getAccountId());
+
+		cout << string(40, '-') << endl;
+		cout << "By " << reviewer->getUsername() << " on " << review->getDate() << "\t" << "Rating: " << review->getRating() << "/5" << endl << endl;
+		cout << review->getText() << endl;
+	}
+
+	cout << endl;
 }
 
 void printHistory(DatabaseManager *dbm, int customerId) {
@@ -55,7 +69,7 @@ void printHistory(DatabaseManager *dbm, int customerId) {
 
 
 //DEBUG
-User* getEmployeeUser() {
+User* DebugGetEmployeeUser() {
 	return DatabaseManager::shared()->getUser("jon", "testpass");
 }
 //END DEBUG
@@ -77,7 +91,7 @@ int main() {
 		return 1; //1 is standardly returned for entire program errors 
 	}
 	*/
-	User *user = getEmployeeUser();
+	User *user = DebugGetEmployeeUser();
 
 	//clearWindowsConsole();
 	cout << string(8, '*') << " Logged in as: " << user->getUsername() << " " << string(8, '*') << endl;
