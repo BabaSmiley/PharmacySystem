@@ -25,29 +25,41 @@ private:
 		int priorityLevel;
 
 		cout << endl << "To update an attribute of the store, enter the new value when prompted. Otherwise, just hit enter." << endl;
-		cout << "Address: ";
-		address = getInput("address");
-		cout << endl << "City: ";
-		city = getInput("city");
-		cout << endl << "State: ";
-		state = getInput("state");
-		cout << endl << "Zip Code: ";
-		zipCodeString = getInput("zipCodeString");
+		address = getInput("Address");
+		city = getInput("City");
+		state = getInput("State");
+		zipCodeString = getInput("Zip Code");
 		try {
-			zipCode = stoi(zipCodeString);
+			if (zipCodeString.empty()) {
+				zipCode = NULL;
+			}
+			else {
+				zipCode = stoi(zipCodeString);
+			}
 		}
 		catch (const char *e) {
 			throw e;
 		}
-		cout << endl << "Priority Level: ";
-		priorityLevelString = getInput("priorityLevelString");
+		priorityLevelString = getInput("Priority Level");
 		try {
-			priorityLevel = stoi(priorityLevelString);
+			if (priorityLevelString.empty()) {
+				priorityLevel = NULL;
+			}
+			else {
+				priorityLevel = stoi(priorityLevelString);
+			}
 		}
 		catch (const char *e) {
 			throw e;
 		}
 
 		Store *store = DatabaseManager::shared()->updateStore(id, address, city, state, zipCode, priorityLevel);
+
+		if (store) {
+			cout << "Store successfully updated." << endl;
+		}
+		else {
+			throw "A store with this ID does not exist.";
+		}
 	}
 };

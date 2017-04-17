@@ -27,6 +27,7 @@ void printHelp(UserType type) {
 		cout << "'create item' : Will begin process to create a new item." << endl;
 		cout << "'delete item' : Will begin process to delete an item." << endl;
 		cout << "'view history {customer ID}' : View the history of a customer. Specify the customer ID to view the history of." << endl;
+		cout << "'manage store {store ID}' : Update the attributes of a store. Specify the store ID to make modifications." << endl;
 	}
 	else if (type == Customer) {
 		cout << "'view history' : View your purchase history." << endl;
@@ -150,7 +151,6 @@ int main() {
 			}
 			else if ("manage store" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
 				if (user->isEmployee()) {
-					Store *store = dbm->getStore(stoi(input.at(2)));
 					ManageStore ms;
 					ms.promptForInput(stoi(input.at(2)));
 				}
