@@ -18,6 +18,8 @@ DatabaseManager::DatabaseManager() {
 	
 	/* Attempt to open connection to file */
 	int returnCode = sqlite3_open(DatabaseConstants::DatabaseName, &db);
+
+	sqlite3_exec(db, "PRAGMA foreign_keys = ON;", 0, 0, 0);
 	
 	/* MARK - disabled for now
 	if (returnCode) {

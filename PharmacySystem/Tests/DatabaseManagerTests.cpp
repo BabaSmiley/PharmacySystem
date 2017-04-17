@@ -143,7 +143,7 @@ bool testDeleteItem(DatabaseManager *dbm) {
 }
 
 bool testCreatePrescription(DatabaseManager *dbm) {
-	Prescription *newPrescription = dbm->createPrescription(17, "2017-04-20", 9, 1);
+	Prescription *newPrescription = dbm->createPrescription(18, "2017-04-20", 11, 1);
 	if (newPrescription) {
 		cout << endl << "New prescription created" << endl;
 		cout << "Id: " << newPrescription->getId() << endl;
