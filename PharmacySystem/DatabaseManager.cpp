@@ -148,14 +148,31 @@ Store* DatabaseManager::createStore(int id, string address, string city, string 
 	return newStore;
 }
 
-Store* DatabaseManager::updateStore(int id, string address, string city, string state, int zipCode, int priorityLevel) {
+Store* DatabaseManager::updateStore(int id, string address = NULL, string city = NULL, string state = NULL, int zipCode = NULL, int priorityLevel = NULL) {
 	sqlite3_stmt *stmt;
 	Store *updatingStore = nullptr;
 
-	string sql = "UPDATE Store SET Id = " + quotesql(id) + ", Address = " + quotesql(address) + ", City = " + quotesql(city) + ", State = " + quotesql(state) + ", ZipCode = " + quotesql(zipCode) + ", PriorityLevel = " + quotesql(priorityLevel) + " WHERE Id = " + quotesql(id);
-	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+	string baseSql = "UPDATE Store SET Id = " + quotesql(id);
+	if (!address.empty()) {
+		baseSql += ", Address = " + quotesql(address);
+	}
+	if (!city.empty()) {
+		baseSql += ", City = " + quotesql(city);
+	}
+	if (!state.empty()) {
+		baseSql += ", State = " + quotesql(state);
+	}
+	if (zipCode != NULL) {
+		baseSql += ", ZipCode = " + quotesql(zipCode);
+	}
+	if (priorityLevel != NULL) {
+		baseSql += ", PriorityLevel = " + quotesql(priorityLevel);
+	}
+	baseSql += " WHERE Id = " + quotesql(id);
+
+	if (sqlite3_prepare_v2(db, baseSql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
-			updatingStore = new Store(id, address, city, state, zipCode, priorityLevel);
+			updatingStore = getStore(id);
 		}
 	}
 

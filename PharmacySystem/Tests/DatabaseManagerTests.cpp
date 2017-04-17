@@ -57,7 +57,7 @@ bool testCreateStore(DatabaseManager *dbm) {
 }
 
 bool testUpdateStore(DatabaseManager *dbm) {
-	Store *updatingStore = dbm->updateStore(13, "123 Alley", "NewTown", "MI", 48138, 199);
+	Store *updatingStore = dbm->updateStore(13, "", "", "NY", 42069, NULL);
 	if (updatingStore) {
 		cout << endl << "Store updated" << endl;
 		cout << "ID: " << updatingStore->getId() << endl;

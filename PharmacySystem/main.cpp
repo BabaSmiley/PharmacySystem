@@ -6,6 +6,7 @@
 #include "LoginRegistration.cpp"
 #include "User.cpp"
 #include "DatabaseManagerTests.h"
+#include "ManageStore.cpp"
 using namespace std;
 
 /// Will clear the windows console
@@ -145,6 +146,16 @@ int main() {
 					cout << "No store available for that store ID." << endl;
 				} else {
 					printStoreReviews(dbm, store);
+				}
+			}
+			else if ("manage store" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
+				if (user->isEmployee()) {
+					Store *store = dbm->getStore(stoi(input.at(2)));
+					ManageStore ms;
+					ms.promptForInput(stoi(input.at(2)));
+				}
+				else {
+					cout << "Sorry, your account does not have access to this setting." << endl;
 				}
 			}
 			else {
