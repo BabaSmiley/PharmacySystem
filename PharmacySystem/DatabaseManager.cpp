@@ -275,14 +275,46 @@ Item* DatabaseManager::createItem(int id, string name, string description, int p
 	return newItem;
 }
 
-Item* DatabaseManager::updateItem(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, long onOrderQty) {
+Item* DatabaseManager::updateItem(int id, string name = NULL, string description = NULL, int price = NULL, string dosage = NULL, int vendorId = NULL, string expectedDeliveryDate = NULL, long whRefillLevel = NULL, long whRefillQty = NULL, long whLevel = NULL, long onOrderQty = NULL) {
 	sqlite3_stmt *stmt;
 	Item* updatingItem = nullptr;
 
-	string sql = "UPDATE Item SET Id = " + quotesql(id) + ", Name = " + quotesql(name) + ", Description = " + quotesql(description) + ", Price = " + quotesql(price) + ", Dosage = " + quotesql(dosage) + ", VendorId = " + quotesql(vendorId) + ", ExpectedDeliveryDate = " + quotesql(expectedDeliveryDate) + ", WhRefillLevel = " + quotesql(whRefillLevel) + ", WhRefillQty = " + quotesql(whRefillQty) + ", WhLevel = " + quotesql(whLevel) + ", onOrderQty = " + quotesql(onOrderQty) + " WHERE Id = " + quotesql(id);
-	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+	string baseSql = "UPDATE Item SET Id = " + quotesql(id);
+	if (!name.empty()) {
+		baseSql += ", Name = " + quotesql(name);
+	}
+	if (!description.empty()) {
+		baseSql += ", Description = " + quotesql(description);
+	}
+	if (price != NULL) {
+		baseSql += ", Price = " + quotesql(price);
+	}
+	if (!dosage.empty()) {
+		baseSql += ", Dosage = " + quotesql(dosage);
+	}
+	if (vendorId != NULL) {
+		baseSql += ", VendorId = " + quotesql(vendorId);
+	}
+	if (!expectedDeliveryDate.empty()) {
+		baseSql += ", ExpectedDeliveryDate = " + quotesql(expectedDeliveryDate);
+	}
+	if (whRefillLevel != NULL) {
+		baseSql += ", WhRefillLevel = " + quotesql(whRefillLevel);
+	}
+	if (whRefillQty != NULL) {
+		baseSql += ", WhRefillQty = " + quotesql(whRefillQty);
+	}
+	if (whLevel != NULL) {
+		baseSql += ", WhLevel = " + quotesql(whLevel);
+	}
+	if (onOrderQty != NULL) {
+		baseSql += ", onOrderQty = " + quotesql(onOrderQty);
+	}
+	baseSql += " WHERE Id = " + quotesql(id);
+
+	if (sqlite3_prepare_v2(db, baseSql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
-			updatingItem = new Item(id, name, description, price, dosage, vendorId, expectedDeliveryDate, whRefillLevel, whRefillQty, whLevel, onOrderQty);
+			updatingItem = getItem(id);
 		}
 	}
 

@@ -8,6 +8,7 @@
 #include "User.cpp"
 #include "DatabaseManagerTests.h"
 #include "ManageStore.cpp"
+#include "ManageItem.cpp"
 using namespace std;
 
 /// Will clear the windows console
@@ -193,6 +194,15 @@ int main() {
 				if (user->isEmployee()) {
 					ManageStore ms;
 					ms.promptForInput(stoi(input.at(2)));
+				}
+				else {
+					cout << "Sorry, your account does not have access to this setting." << endl;
+				}
+			}
+			else if ("manage item" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
+				if (user->isEmployee()) {
+					ManageItem mi;
+					mi.promptForInput(stoi(input.at(2)));
 				}
 				else {
 					cout << "Sorry, your account does not have access to this setting." << endl;
