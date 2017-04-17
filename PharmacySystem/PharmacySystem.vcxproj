@@ -158,6 +158,7 @@
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="LoginRegistration.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ManageStore.cpp" />
     <ClCompile Include="Prescription.cpp" />
     <ClCompile Include="Review.cpp" />
     <ClCompile Include="sqlite3.c">

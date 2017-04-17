@@ -150,7 +150,6 @@ int main() {
 			}
 			else if ("manage store" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
 				if (user->isEmployee()) {
-					Store *store = dbm->getStore(stoi(input.at(2)));
 					ManageStore ms;
 					ms.promptForInput(stoi(input.at(2)));
 				}
