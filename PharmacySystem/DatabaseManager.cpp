@@ -425,6 +425,36 @@ Inventory* DatabaseManager::getInventory(int storeId, int itemId) {
 	return result;
 }
 
+vector<Inventory*> DatabaseManager::getStoreInventory(int storeId) {
+	sqlite3_stmt *stmt;
+	vector<Inventory*> result;
+
+	string sql = "";
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		while (sqlite3_step(stmt) == SQLITE_ROW) {
+			Inventory *inventory;
+
+			int storeId = sqlite3_column_int(stmt, 0);
+			int itemId = sqlite3_column_int(stmt, 1);
+			long itemLevel = sqlite3_column_int(stmt, 2);
+			long maxLevel = sqlite3_column_int(stmt, 3);
+			long refillLevel = sqlite3_column_int(stmt, 4);
+			long refillQuantity = sqlite3_column_int(stmt, 5);
+
+			inventory = new Inventory(storeId, itemId, itemLevel, maxLevel, refillLevel, refillQuantity);
+
+			result.push_back(inventory);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
+/// Reviews ///
+
 vector<Review*> DatabaseManager::getReviews(int storeId) {
 	sqlite3_stmt *stmt;
 	vector<Review*> result;
@@ -440,6 +470,8 @@ vector<Review*> DatabaseManager::getReviews(int storeId) {
 			int rating = sqlite3_column_int(stmt, 2);
 			string text = sqlToString(sqlite3_column_text(stmt, 3));
 			string date = sqlToString(sqlite3_column_text(stmt, 3));
+
+			review = new Review(accountId, storeId, rating, text, date);
 
 			result.push_back(review);
 		}

@@ -122,6 +122,11 @@ public:
 	*/
 	Inventory* getInventory(int storeId, int itemId);
 
+	/* Gets a list of all inventory at a store
+		Returns: Returns a vector of inventory objects associated with a `storeId`
+	*/
+	vector<Inventory*> getStoreInventory(int storeId);
+
 	/* Gets a stores reviews from the database
 		Returns: Returns vector of review objects
 	*/
