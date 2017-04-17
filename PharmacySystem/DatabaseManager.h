@@ -12,6 +12,7 @@
 #include "Item.cpp"
 #include "Prescription.cpp"
 #include "Inventory.cpp"
+#include "Review.cpp"
 
 class DatabaseManager
 {
@@ -120,6 +121,11 @@ public:
 		Returns: Returns a filled in Inventory object, or nullptr if no inventory was found for `storeId` and `itemId`
 	*/
 	Inventory* getInventory(int storeId, int itemId);
+
+	/* Gets a stores reviews from the database
+		Returns: Returns vector of review objects
+	*/
+	vector<Review*> getReviews(int storeId);
 
 private:
 	//static DatabaseManager *sharedInstance;

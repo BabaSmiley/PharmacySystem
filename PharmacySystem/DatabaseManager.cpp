@@ -199,7 +199,6 @@ vector<Store*> DatabaseManager::getStores(unsigned int count) {
 	string sql = "select Id, Address, City, State, ZipCode, PriorityLevel from Store" + limitingSQL;
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
-		int cols = sqlite3_column_count(stmt);
 
 		while (sqlite3_step(stmt) == SQLITE_ROW) {
 			Store *store;
@@ -418,6 +417,31 @@ Inventory* DatabaseManager::getInventory(int storeId, int itemId) {
 			long refillQuantity = sqlite3_column_int(stmt, 5);
 
 			result = new Inventory(storeId, itemId, itemLevel, maxLevel, refillLevel, refillQuantity);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
+vector<Review*> DatabaseManager::getReviews(int storeId) {
+	sqlite3_stmt *stmt;
+	vector<Review*> result;
+
+	string sql = "SELECT AccountId, StoreId, Rating, Text, Date FROM Review WHERE StoreId = " + quotesql(storeId);
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		while (sqlite3_step(stmt) == SQLITE_ROW) {
+			Review *review;
+
+			int accountId = sqlite3_column_int(stmt, 0);
+			int storeId = sqlite3_column_int(stmt, 1);
+			int rating = sqlite3_column_int(stmt, 2);
+			string text = sqlToString(sqlite3_column_text(stmt, 3));
+			string date = sqlToString(sqlite3_column_text(stmt, 3));
+
+			result.push_back(review);
 		}
 	}
 

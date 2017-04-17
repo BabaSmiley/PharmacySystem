@@ -159,6 +159,7 @@
     <ClCompile Include="LoginRegistration.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Prescription.cpp" />
+    <ClCompile Include="Review.cpp" />
     <ClCompile Include="sqlite3.c">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeaderFile>

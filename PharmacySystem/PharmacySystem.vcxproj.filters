@@ -69,6 +69,9 @@
     <ClCompile Include="CommandUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Review.cpp">
+      <Filter>Source Files\DB Models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sqlite3.h">
