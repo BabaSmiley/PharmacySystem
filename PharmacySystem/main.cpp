@@ -18,7 +18,7 @@ void printHelp(UserType type) {
 	cout << "Available Commands:" << endl;
 	// General all-user commands
 	cout << "'list stores {number of stores}' : Will list all available stores. Optionally can state the number of stores to show" << endl;
-	cout << "'view review {store ID} {reviews to print}' : Will list store reviews for a store ID. Optionally can state a number of reviews to print" << endl;
+	cout << "'view review {store ID}' : Will list store reviews for a store ID. Optionally can state a number of reviews to print" << endl;
 
 	// User specific commands
 	if (type == Employee) {
@@ -81,7 +81,7 @@ int main() {
 	
 	
 	/* Start Login & Registration Process */
-	/* DEBUG - commented out so dont have to repeatadly sign in
+	/* DEBUG - commented out so dont have to repeatadly sign in. Uncomment to reactivate the login feature
 	LoginRegistration lr;
 	lr.displayScreen();
 
