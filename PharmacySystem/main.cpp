@@ -4,11 +4,14 @@
 #include <stdexcept> // Used for out_of_range error
 #include <iomanip>
 #include "DatabaseManager.h"
-#include "LoginRegistration.cpp"
 #include "User.cpp"
 #include "DatabaseManagerTests.h"
+
+// Controllers
+#include "LoginRegistration.cpp"
 #include "ManageStore.cpp"
 #include "ManageItem.cpp"
+#include "CreatePrescriptionController.cpp"
 using namespace std;
 
 /// Will clear the windows console
@@ -26,10 +29,11 @@ void printHelp(UserType type) {
 	// User specific commands
 	if (type == Employee) {
 		cout << "'create prescription' : Will begin process to create a customer prescription." << endl;
-		cout << "'create item' : Will begin process to create a new item." << endl;
-		cout << "'delete item' : Will begin process to delete an item." << endl;
+		cout << "'create item' : Will begin process to create a new item." << endl; //?
+		cout << "'delete item' : Will begin process to delete an item." << endl; //?
 		cout << "'view history {customer ID}' : View the history of a customer. Specify the customer ID to view the history of." << endl;
 		cout << "'manage store {store ID}' : Update the attributes of a store. Specify the store ID to make modifications." << endl;
+		cout << "'create prescription': Will begin process to create a new prescription" << endl;
 	}
 	else if (type == Customer) {
 		cout << "'view history' : View your purchase history." << endl;
@@ -190,24 +194,21 @@ int main() {
 					printStoreReviews(dbm, store);
 				}
 			}
-			else if ("manage store" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
-				if (user->isEmployee()) {
-					ManageStore ms;
-					ms.promptForInput(stoi(input.at(2)));
-				}
-				else {
-					cout << "Sorry, your account does not have access to this setting." << endl;
-				}
+
+			// Employee Specific Commands
+			else if (user->isEmployee() && "manage store" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
+				ManageStore ms;
+				ms.promptForInput(stoi(input.at(2)));
 			}
-			else if ("manage item" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
-				if (user->isEmployee()) {
-					ManageItem mi;
-					mi.promptForInput(stoi(input.at(2)));
-				}
-				else {
-					cout << "Sorry, your account does not have access to this setting." << endl;
-				}
+			else if (user->isEmployee() && "manage item" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
+				ManageItem mi;
+				mi.promptForInput(stoi(input.at(2)));
 			}
+			else if (user->isEmployee() && "create prescription" == input.at(0) + " " + input.at(1)) {
+				CreatePrescriptionController prescriptionController;
+				prescriptionController.startCreatePrescription();
+			}
+
 			else {
 				throw exception("User command not recognized in main.");
 			}

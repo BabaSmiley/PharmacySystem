@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="BatchProcesses.cpp" />
     <ClCompile Include="Constants.h" />
+    <ClCompile Include="CreatePrescriptionController.cpp" />
     <ClCompile Include="DatabaseManager.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Item.cpp" />

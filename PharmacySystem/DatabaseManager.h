@@ -32,6 +32,7 @@ public:
 		Returns: Returns a User object if a user exists in the database for the credentials. Or else returns `nullptr`.
 	*/
 	User* getUser(string username, string password);
+	User* getUser(string username);
 	User* getUser(int userID);
 
 	/* Create and add a user to the database

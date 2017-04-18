@@ -65,6 +65,26 @@ User* DatabaseManager::getUser(string username, string password) {
 	return result;
 }
 
+User* DatabaseManager::getUser(string username) {
+	sqlite3_stmt *stmt;
+	User *result = nullptr;
+
+	string sql = "select Id, IsEmployee from Account where Username=" + quotesql(username);
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_ROW) {
+			int id = sqlite3_column_int(stmt, 0);
+			int isEmployee = sqlite3_column_int(stmt, 1);
+			UserType type = (isEmployee == 1) ? Employee : Customer;
+
+			result = new User(id, username, type);
+		}
+	}
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
 User* DatabaseManager::getUser(int userID) {
 	sqlite3_stmt *stmt;
 	User *result = nullptr;
