@@ -93,7 +93,7 @@ bool testDeleteStore(DatabaseManager *dbm) {
 }
 
 bool testCreateItem(DatabaseManager *dbm) {
-	Item *newItem = dbm->createItem(24, "Drug 1", "Test drug", 15, "all day erryday", 10, "2017-04-20", 500, 500, 500, 100);
+	Item *newItem = dbm->createItem("Drug 1", "Test drug", 15, "all day erryday", 10, "2017-04-20", 500, 500, 500, 100);
 	if (newItem) {
 		cout << endl << "New item created" << endl;
 		cout << "ID: " << newItem->getId() << endl;
@@ -143,7 +143,7 @@ bool testDeleteItem(DatabaseManager *dbm) {
 }
 
 bool testCreatePrescription(DatabaseManager *dbm) {
-	Prescription *newPrescription = dbm->createPrescription(18, "2017-04-20", 11, 1);
+	Prescription *newPrescription = dbm->createPrescription("2017-04-20", 11, 1);
 	if (newPrescription) {
 		cout << endl << "New prescription created" << endl;
 		cout << "Id: " << newPrescription->getId() << endl;

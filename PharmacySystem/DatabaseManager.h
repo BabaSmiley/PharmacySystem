@@ -80,17 +80,25 @@ public:
 	/* Creates and stores parameters in items database
 		Returns: Returns an item object representing a DB Item model
 	*/
-	Item* createItem(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, long onOrderQty);
+	Item* createItem(string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, long onOrderQty);
 
 	/* Updates and stores parameters in items database
+		Must specific an id, all other fields optional
 		Returns: Returns an item object representing a DB Item model
 	*/
-	Item* updateItem(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, long onOrderQty);
+	Item* updateItem(int id, string name = NULL, string description = NULL, int price = NULL, string dosage = NULL, int vendorId = NULL, string expectedDeliveryDate = NULL, long whRefillLevel = NULL, long whRefillQty = NULL, long whLevel = NULL, long onOrderQty = NULL);
 
 	/* Gets an item from the database
-		Returns: Returns a filled in Item object, or nullptr if no item was found for `itemId`
+		Returns: Returns a filled in Item object, or nullptr if no item was found
 	*/
 	Item* getItem(int itemId);
+	Item* getItem(string itemName);
+
+	/* Gets a list of all items in the database
+		Returns: a vector of all items in the database. If count is specified it will return items from oldest to newest.
+	*/
+	vector<Item*> getItems(unsigned int count = NULL);
+
 
 	/* Delete a prescription from the database
 		Parameter prescription id: A prescription id representing the prescription to delete in the database.
@@ -101,7 +109,7 @@ public:
 	/* Creates and stores parameters in prescription database
 		Returns: Returns a prescription object representing a DB Prescription model
 	*/
-	Prescription* createPrescription(int id, string date, int customerId, int storeId);
+	Prescription* createPrescription(string date, int customerId, int storeId);
 
 	/* Gets a prescription from the database
 		Returns: Returns a filled in Prescription object, or nullptr if no prescription was found for `prescriptionId`
@@ -112,7 +120,12 @@ public:
 		Returns: All prescriptions a customer has ever purchased
 	*/
 	vector<Prescription*> getPrescriptionHistory(int customerId);
-	 
+	
+	/* Created a Purchase object in the database
+		Returns: a Purchase object representing the one created in the database or nullptr if it wasnt sucessfully created
+	*/
+	Purchase* createPurchase(int prescriptionId, int itemId, int quantity, int salePrice);
+
 	/* Gets an array of purchases contained in a prescription
 		Returns: All purchases inside of a given prescription
 	*/
@@ -154,6 +167,9 @@ private:
 	~DatabaseManager();
 
 	void closeDatabase();
+
+	Item* itemFromSQL(sqlite3_stmt *stmt);
+
 	vector<vector<string>> query(const char *sql);
 };
 
