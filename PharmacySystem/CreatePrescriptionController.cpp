@@ -16,16 +16,16 @@ public:
 	Prescription* startCreatePrescription() {
 		
 		User *customer = getUserFromInput();
-		if (customer == nullptr || customer->getUserType() != Customer) {
-			cout << "[!] Invalid customer credentials." << endl;
-			cout << endProcessMessage << endl;
+		if (customer == nullptr) {
+			// Customer user was not able to be retrived
+			cout << endProcessMessage << endl << endl;
 			return nullptr;
 		}
 
 		Store *store = getStoreFromInput();
 		if (store == nullptr) {
-			cout << "[!] Invalid store id." << endl;
-			cout << endProcessMessage << endl;
+			// Store was not able to be retrived
+			cout << endProcessMessage << endl << endl;
 			return nullptr;
 		}
 
@@ -52,14 +52,18 @@ public:
 		int prescriptionId = prescription->getId();
 
 		//3. Create Purchases for every item specified and tie it to the created prescription
+		int prescriptionCost = 0;
 		for (ItemOrder* itemOrder : ordersToInclude) {
 			Item *item = itemOrder->item;
 
 			int salePrice = item->getPrice(); //TODO: account for Discounts on items
+
+			prescriptionCost += salePrice;
 			DatabaseManager::shared()->createPurchase(prescriptionId, item->getId(), itemOrder->quantity, salePrice);
 		}
 
-		cout << "Prescription #" << prescription->getId() << " successfully created." << endl;
+		cout << endl << "Prescription #" << prescription->getId() << " successfully created." << endl;
+		cout << "Total Cost: " << prescriptionCost << endl << endl;
 
 		return prescription;
 	}
@@ -83,19 +87,35 @@ private:
 
 	/// Prompts user for user input and returns a user from the database, or else returns nullptr
 	User* getUserFromInput() {
-		cout << endl << "Enter a customer's username:" << endl;
-		string username = getInput("username");
-		return DatabaseManager::shared()->getUser(username);
+		cout << endl << "Enter a customer's username: (Or 'exit' to cancel)" << endl;
+		string input = getInput("username");
+		
+		if (input == "exit") {
+			return nullptr;
+		}
+
+		User *user = DatabaseManager::shared()->getUser(input);
+		if (user == nullptr || user->getUserType() != Customer) {
+			cout << "[!] Invalid customer credentials." << endl;
+			return nullptr;
+		}
+		return user;
 	}
 
 	/// Prompts user for user input and returns a store from the database, or else returns nullptr
 	Store* getStoreFromInput() {
-		cout << "Enter the store id to order from:" << endl;
-		string storeId = getInput("storeId");
+		cout << "Enter the store id to order from: (Or 'exit' to cancel)" << endl;
+		string input = getInput("storeId");
+		
+		if (input == "exit") {
+			return nullptr;
+		}
+
 		try {
-			return DatabaseManager::shared()->getStore(stoi(storeId));
+			return DatabaseManager::shared()->getStore(stoi(input));
 		}
 		catch (const exception &e) {
+			cout << "[!] Invalid store id." << endl;
 			return nullptr;
 		}
 	}
@@ -106,7 +126,7 @@ private:
 
 		while (itemOrder == nullptr) {
 
-			cout << endl << "Enter an item's name to add to the prescription:" << endl << "(Or type 'view items' to a view a list of all items) ('exit' to cancel)" << endl;
+			cout << endl << "Enter an item's name to add to the prescription:" << endl << "(Or type 'list items' to a view a list of all items) ('exit' to cancel)" << endl;
 			string userInput = getInput("item");
 
 			vector<string> input = splitString(userInput, " ");
@@ -115,7 +135,7 @@ private:
 				if ("exit" == input.at(0)) {
 					return nullptr;
 				}
-				else if (input.size() == 2 &&  "view items" == input.at(0) + " " + input.at(1)) {
+				else if (input.size() == 2 &&  "list items" == input.at(0) + " " + input.at(1)) {
 					printItemTable();
 				}
 				else {
@@ -130,6 +150,9 @@ private:
 
 					if (quantity > 0) {
 						itemOrder = new ItemOrder(resultForInput, quantity);
+					}
+					else {
+						cout << "Invalid quantity entered." << endl;
 					}
 				}
 			}
