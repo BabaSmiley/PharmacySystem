@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include "CommandUtils.cpp"
 #include "DatabaseManager.h"
+#include "ItemViewController.cpp"
 using namespace std;
 
 
@@ -57,6 +58,8 @@ public:
 			int salePrice = item->getPrice(); //TODO: account for Discounts on items
 			DatabaseManager::shared()->createPurchase(prescriptionId, item->getId(), itemOrder->quantity, salePrice);
 		}
+
+		cout << "Prescription #" << prescription->getId() << " successfully created." << endl;
 
 		return prescription;
 	}
@@ -142,14 +145,8 @@ private:
 
 	/* HELPERS */
 	void printItemTable() {
-		vector<Item*> items = DatabaseManager::shared()->getItems();
-
-		for (Item* item : items) {
-			cout << item->getName() << endl;
-		}
-
+		ItemViewController::printItemTable();
 	}
-
 
 	/// Returns the current date in the format YYYY-MM-DD
 	string getDate() {

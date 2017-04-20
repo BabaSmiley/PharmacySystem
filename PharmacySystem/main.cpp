@@ -12,6 +12,7 @@
 #include "ManageStore.cpp"
 #include "ManageItem.cpp"
 #include "CreatePrescriptionController.cpp"
+#include "ItemViewController.cpp"
 using namespace std;
 
 /// Will clear the windows console
@@ -23,15 +24,17 @@ void printHelp(UserType type) {
 	cout << "#########################" << endl;
 	cout << "Available Commands:" << endl;
 	// General all-user commands
-	cout << "'list stores {number of stores}' : Will list all available stores. Optionally can state the number of stores to show" << endl;
-	cout << "'view review {store ID}' : Will list store reviews for a store ID. Optionally can state a number of reviews to print" << endl;
+	cout << "'list stores {number of stores}' : Will list all available stores. Optionally can state the number of stores to show." << endl;
+	cout << "'view review {store ID}' : Will list store reviews for a store ID. Optionally can state a number of reviews to print." << endl;
 
 	// User specific commands
 	if (type == Employee) {
 		cout << "'create prescription' : Will begin process to create a customer prescription." << endl;
-		cout << "'create item' : Will begin process to create a new item." << endl; //?
-		cout << "'delete item' : Will begin process to delete an item." << endl; //?
+		//cout << "'create item' : Will begin process to create a new item." << endl; //?
+		//cout << "'delete item' : Will begin process to delete an item." << endl; //?
 		cout << "'view history {customer ID}' : View the history of a customer. Specify the customer ID to view the history of." << endl;
+		cout << "'list items {number of items}': Will list all items in the system. Optionally can state the number of items to show." << endl;
+		cout << "'manage item {item ID}' : Update the attributes of a item. Specify the item ID to make modifications." << endl;
 		cout << "'manage store {store ID}' : Update the attributes of a store. Specify the store ID to make modifications." << endl;
 		cout << "'create prescription': Will begin process to create a new prescription" << endl;
 	}
@@ -39,6 +42,7 @@ void printHelp(UserType type) {
 		cout << "'view history' : View your purchase history." << endl;
 	}
 
+	cout << "'clear': Will clear the console window to avoid clutter." << endl;
 	cout << endl << "'help' : Will print this usage statement." << endl;
 	cout << "'logout' : Will log out of the system and close the program." << endl;
 	cout << "#########################" << endl;
@@ -114,6 +118,9 @@ void printHistory(DatabaseManager *dbm, int customerId) {
 	cout << string(40, '-') << endl << endl;
 }
 
+void printItemTable(unsigned int count = NULL) {
+	ItemViewController::printItemTable(count);
+}
 
 //DEBUG
 User* DebugGetEmployeeUser() {
@@ -162,6 +169,7 @@ int main() {
 			else if ("help" == input.at(0)) {
 				printHelp(user->getUserType());
 			}
+			else if ("clear" == input.at(0)) { clearWindowsConsole();  }
 			else if ("list stores" == input.at(0) + " " + input.at(1)) {
 				if (input.size() > 2) {
 					int countInput = stoi(input.at(2));
@@ -197,6 +205,19 @@ int main() {
 			}
 
 			// Employee Specific Commands
+			else if (user->isEmployee() && "list items" == input.at(0) + " " + input.at(1)) {
+				if (input.size() > 2) {
+					int countInput = stoi(input.at(2));
+					if (countInput <= 0) { //is signed
+						throw exception("Input is a signed int. Expected unsigned.");
+					}
+					unsigned int count = (unsigned int)countInput;
+					printItemTable(count);
+				}
+				else {
+					printItemTable();
+				}
+			}
 			else if (user->isEmployee() && "manage store" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
 				ManageStore ms;
 				ms.promptForInput(stoi(input.at(2)));
