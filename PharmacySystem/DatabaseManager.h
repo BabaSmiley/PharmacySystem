@@ -140,7 +140,7 @@ public:
 	/* Creates and stores parameters in inventory database
 		Returns: Returns an inventory object representing a DB Inventory model
 	*/
-	Inventory* createInventory(int storeId, int itemId, long itemLevel, long maxLevel, long refillLevel, long refillQuantity);
+	Inventory* createInventory(int storeId, int itemId, long itemLevel, long refillLevel, long refillQuantity);
 
 	/* Gets an inventory entry from the database
 		Returns: Returns a filled in Inventory object, or nullptr if no inventory was found for `storeId` and `itemId`

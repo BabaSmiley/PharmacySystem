@@ -179,13 +179,12 @@ bool testDeletePrescription(DatabaseManager *dbm) {
 }
 
 bool testCreateInventory(DatabaseManager *dbm) {
-	Inventory *newInventory = dbm->createInventory(1, 24, 500, 1000, 500, 500);
+	Inventory *newInventory = dbm->createInventory(1, 24, 500, 500, 500);
 	if (newInventory) {
 		cout << endl << "New inventory created" << endl;
 		cout << "Store: " << newInventory->getStoreId() << endl;
 		cout << "Item: " << newInventory->getItemId() << endl;
 		cout << "Item Level: " << newInventory->getItemLevel() << endl;
-		cout << "Max Level: " << newInventory->getMaxLevel() << endl;
 		cout << "Refill Level: " << newInventory->getRefillLevel() << endl;
 		cout << "Refill Quantity: " << newInventory->getRefillQuantity() << endl;
 		return true;

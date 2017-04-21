@@ -556,14 +556,14 @@ bool DatabaseManager::deleteInventory(int storeId, int itemId) {
 	return result;
 }
 
-Inventory* DatabaseManager::createInventory(int storeId, int itemId, long itemLevel, long maxLevel, long refillLevel, long refillQuantity) {
+Inventory* DatabaseManager::createInventory(int storeId, int itemId, long itemLevel, long refillLevel, long refillQuantity) {
 	sqlite3_stmt *stmt;
 	Inventory *newInventory = nullptr;
 
-	string sql = "INSERT INTO Inventory (StoreId, ItemId, ItemLevel, MaxLevel, RefillLevel, RefillQuantity) VALUES (" + quotesql(storeId) + "," + quotesql(itemId) + "," + quotesql(itemLevel) + "," + quotesql(maxLevel) + "," + quotesql(refillLevel) + "," + quotesql(refillQuantity) + ")";
+	string sql = "INSERT INTO Inventory (StoreId, ItemId, ItemLevel, MaxLevel, RefillLevel, RefillQuantity) VALUES (" + quotesql(storeId) + "," + quotesql(itemId) + "," + quotesql(itemLevel) + "," + quotesql(refillLevel) + "," + quotesql(refillQuantity) + ")";
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
-			newInventory = new Inventory(storeId, itemId, itemLevel, maxLevel, refillLevel, refillQuantity);
+			newInventory = new Inventory(storeId, itemId, itemLevel, refillLevel, refillQuantity);
 		}
 	}
 
@@ -583,11 +583,10 @@ Inventory* DatabaseManager::getInventory(int storeId, int itemId) {
 			int storeId = sqlite3_column_int(stmt, 0);
 			int itemId = sqlite3_column_int(stmt, 1);
 			long itemLevel = sqlite3_column_int(stmt, 2);
-			long maxLevel = sqlite3_column_int(stmt, 3);
-			long refillLevel = sqlite3_column_int(stmt, 4);
-			long refillQuantity = sqlite3_column_int(stmt, 5);
+			long refillLevel = sqlite3_column_int(stmt, 3);
+			long refillQuantity = sqlite3_column_int(stmt, 4);
 
-			result = new Inventory(storeId, itemId, itemLevel, maxLevel, refillLevel, refillQuantity);
+			result = new Inventory(storeId, itemId, itemLevel, refillLevel, refillQuantity);
 		}
 	}
 
@@ -609,11 +608,10 @@ vector<Inventory*> DatabaseManager::getStoreInventory(int storeId) {
 			int storeId = sqlite3_column_int(stmt, 0);
 			int itemId = sqlite3_column_int(stmt, 1);
 			long itemLevel = sqlite3_column_int(stmt, 2);
-			long maxLevel = sqlite3_column_int(stmt, 3);
-			long refillLevel = sqlite3_column_int(stmt, 4);
-			long refillQuantity = sqlite3_column_int(stmt, 5);
+			long refillLevel = sqlite3_column_int(stmt, 3);
+			long refillQuantity = sqlite3_column_int(stmt, 4);
 
-			inventory = new Inventory(storeId, itemId, itemLevel, maxLevel, refillLevel, refillQuantity);
+			inventory = new Inventory(storeId, itemId, itemLevel, refillLevel, refillQuantity);
 
 			result.push_back(inventory);
 		}
