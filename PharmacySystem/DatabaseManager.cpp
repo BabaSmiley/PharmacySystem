@@ -654,6 +654,34 @@ vector<Review*> DatabaseManager::getReviews(int storeId) {
 
 /// Discount ///
 
+/// Sales ///
+
+vector<Sale*> DatabaseManager::getSalesByItem(int itemId) {
+	sqlite3_stmt *stmt;
+	vector<Sale*> result;
+
+	string sql = "SELECT Purchase.PrescriptionId, Purchase.Quantity, Purchase.SalePrice, Prescription.Date FROM Purchase LEFT JOIN Prescription ON Purchase.PrescriptionId = Prescription.Id WHERE Purchase.ItemId = " + quotesql(itemId);
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		while (sqlite3_step(stmt) == SQLITE_ROW) {
+			Sale *sale;
+
+			int prescriptionId = sqlite3_column_int(stmt, 0);
+			int quantity = sqlite3_column_int(stmt, 1);
+			int salePrice = sqlite3_column_int(stmt, 2);
+			string date = sqlToString(sqlite3_column_text(stmt, 3));
+
+			sale = new Sale(prescriptionId, quantity, salePrice, date);
+
+			result.push_back(sale);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
 
 
 

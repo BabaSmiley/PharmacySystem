@@ -14,6 +14,7 @@
 #include "Purchase.cpp"
 #include "Inventory.cpp"
 #include "Review.cpp"
+#include "Sale.cpp"
 
 class DatabaseManager
 {
@@ -156,6 +157,11 @@ public:
 		Returns: Returns vector of review objects
 	*/
 	vector<Review*> getReviews(int storeId);
+
+	/* Gets an items sales from the database
+		Returns: Returns a vector of sales objects
+	*/
+	vector<Sale*> getSalesByItem(int itemId);
 
 private:
 	//static DatabaseManager *sharedInstance;
