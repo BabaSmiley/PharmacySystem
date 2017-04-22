@@ -244,7 +244,7 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo
 			string StorePriority = line.substr(57, 2);
 
 			//|action code 'A' or 'D'|store id|street address|city name|state|zip code|store priority level|
-			dbm->createStore(stoi(storeID), storeAddress, storeCity, storeState, stoi(storeZip), stoi(StorePriority));
+			dbm->createStore(stoi(storeID), storeAddress, storeCity, storeState, stoi(storeZip), stoi(StorePriority), 1);
 			int controlCount = 0;
 			getline(input, line);
 

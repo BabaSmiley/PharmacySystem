@@ -54,12 +54,12 @@ public:
 	/* Creates and stores parameters in stores database
 		Returns: returns a Store object representing a DB Store model
 	*/
-	Store* createStore(int id, string address, string city, string state, int zipCode, int priorityLevel);
+	Store* createStore(int id, string address, string city, string state, int zipCode, int priorityLevel, int isActive);
 
 	/* Updates and stores parameters in stores database
 		Returns: Returns an updated store object representing a DB Store model
 	*/
-	Store* updateStore(int id, string address, string city, string state, int zipCode, int priorityLevel);
+	Store* updateStore(int id, string address, string city, string state, int zipCode, int priorityLevel, int isActive);
 
 	/* Get a store from the database
 		Returns: returns a filled in Store object, or nullptr if no store was found for `storeId`
@@ -82,13 +82,18 @@ public:
 	/* Creates and stores parameters in items database
 		Returns: Returns an item object representing a DB Item model
 	*/
-	Item* createItem(string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, bool isActive);
+	Item* createItem(string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, int isActive);
+
+	/* Creates and stores parameters in items database with manual item id
+		Returns: Returns an item object representing a DB Item model
+	*/
+	Item* createItem(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, int isActive);
 
 	/* Updates and stores parameters in items database
 		Must specific an id, all other fields optional
 		Returns: Returns an item object representing a DB Item model
 	*/
-	Item* updateItem(int id, string name = NULL, string description = NULL, int price = NULL, string dosage = NULL, int vendorId = NULL, string expectedDeliveryDate = NULL, long whRefillLevel = NULL, long whRefillQty = NULL, long whLevel = NULL, bool isActive = NULL);
+	Item* updateItem(int id, string name = NULL, string description = NULL, int price = NULL, string dosage = NULL, int vendorId = NULL, string expectedDeliveryDate = NULL, long whRefillLevel = NULL, long whRefillQty = NULL, long whLevel = NULL, int isActive = NULL);
 
 	/* Gets an item from the database
 		Returns: Returns a filled in Item object, or nullptr if no item was found

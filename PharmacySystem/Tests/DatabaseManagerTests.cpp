@@ -41,13 +41,14 @@ void testDatabaseUser(DatabaseManager *dbm) {
 
 bool testCreateStore(DatabaseManager *dbm) {
 	//Test Create
-	Store *newStore = dbm->createStore(13, "123 Alley", "NewTown", "NY", 34592, 199);
+	Store *newStore = dbm->createStore(69, "123 Alley", "NewTown", "NY", 34592, 199, 1);
 	if (newStore) {
 		cout << endl << "New store created" << endl;
 		cout << "ID: " << newStore->getId() << endl;
 		cout << "Address: " << newStore->getAddress() << endl;
 		cout << "City/State: " << newStore->getCity() << "/" << newStore->getState() << " " << newStore->getZipCode() << endl;
 		cout << "Priority: " << newStore->getPriorityLevel() << endl;
+		cout << "Is Active: " << (newStore->getIsActive() == 1 ? "True" : "False") << endl;
 		return true;
 	}
 	else {
@@ -57,7 +58,7 @@ bool testCreateStore(DatabaseManager *dbm) {
 }
 
 bool testUpdateStore(DatabaseManager *dbm) {
-	Store *updatingStore = dbm->updateStore(13, "", "", "NY", 42069, NULL);
+	Store *updatingStore = dbm->updateStore(13, "", "", "NY", 42069, NULL, 1);
 	if (updatingStore) {
 		cout << endl << "Store updated" << endl;
 		cout << "ID: " << updatingStore->getId() << endl;
@@ -93,7 +94,7 @@ bool testDeleteStore(DatabaseManager *dbm) {
 }
 
 bool testCreateItem(DatabaseManager *dbm) {
-	Item *newItem = dbm->createItem("Drug 1", "Test drug", 15, "all day erryday", 10, "2017-04-20", 500, 500, 500, 100);
+	Item *newItem = dbm->createItem("Nyquill", "sleep sleep", 15, "every night", 420, "2017-04-20", 500, 500, 500, 1);
 	if (newItem) {
 		cout << endl << "New item created" << endl;
 		cout << "ID: " << newItem->getId() << endl;
@@ -108,7 +109,7 @@ bool testCreateItem(DatabaseManager *dbm) {
 }
 
 bool testUpdateItem(DatabaseManager *dbm) {
-	Item *updatingItem = dbm->updateItem(24, "Drug 1", "Test drug update", 15, "8 days a week", 10, "2017-04-20", 500, 500, 500, 101);
+	Item *updatingItem = dbm->updateItem(24, "NuDrug", "testing", 56, "whenever", 420, "2017-05-04", 500, 500, 500, 1);
 	if (updatingItem) {
 		cout << endl << "Item updated" << endl;
 		cout << "ID: " << updatingItem->getId() << endl;

@@ -23,6 +23,8 @@ private:
 		int zipCode;
 		string priorityLevelString;
 		int priorityLevel;
+		string isActiveString;
+		int isActive;
 
 		cout << endl << "To update an attribute of the store, enter the new value when prompted. Otherwise, just hit enter." << endl;
 		address = getInput("Address");
@@ -52,8 +54,20 @@ private:
 		catch (const char *e) {
 			throw e;
 		}
+		isActiveString = getInput("Is Active");
+		try {
+			if (isActiveString.empty()) {
+				isActive = NULL;
+			}
+			else {
+				isActive = stoi(isActiveString);
+			}
+		}
+		catch (const char *e) {
+			throw e;
+		}
 
-		Store *store = DatabaseManager::shared()->updateStore(id, address, city, state, zipCode, priorityLevel);
+		Store *store = DatabaseManager::shared()->updateStore(id, address, city, state, zipCode, priorityLevel, isActive);
 
 		if (store) {
 			cout << "Store successfully updated." << endl;
