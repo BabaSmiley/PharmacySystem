@@ -266,7 +266,7 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo
 					string IReorderLevel = line.substr(20, 10);
 					string IReorderQty = line.substr(30, 10);
 					//|action code 'I'|item code|store default quantity|store reorder level|store reorder quantity|
-					dbm->createInventory(stoi(storeID), stoi(ICode), stoi(IdefaultQty), stoi(IReorderLevel), stoi(IReorderQty));
+					dbm->createInventory(stoi(storeID), stoi(ICode), stoi(IdefaultQty), stoi(IReorderLevel), stoi(IReorderQty), 0);
 					outInvToStoreReq << "A" + storeID + StorePriority + ICode + IReorderQty << endl;
 					InvToStoreReqCounter++;
 					controlCount++;
