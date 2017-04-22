@@ -152,8 +152,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BatchProcesses.cpp" />
+    <ClCompile Include="CommonUserPrompts.cpp" />
     <ClCompile Include="Constants.h" />
     <ClCompile Include="CreatePrescriptionController.cpp" />
+    <ClCompile Include="CreateReviewController.cpp" />
     <ClCompile Include="DatabaseManager.cpp" />
     <ClCompile Include="Discount.cpp" />
     <ClCompile Include="Inventory.cpp" />

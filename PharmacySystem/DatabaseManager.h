@@ -154,6 +154,11 @@ public:
 	*/
 	vector<Inventory*> getStoreInventory(int storeId);
 
+	/* Creates a customer review for a store
+		Returns: A Review object for the review created
+	*/
+	Review* createReview(int accountId, int storeId, int rating, string text, string date);
+
 	/* Gets a stores reviews from the database
 		Returns: Returns vector of review objects
 	*/

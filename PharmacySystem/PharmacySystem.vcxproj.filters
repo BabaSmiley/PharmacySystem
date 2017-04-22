@@ -93,6 +93,12 @@
     <ClCompile Include="Discount.cpp">
       <Filter>Source Files\DB Models</Filter>
     </ClCompile>
+    <ClCompile Include="CreateReviewController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonUserPrompts.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sqlite3.h">

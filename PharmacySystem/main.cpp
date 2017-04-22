@@ -13,6 +13,7 @@
 #include "ManageItem.cpp"
 #include "CreatePrescriptionController.cpp"
 #include "ItemViewController.cpp"
+#include "CreateReviewController.cpp";
 using namespace std;
 
 /// Will clear the windows console
@@ -37,6 +38,7 @@ void printHelp(UserType type) {
 		cout << "'create prescription': Will begin process to create a new prescription" << endl;
 	}
 	else if (type == Customer) {
+		cout << "'create review': Will begin process to leave a review for a store." << endl;
 		cout << "'view history' : View your purchase history." << endl;
 	}
 
@@ -131,10 +133,9 @@ User* DebugGetEmployeeUser() {
 int main() {
 	DatabaseManager *dbm = DatabaseManager::shared();
 	//runTests(dbm);
-	dbm->createDiscount(1, 25, 10, "some", "another");
 	
 	/* Start Login & Registration Process */
-	/* DEBUG - commented out so dont have to repeatadly sign in. Uncomment to reactivate the login feature
+	// DEBUG - commented out so dont have to repeatadly sign in. Uncomment to reactivate the login feature
 	LoginRegistration lr;
 	lr.displayScreen();
 
@@ -143,8 +144,8 @@ int main() {
 		cout << "[!] An error occured in logging in. Please close the program and try again." << endl;
 		return 1; //1 is standardly returned for entire program errors 
 	}
-	*/
-	User *user = DebugGetEmployeeUser();
+	
+	//User *user = DebugGetEmployeeUser();
 
 	//clearWindowsConsole();
 	cout << string(8, '*') << " Logged in as: " << user->getUsername() << " " << string(8, '*') << endl;
@@ -188,7 +189,8 @@ int main() {
 						throw exception("No user available for input id.");
 					}
 					customerID = inputID;
-				} else { //is customer user
+				}
+				else { //is customer user
 					customerID = user->getUserID();
 				}
 				printHistory(dbm, customerID);
@@ -201,6 +203,18 @@ int main() {
 					printStoreReviews(dbm, store);
 				}
 			}
+			// Customer Specific Commands
+			else if (user->getUserType() == Customer && "create review" == input.at(0) + " " + input.at(1)) {
+				CreateReviewController reviewController;
+				Review *review = reviewController.createReview(user);
+				if (review != nullptr) {
+					cout << "Review successfully created." << endl << endl;
+				}
+				else {
+					cout << "[!] Error in creating a review. Please try again later." << endl;
+				}
+			}
+
 
 			// Employee Specific Commands
 			else if (user->isEmployee() && "list items" == input.at(0) + " " + input.at(1)) {

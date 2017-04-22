@@ -1,12 +1,12 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include <ctime>
 #include <vector>
 #include <stdexcept>
 #include "CommandUtils.cpp"
 #include "DatabaseManager.h"
 #include "ItemViewController.cpp"
+#include "CommonUserPrompts.cpp"
 using namespace std;
 
 
@@ -15,14 +15,14 @@ public:
 
 	Prescription* startCreatePrescription() {
 		
-		User *customer = getUserFromInput();
+		User *customer = CommonUserPrompts::getUserFromInput();
 		if (customer == nullptr) {
 			// Customer user was not able to be retrived
 			cout << endProcessMessage << endl << endl;
 			return nullptr;
 		}
 
-		Store *store = getStoreFromInput();
+		Store *store = CommonUserPrompts::getStoreFromInput();
 		if (store == nullptr) {
 			// Store was not able to be retrived
 			cout << endProcessMessage << endl << endl;
@@ -84,42 +84,6 @@ private:
 	const char *endProcessMessage = "Ended create prescription process.";
 	const char *itemDoesNotExistMessage = "That item does not exist.";
 
-
-	/// Prompts user for user input and returns a user from the database, or else returns nullptr
-	User* getUserFromInput() {
-		cout << endl << "Enter a customer's username: (Or 'exit' to cancel)" << endl;
-		string input = getInput("username");
-		
-		if (input == "exit") {
-			return nullptr;
-		}
-
-		User *user = DatabaseManager::shared()->getUser(input);
-		if (user == nullptr || user->getUserType() != Customer) {
-			cout << "[!] Invalid customer credentials." << endl;
-			return nullptr;
-		}
-		return user;
-	}
-
-	/// Prompts user for user input and returns a store from the database, or else returns nullptr
-	Store* getStoreFromInput() {
-		cout << "Enter the store id to order from: (Or 'exit' to cancel)" << endl;
-		string input = getInput("storeId");
-		
-		if (input == "exit") {
-			return nullptr;
-		}
-
-		try {
-			return DatabaseManager::shared()->getStore(stoi(input));
-		}
-		catch (const exception &e) {
-			cout << "[!] Invalid store id." << endl;
-			return nullptr;
-		}
-	}
-
 	/// Prompts user for input of an item name and quantity. Will return an ItemOrder if successful, or nullptr if user types 'exit' during method
 	ItemOrder* getItemOrderFromInput() {
 		ItemOrder *itemOrder = nullptr;
@@ -169,17 +133,6 @@ private:
 	/* HELPERS */
 	void printItemTable() {
 		ItemViewController::printItemTable();
-	}
-
-	/// Returns the current date in the format YYYY-MM-DD
-	string getDate() {
-		time_t t = time(0);
-		struct tm now;
-		localtime_s(&now, &t);
-
-		char time[80];
-		strftime(time, 80, "%Y-%m-%d", &now);
-		return time;
 	}
 
 };

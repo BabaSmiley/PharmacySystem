@@ -624,6 +624,24 @@ vector<Inventory*> DatabaseManager::getStoreInventory(int storeId) {
 
 /// Reviews ///
 
+Review* DatabaseManager::createReview(int accountId, int storeId, int rating, string text, string date) {
+	sqlite3_stmt *stmt;
+	Review* result = nullptr;
+
+	string sql = "INSERT INTO Review (AccountId, StoreId, Rating, Text, Date) VALUES (" + quotesql(accountId) + "," + quotesql(storeId) + "," + quotesql(rating) + "," + quotesql(text) + "," + quotesql(date) + ")";
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			result = new Review(accountId, storeId, rating, text, date);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return result;
+
+}
+
 vector<Review*> DatabaseManager::getReviews(int storeId) {
 	sqlite3_stmt *stmt;
 	vector<Review*> result;

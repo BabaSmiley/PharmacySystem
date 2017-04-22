@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <ctime>
 #include <iterator>
 #include <vector>
 using namespace std;
@@ -39,4 +40,15 @@ void splitString(string(&arr)[N], string str)
 	istringstream iss(str);
 	for (auto it = istream_iterator<string>(iss); it != istream_iterator<string>() && n < N; ++it, ++n)
 		arr[n] = *it;
+}
+
+/// Returns the current date in the format YYYY-MM-DD
+static string getDate() {
+	time_t t = time(0);
+	struct tm now;
+	localtime_s(&now, &t);
+
+	char time[80];
+	strftime(time, 80, "%Y-%m-%d", &now);
+	return time;
 }
