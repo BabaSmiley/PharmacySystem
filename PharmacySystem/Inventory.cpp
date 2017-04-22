@@ -4,12 +4,13 @@ using namespace std;
 
 struct Inventory {
 public:
-	Inventory(int storeId, int itemId, long itemLevel, long refillLevel, long refillQuantity) {
+	Inventory(int storeId, int itemId, long itemLevel, long refillLevel, long refillQuantity, long onOrderQty) {
 		this->storeId = storeId;
 		this->itemId = itemId;
 		this->itemLevel = itemLevel;
 		this->refillLevel = refillLevel;
 		this->refillQuantity = refillQuantity;
+		this->onOrderQty = onOrderQty;
 	}
 
 	int getStoreId() { return storeId; }
@@ -21,6 +22,8 @@ public:
 	long getRefillLevel() { return refillLevel; }
 
 	long getRefillQuantity() { return refillQuantity; }
+
+	long getOnOrderQty() { return onOrderQty; }
 
 	bool operator == (const Inventory& i) {
 		if (storeId == i.storeId && itemId == i.itemId && itemLevel == i.itemLevel && refillLevel == i.refillLevel && refillQuantity == i.refillQuantity) {
@@ -42,6 +45,7 @@ public:
 		cout << "Item Level: " << itemLevel << endl;
 		cout << "Refill Level: " << refillLevel << endl;
 		cout << "Refill Quantity: " << refillQuantity << endl;
+		cout << "On Order Quantity: " << onOrderQty << endl;
 	}
 	
 private:
@@ -50,4 +54,5 @@ private:
 	long itemLevel;
 	long refillLevel;
 	long refillQuantity;
+	long onOrderQty;
 };

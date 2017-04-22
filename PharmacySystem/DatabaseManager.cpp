@@ -188,7 +188,10 @@ Store* DatabaseManager::updateStore(int id, string address = NULL, string city =
 	if (priorityLevel != NULL) {
 		baseSql += ", PriorityLevel = " + quotesql(priorityLevel);
 	}
-	baseSql += ", IsActive = " + quotesql(isActive) + " WHERE Id = " + quotesql(id);
+	if (isActive != NULL) {
+		baseSql += ", IsActive = " + quotesql(isActive);
+	}
+	baseSql += " WHERE Id = " + quotesql(id);
 
 	if (sqlite3_prepare_v2(db, baseSql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
@@ -269,7 +272,7 @@ bool DatabaseManager::deleteItem(int itemId) {
 
 	sqlite3_stmt *stmt;
 	bool result = false;
-	string sql = "DELETE FROM Item WHERE Id = " + quotesql(itemId);
+	string sql = "DELETE FROM Inventory WHERE ItemId = " + quotesql(itemId) + "; " + "UPDATE Item Set IsActive = '0' WHERE Id  " + quotesql(itemId);
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
@@ -582,14 +585,14 @@ bool DatabaseManager::deleteInventory(int storeId, int itemId) {
 	return result;
 }
 
-Inventory* DatabaseManager::createInventory(int storeId, int itemId, long itemLevel, long refillLevel, long refillQuantity) {
+Inventory* DatabaseManager::createInventory(int storeId, int itemId, long itemLevel, long refillLevel, long refillQuantity, long onOrderQty) {
 	sqlite3_stmt *stmt;
 	Inventory *newInventory = nullptr;
 
-	string sql = "INSERT INTO Inventory (StoreId, ItemId, ItemLevel, MaxLevel, RefillLevel, RefillQuantity) VALUES (" + quotesql(storeId) + "," + quotesql(itemId) + "," + quotesql(itemLevel) + "," + quotesql(refillLevel) + "," + quotesql(refillQuantity) + ")";
+	string sql = "INSERT INTO Inventory (StoreId, ItemId, ItemLevel, RefillLevel, RefillQuantity) VALUES (" + quotesql(storeId) + "," + quotesql(itemId) + "," + quotesql(itemLevel) + "," + quotesql(refillLevel) + "," + quotesql(refillQuantity) + ")";
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
-			newInventory = new Inventory(storeId, itemId, itemLevel, refillLevel, refillQuantity);
+			newInventory = new Inventory(storeId, itemId, itemLevel, refillLevel, refillQuantity, onOrderQty);
 		}
 	}
 
@@ -602,7 +605,7 @@ Inventory* DatabaseManager::getInventory(int storeId, int itemId) {
 	sqlite3_stmt *stmt;
 	Inventory *result = nullptr;
 
-	string sql = "SELECT StoreId, ItemId, ItemLevel, MaxLevel, RefillLevel, RefillQuantity FROM Inventory WHERE StoreId = " + quotesql(storeId) + " AND ItemId = " + quotesql(itemId);
+	string sql = "SELECT StoreId, ItemId, ItemLevel, RefillLevel, RefillQuantity, onOrderQty FROM Inventory WHERE StoreId = " + quotesql(storeId) + " AND ItemId = " + quotesql(itemId);
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -611,8 +614,9 @@ Inventory* DatabaseManager::getInventory(int storeId, int itemId) {
 			long itemLevel = sqlite3_column_int(stmt, 2);
 			long refillLevel = sqlite3_column_int(stmt, 3);
 			long refillQuantity = sqlite3_column_int(stmt, 4);
+			long onOrderQty = sqlite3_column_int(stmt, 5);
 
-			result = new Inventory(storeId, itemId, itemLevel, refillLevel, refillQuantity);
+			result = new Inventory(storeId, itemId, itemLevel, refillLevel, refillQuantity, onOrderQty);
 		}
 	}
 
@@ -625,7 +629,7 @@ vector<Inventory*> DatabaseManager::getStoreInventory(int storeId) {
 	sqlite3_stmt *stmt;
 	vector<Inventory*> result;
 
-	string sql = "SELECT StoreId, ItemId, ItemLevel, MaxLevel, RefillLevel, RefillQuantity FROM Inventory WHERE StoreId = " + quotesql(storeId);
+	string sql = "SELECT StoreId, ItemId, ItemLevel, RefillLevel, RefillQuantity, onOrderQty FROM Inventory WHERE StoreId = " + quotesql(storeId);
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		while (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -636,8 +640,37 @@ vector<Inventory*> DatabaseManager::getStoreInventory(int storeId) {
 			long itemLevel = sqlite3_column_int(stmt, 2);
 			long refillLevel = sqlite3_column_int(stmt, 3);
 			long refillQuantity = sqlite3_column_int(stmt, 4);
+			long onOrderQty = sqlite3_column_int(stmt, 5);
 
-			inventory = new Inventory(storeId, itemId, itemLevel, refillLevel, refillQuantity);
+			inventory = new Inventory(storeId, itemId, itemLevel, refillLevel, refillQuantity, onOrderQty);
+
+			result.push_back(inventory);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
+vector<Inventory*> DatabaseManager::getAllInventory() {
+	sqlite3_stmt *stmt;
+	vector<Inventory*> result;
+
+	string sql = "SELECT StoreId, ItemId, ItemLevel, RefillLevel, RefillQuantity, onOrderQty FROM Inventory";
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		while (sqlite3_step(stmt) == SQLITE_OK) {
+			Inventory *inventory;
+
+			int storeId = sqlite3_column_int(stmt, 0);
+			int itemId = sqlite3_column_int(stmt, 1);
+			long itemLevel = sqlite3_column_int(stmt, 2);
+			long refillLevel = sqlite3_column_int(stmt, 3);
+			long refillQuantity = sqlite3_column_int(stmt, 4);
+			long onOrderQty = sqlite3_column_int(stmt, 5);
+
+			inventory = new Inventory(storeId, itemId, itemLevel, refillLevel, refillQuantity, onOrderQty);
 
 			result.push_back(inventory);
 		}

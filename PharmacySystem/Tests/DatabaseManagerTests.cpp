@@ -180,7 +180,7 @@ bool testDeletePrescription(DatabaseManager *dbm) {
 }
 
 bool testCreateInventory(DatabaseManager *dbm) {
-	Inventory *newInventory = dbm->createInventory(1, 24, 500, 500, 500);
+	Inventory *newInventory = dbm->createInventory(1, 24, 500, 500, 500, 500);
 	if (newInventory) {
 		cout << endl << "New inventory created" << endl;
 		cout << "Store: " << newInventory->getStoreId() << endl;
@@ -271,7 +271,7 @@ void runTests(DatabaseManager *dbm) {
 	//cout << testGetPrescription(dbm) << endl;
 
 	///INVENTORY DB FUNCTIONALITY
-	//cout << testCreateInventory(dbm) << endl;
+	cout << testCreateInventory(dbm) << endl;
 	//cout << testDeleteInventory(dbm) << endl;
 	//cout << testGetInventory(dbm) << endl;
 

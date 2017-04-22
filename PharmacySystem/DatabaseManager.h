@@ -147,7 +147,7 @@ public:
 	/* Creates and stores parameters in inventory database
 		Returns: Returns an inventory object representing a DB Inventory model
 	*/
-	Inventory* createInventory(int storeId, int itemId, long itemLevel, long refillLevel, long refillQuantity);
+	Inventory* createInventory(int storeId, int itemId, long itemLevel, long refillLevel, long refillQuantity, long onOrderQty);
 
 	/* Gets an inventory entry from the database
 		Returns: Returns a filled in Inventory object, or nullptr if no inventory was found for `storeId` and `itemId`
@@ -158,6 +158,11 @@ public:
 		Returns: Returns a vector of inventory objects associated with a `storeId`
 	*/
 	vector<Inventory*> getStoreInventory(int storeId);
+
+	/* Gets a list of all inventory company wide
+		Returns: Returns a vector of inventory objects across the whole company
+	*/
+	vector<Inventory*> getAllInventory();
 
 	/* Creates a customer review for a store
 		Returns: A Review object for the review created
