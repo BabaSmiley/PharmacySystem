@@ -31,7 +31,7 @@ private:
 		string whLevelString;
 		long whLevel;
 		string isActiveString;
-		bool isActive;
+		int isActive;
 
 		cout << endl << "To update an attribute of the item, enter the new value when prompted. Otherwise, just hit enter." << endl;
 		name = getInput("Name");
