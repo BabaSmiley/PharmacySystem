@@ -279,15 +279,15 @@ bool DatabaseManager::deleteItem(int itemId) {
 	return result;
 }
 
-Item* DatabaseManager::createItem(string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, long onOrderQty) {
+Item* DatabaseManager::createItem(string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, bool isActive) {
 	sqlite3_stmt *stmt;
 	Item *newItem = nullptr;
 
-	string sql = "INSERT INTO Item (Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, onOrderQty) VALUES (" + quotesql(name) + "," + quotesql(description) + "," + quotesql(price) + "," + quotesql(dosage) + "," + quotesql(vendorId) + "," + quotesql(expectedDeliveryDate) + "," + quotesql(whRefillLevel) + "," + quotesql(whRefillQty) + "," + quotesql(whLevel) + "," + quotesql(onOrderQty) + ")";
+	string sql = "INSERT INTO Item (Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive) VALUES (" + quotesql(name) + "," + quotesql(description) + "," + quotesql(price) + "," + quotesql(dosage) + "," + quotesql(vendorId) + "," + quotesql(expectedDeliveryDate) + "," + quotesql(whRefillLevel) + "," + quotesql(whRefillQty) + "," + quotesql(whLevel) + "," + quotesql(isActive) + ")";
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
 			int id = (int)sqlite3_last_insert_rowid(db);
-			newItem = new Item(id, name, description, price, dosage, vendorId, expectedDeliveryDate, whRefillLevel, whRefillQty, whLevel, onOrderQty);
+			newItem = new Item(id, name, description, price, dosage, vendorId, expectedDeliveryDate, whRefillLevel, whRefillQty, whLevel, isActive);
 		}
 	}
 
@@ -296,7 +296,7 @@ Item* DatabaseManager::createItem(string name, string description, int price, st
 	return newItem;
 }
 
-Item* DatabaseManager::updateItem(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, long onOrderQty) {
+Item* DatabaseManager::updateItem(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, bool isActive) {
 	sqlite3_stmt *stmt;
 	Item* updatingItem = nullptr;
 
@@ -328,8 +328,8 @@ Item* DatabaseManager::updateItem(int id, string name, string description, int p
 	if (whLevel != NULL) {
 		baseSql += ", WhLevel = " + quotesql(whLevel);
 	}
-	if (onOrderQty != NULL) {
-		baseSql += ", onOrderQty = " + quotesql(onOrderQty);
+	if (isActive != NULL) {
+		baseSql += ", IsActive = " + quotesql(isActive);
 	}
 	baseSql += " WHERE Id = " + quotesql(id);
 
@@ -348,7 +348,7 @@ Item* DatabaseManager::getItem(int itemId) {
 	sqlite3_stmt *stmt;
 	Item *result = nullptr;
 
-	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, onOrderQty FROM Item WHERE Id = " + quotesql(itemId);
+	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item WHERE Id = " + quotesql(itemId);
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		result = itemFromSQL(stmt);
@@ -362,7 +362,7 @@ Item* DatabaseManager::getItem(string itemName) {
 	sqlite3_stmt *stmt;
 	Item *result = nullptr;
 
-	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, onOrderQty FROM Item WHERE Name = " + quotesql(itemName);
+	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item WHERE Name = " + quotesql(itemName);
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		result = itemFromSQL(stmt);
@@ -381,7 +381,7 @@ vector<Item*> DatabaseManager::getItems(unsigned int count) {
 		limitingSQL = " limit " + to_string(count);
 	}
 
-	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, onOrderQty FROM Item" + limitingSQL;
+	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, isActive FROM Item" + limitingSQL;
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 
@@ -398,9 +398,9 @@ vector<Item*> DatabaseManager::getItems(unsigned int count) {
 			long whRefillLevel = sqlite3_column_int(stmt, 7);
 			long whRefillQty = sqlite3_column_int(stmt, 8);
 			long whLevel = sqlite3_column_int(stmt, 9);
-			long onOrderQty = sqlite3_column_int(stmt, 10);
+			bool isActive = (sqlite3_column_int(stmt, 10) == 1) ? true : false;
 
-			item = new Item(id, name, description, price, dosage, vendorId, expectedDeliveryDate, whRefillLevel, whRefillQty, whLevel, onOrderQty);
+			item = new Item(id, name, description, price, dosage, vendorId, expectedDeliveryDate, whRefillLevel, whRefillQty, whLevel, isActive);
 			items.push_back(item);
 		}
 	}
@@ -807,9 +807,9 @@ Item* DatabaseManager::itemFromSQL(sqlite3_stmt *stmt) {
 		long whRefillLevel = sqlite3_column_int(stmt, 7);
 		long whRefillQty = sqlite3_column_int(stmt, 8);
 		long whLevel = sqlite3_column_int(stmt, 9);
-		long onOrderQty = sqlite3_column_int(stmt, 10);
+		bool isActive = (sqlite3_column_int(stmt, 10) == 1) ? true : false;
 
-		return new Item(id, name, description, price, dosage, vendorId, expectedDeliveryDate, whRefillLevel, whRefillQty, whLevel, onOrderQty);
+		return new Item(id, name, description, price, dosage, vendorId, expectedDeliveryDate, whRefillLevel, whRefillQty, whLevel, isActive);
 	}
 	return nullptr;
 }

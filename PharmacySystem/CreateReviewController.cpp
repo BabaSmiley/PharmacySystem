@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include <iostream>
+#include <vector>
+#include <algorithm>
 #include "CommandUtils.cpp" //for getDate()
 #include "DatabaseManager.h"
 #include "Review.cpp"
@@ -14,16 +16,25 @@ public:
 	Review* createReview(User* user) {
 
 		if (user->getUserType() != Customer) { //guard
+			cout << "You are not signed in as a customer." << endl;
 			cout << "Ended create review process." << endl << endl;
 			return nullptr;
 		}
 
 		Store *store = CommonUserPrompts::getStoreFromInput();
 		if (store == nullptr) {
+			cout << "Store was not found for this ID." << endl;
 			cout << "Ended create review process." << endl << endl;
 			return nullptr;
 		}
 		int storeId = store->getId();
+
+		// Check if user has bought from the store before
+		if (!userHasBoughtFromStore(user, store)) {
+			cout << "You have no purchases from this store and can not leave a review." << endl;
+			cout << "Ended create review process." << endl << endl;
+			return nullptr;
+		}
 
 		// Get Rating
 		bool ratingRetrieved = false;
@@ -52,7 +63,34 @@ public:
 		string today = getDate();
 		Review *review = DatabaseManager::shared()->createReview(user->getUserID(), storeId, rating, reviewText, today);
 		
+		if (review != nullptr) {
+			cout << "Review successfully created." << endl << endl;
+		}
+		else {
+			cout << "Review was not able to be created at this time. Please try again later." << endl << endl;
+		}
+
 		return review;
 	}
 
+private:
+
+	/* Helpers */
+	
+	/* Checks if user has bought from a store before
+		Returns: returns true if the user has at least once purchase from the given store
+	*/
+	bool userHasBoughtFromStore(User *user, Store *store) {
+		if (user == nullptr || store == nullptr) { return false; } //Guard
+
+		int storeId = store->getId();
+		vector<Prescription*> prescriptions = DatabaseManager::shared()->getPrescriptionHistory(user->getUserID());
+		
+		for (Prescription *p : prescriptions) {
+			if (p->getStoreId() == storeId) {
+				return true;
+			}
+		}
+		return false;
+	}
 };

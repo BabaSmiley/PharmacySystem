@@ -129,7 +129,6 @@ User* DebugGetEmployeeUser() {
 //END DEBUG
 
 
-
 int main() {
 	DatabaseManager *dbm = DatabaseManager::shared();
 	//runTests(dbm);
@@ -206,15 +205,8 @@ int main() {
 			// Customer Specific Commands
 			else if (user->getUserType() == Customer && "create review" == input.at(0) + " " + input.at(1)) {
 				CreateReviewController reviewController;
-				Review *review = reviewController.createReview(user);
-				if (review != nullptr) {
-					cout << "Review successfully created." << endl << endl;
-				}
-				else {
-					cout << "[!] Error in creating a review. Please try again later." << endl;
-				}
+				reviewController.createReview(user);
 			}
-
 
 			// Employee Specific Commands
 			else if (user->isEmployee() && "list items" == input.at(0) + " " + input.at(1)) {

@@ -5,7 +5,7 @@ using namespace std;
 
 struct Item {
 public:
-	Item(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, long onOrderQty) {
+	Item(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, bool isActive) {
 		this->id = id;
 		this->name = name;
 		this->description = description;
@@ -16,7 +16,7 @@ public:
 		this->whRefillLevel = whRefillLevel;
 		this->whRefillQty = whRefillQty;
 		this->whLevel = whLevel;
-		this->onOrderQty = onOrderQty;
+		this->isActive = isActive;
 	}
 
 	int getId() { return id; }
@@ -39,11 +39,11 @@ public:
 
 	long getWhLevel() { return whLevel; }
 
-	long getOnOrderQty() { return onOrderQty; }
+	bool getIsActive() { return isActive; }
 
 	bool operator == (const Item& i) {
 		if (id == i.id && name == i.name && description == i.description && price == i.price && dosage == i.dosage && vendorId == i.vendorId &&
-			expectedDeliveryDate == i.expectedDeliveryDate && whRefillLevel == i.whRefillLevel && whRefillQty == i.whRefillQty && whLevel == i.whLevel && onOrderQty == i.onOrderQty) {
+			expectedDeliveryDate == i.expectedDeliveryDate && whRefillLevel == i.whRefillLevel && whRefillQty == i.whRefillQty && whLevel == i.whLevel && isActive == i.isActive) {
 			return true;
 		}
 		return false;
@@ -67,7 +67,7 @@ public:
 		cout << "Warehouse Refill Level: " << whRefillLevel << endl;
 		cout << "Warehouse Refill Quantity: " << whRefillQty << endl;
 		cout << "Warehouse Level: " << whLevel << endl;
-		cout << "On Order Quantity: " << onOrderQty << endl;
+		cout << "Is Active: " << isActive << endl;
 	}
 
 private:
@@ -81,5 +81,5 @@ private:
 	long whRefillLevel;
 	long whRefillQty;
 	long whLevel;
-	long onOrderQty;
+	bool isActive;
 };

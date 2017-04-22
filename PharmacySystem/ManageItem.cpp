@@ -30,8 +30,8 @@ private:
 		long whRefillQty;
 		string whLevelString;
 		long whLevel;
-		string onOrderQtyString;
-		long onOrderQty;
+		string isActiveString;
+		bool isActive;
 
 		cout << endl << "To update an attribute of the item, enter the new value when prompted. Otherwise, just hit enter." << endl;
 		name = getInput("Name");
@@ -98,20 +98,20 @@ private:
 		catch (const char *e) {
 			throw e;
 		}
-		onOrderQtyString = getInput("On Order Quantity");
+		isActiveString = getInput("Is Active (0 or 1)");
 		try {
-			if (onOrderQtyString.empty()) {
-				onOrderQty = NULL;
+			if (isActiveString.empty()) {
+				isActive = NULL;
 			}
 			else {
-				onOrderQty = stoi(onOrderQtyString);
+				isActive = stoi(isActiveString);
 			}
 		}
 		catch (const char *e) {
 			throw e;
 		}
 
-		Item *item = DatabaseManager::shared()->updateItem(id, name, description, price, dosage, vendorId, expectedDeliveryDate, whRefillLevel, whRefillQty, whLevel, onOrderQty);
+		Item *item = DatabaseManager::shared()->updateItem(id, name, description, price, dosage, vendorId, expectedDeliveryDate, whRefillLevel, whRefillQty, whLevel, isActive);
 
 		if (item) {
 			cout << "Item successfully updated." << endl;
