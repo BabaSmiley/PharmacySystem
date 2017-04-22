@@ -130,7 +130,7 @@ User* DebugGetEmployeeUser() {
 
 int main() {
 	DatabaseManager *dbm = DatabaseManager::shared();
-	//runTests(dbm);
+	runTests(dbm);
 
 	
 	/* Start Login & Registration Process */

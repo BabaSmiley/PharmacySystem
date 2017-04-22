@@ -90,6 +90,9 @@
     <ClCompile Include="Sale.cpp">
       <Filter>Source Files\DB Models</Filter>
     </ClCompile>
+    <ClCompile Include="Discount.cpp">
+      <Filter>Source Files\DB Models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sqlite3.h">

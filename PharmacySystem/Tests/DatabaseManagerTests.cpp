@@ -215,6 +215,38 @@ bool testDeleteInventory(DatabaseManager *dbm) {
 	return dbm->deleteInventory(1, 24);
 }
 
+bool testCreateDiscount(DatabaseManager *dbm) {
+	Discount *newDiscount = dbm->createDiscount(1, 24, 50, "2017-04-20", "2017-05-20");
+	if (newDiscount) {
+		newDiscount->printDescription();
+		return true;
+	}
+	else {
+		cout << "Could not create discount" << endl;
+		return false;
+	}
+}
+
+bool testGetDiscount(DatabaseManager *dbm) {
+	Discount *existingDiscount = dbm->getDiscount(1, 24);
+	if (existingDiscount == nullptr) {
+		cout << "Discount which should exist for storeId=1 and itemId=24 does not" << endl;
+		return false;
+	}
+
+	Discount *doesNotExist = dbm->getDiscount(-1, -1);
+	if (doesNotExist != nullptr) {
+		cout << "Discount which should not exist does" << endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool testDeleteDiscount(DatabaseManager *dbm) {
+	return dbm->deleteDiscount(1, 24);
+}
+
 
 void runTests(DatabaseManager *dbm) {
 	//testDatabaseUser(dbm);
@@ -241,4 +273,9 @@ void runTests(DatabaseManager *dbm) {
 	//cout << testCreateInventory(dbm) << endl;
 	//cout << testDeleteInventory(dbm) << endl;
 	//cout << testGetInventory(dbm) << endl;
+
+	///DISCOUNT DB FUNCTIONALITY
+	//cout << testCreateDiscount(dbm) << endl;
+	//cout << testGetDiscount(dbm) << endl;
+	//cout << testDeleteDiscount(dbm) << endl;
 }

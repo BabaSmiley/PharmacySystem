@@ -654,6 +654,66 @@ vector<Review*> DatabaseManager::getReviews(int storeId) {
 
 /// Discount ///
 
+Discount* DatabaseManager::createDiscount(int storeId, int itemId, int percentOff, string startDate, string endDate) {
+	sqlite3_stmt *stmt;
+	Discount *newDiscount = nullptr;
+
+	string sql = "INSERT INTO Discount (StoreId, ItemId, PercentOff, StartDate, EndDate) VALUES (" + quotesql(storeId) + "," + quotesql(itemId) + "," + quotesql(percentOff) + "," + quotesql(startDate) + "," + quotesql(endDate) + ")";
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			newDiscount = new Discount(storeId, itemId, percentOff, startDate, endDate);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return newDiscount;
+}
+
+bool DatabaseManager::deleteDiscount(int storeId, int itemId) {
+	Discount *dbDiscount = getDiscount(storeId, itemId);
+	if (dbDiscount == nullptr || storeId != dbDiscount->getStoreId() || itemId != dbDiscount->getItemId()) {
+		return false;
+	}
+
+	sqlite3_stmt *stmt;
+	bool result = false;
+	string sql = "DELETE FROM Discount WHERE StoreId = " + quotesql(storeId) + " AND ItemId = " + quotesql(itemId);
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			result = true;
+		}
+	}
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
+Discount* DatabaseManager::getDiscount(int storeId, int itemId) {
+	sqlite3_stmt *stmt;
+	Discount *result = nullptr;
+
+	string sql = "SELECT StoreId, ItemId, PercentOff, StartDate, EndDate FROM Discount WHERE StoreId = " + quotesql(storeId) + " AND ItemId = " + quotesql(itemId);
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_ROW) {
+			int storeId = sqlite3_column_int(stmt, 0);
+			int itemId = sqlite3_column_int(stmt, 1);
+			int percentOff = sqlite3_column_int(stmt, 2);
+			string startDate = sqlToString(sqlite3_column_text(stmt, 3));
+			string endDate = sqlToString(sqlite3_column_text(stmt, 4));
+
+			result = new Discount(storeId, itemId, percentOff, startDate, endDate);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
+
 /// Sales ///
 
 vector<Sale*> DatabaseManager::getSalesByItem(int itemId) {

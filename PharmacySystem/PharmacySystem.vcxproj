@@ -155,6 +155,7 @@
     <ClCompile Include="Constants.h" />
     <ClCompile Include="CreatePrescriptionController.cpp" />
     <ClCompile Include="DatabaseManager.cpp" />
+    <ClCompile Include="Discount.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemViewController.cpp" />

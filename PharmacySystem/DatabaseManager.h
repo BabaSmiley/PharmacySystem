@@ -15,6 +15,7 @@
 #include "Inventory.cpp"
 #include "Review.cpp"
 #include "Sale.cpp"
+#include "Discount.cpp"
 
 class DatabaseManager
 {
@@ -162,6 +163,22 @@ public:
 		Returns: Returns a vector of sales objects
 	*/
 	vector<Sale*> getSalesByItem(int itemId);
+
+	/* Creates and stores parameters in discount database
+		Returns: Returns a discount object representing a DB Discount model
+	*/
+	Discount* createDiscount(int storeId, int itemId, int percentOff, string startDate, string endDate);
+
+	/* Delete a discount from the database
+		Parameter store id, item id: A store id and an item id represending the discount to delete in the database
+		Returns: Returns true if `discount` is an exact match in the database and was able to successfully delete it
+	*/
+	bool deleteDiscount(int storeId, int itemId);
+
+	/* Gets a discount from the database
+		Returns: Returns a discount object
+	*/
+	Discount* getDiscount(int storeId, int itemId);
 
 private:
 	//static DatabaseManager *sharedInstance;
