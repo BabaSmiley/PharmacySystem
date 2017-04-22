@@ -73,14 +73,23 @@ void writeFile(vector<string> records, int sequenceNo, string fileName) {
 	output << "T " << ZeroFillNumber(to_string(records.size()), 4) << endl;
 }
 
-void writeWarehouseInventoryUpdateFile(int sequenceNo) {
-	ofstream output("warehouseinventoryupdate.txt");
+void WriteBatchReviewFile(DatabaseManager *dbm, int seqNo) {
+	ofstream out("batchreview.txt");
 
-	output << "HD " << ZeroFillNumber(to_string(sequenceNo), 4) << endl;
+	out << "HD " << ZeroFillNumber(to_string(seqNo), 4) << endl;
 
-	int trailerCount = 0;
+	int trailerCounter = 0;
+	vector<Inventory*> inv;//= getAllInventory();
 
-	output << "T " << ZeroFillNumber(to_string(trailerCount), 0);
+	for (int i = 0; i < inv.size(); i++)
+		if (inv[i]->getItemLevel() <= inv[i]->getRefillLevel()) {
+			Store* store = dbm->getStore(inv[i]->getStoreId());
+			out << "B" << ZeroFillNumber(to_string(inv[i]->getStoreId()), 5) << ZeroFillNumber(to_string(store->getPriorityLevel()), 2) << 
+				ZeroFillNumber(to_string( inv[i]->getItemId()), 9) << ZeroFillNumber(to_string(inv[i]->getRefillQuantity()), 10) << endl;
+			trailerCounter++;
+		}
+
+	out << "T " << ZeroFillNumber(to_string(trailerCounter), 4);
 }
 
 int incSeqNo(int s) {
@@ -107,6 +116,7 @@ vector<string> SortRecords(vector<string> records) { //SORTS RECORDS BY ITEM COD
 }
 
 ///BATCH FUNCTIONS
+//DONE
 void updateItemData(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) { //Where items are added/changed/deleted from the database
 	batchLog << "=====Update Item Data=====";
 
@@ -184,9 +194,8 @@ void updateItemData(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) {
 			string whReorderQuantity = line.substr(164, 10);
 			string expDelivery = line.substr(174, 20);
 
-			//int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, int isActive
-			//dbm->createItem(stoi(itemCode), RemoveSpaces(itemName), RemoveSpaces(itemDesc), 5, RemoveSpaces(itemDosage),
-				//stoi(vendorCode), RemoveSpaces(expDelivery), stol(whReorderLevel), stol(whReorderQuantity), 0, 1);
+			dbm->createItem(stoi(itemCode), RemoveSpaces(itemName), RemoveSpaces(itemDesc), 5, RemoveSpaces(itemDosage),
+				stoi(vendorCode), RemoveSpaces(expDelivery), stol(whReorderLevel), stol(whReorderQuantity), 0, 1);
 		}
 		else batchLog << "Unexpected action code '" << line[0] << "'. Skip line." << endl;
 
@@ -334,6 +343,9 @@ and add them to the stores
 */ {
 	batchLog << "=====Inventory To Store Request=====";
 
+	WriteBatchReviewFile(dbm, sequenceNoBatchRev);
+	//WriteOnlineRequestFile();
+
 	//Code to combine all 3 record files into one file
 	vector<string> records = getRecords(batchLog, sequenceNoCreateStoreItems, "createstoreitems.txt");
 	vector<string> tmp;
@@ -343,7 +355,7 @@ and add them to the stores
 	records.insert(records.begin(), tmp.begin(), tmp.end());
 
 	records = SortRecords(records);
-	writeFile(records, sequenceNoStoreUpdate, "storeupdate.txt");
+	writeFile( records, sequenceNoStoreUpdate, "storeupdate.txt");
 
 	ifstream input("storeupdate.txt");
 	string line;
