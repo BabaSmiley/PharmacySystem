@@ -15,12 +15,12 @@ string sqlToString(const unsigned char* str) {
 
 /* DatabaseManager */
 DatabaseManager::DatabaseManager() {
-	
+
 	/* Attempt to open connection to file */
 	int returnCode = sqlite3_open(DatabaseConstants::DatabaseName, &db);
 
 	sqlite3_exec(db, "PRAGMA foreign_keys = ON;", 0, 0, 0);
-	
+
 	/* MARK - disabled for now
 	if (returnCode) {
 		cout << "Failed to open database: " << sqlite3_errmsg(db);
@@ -55,7 +55,7 @@ User* DatabaseManager::getUser(string username, string password) {
 		if (sqlite3_step(stmt) == SQLITE_ROW) {
 			int id = sqlite3_column_int(stmt, 0);
 			int isEmployee = sqlite3_column_int(stmt, 1);
-			UserType type = (isEmployee==1) ? Employee : Customer;
+			UserType type = (isEmployee == 1) ? Employee : Customer;
 
 			result = new User(id, username, type);
 		}
@@ -96,7 +96,7 @@ User* DatabaseManager::getUser(int userID) {
 			int id = sqlite3_column_int(stmt, 0);
 			string username = sqlToString(sqlite3_column_text(stmt, 1));
 			int isEmployee = sqlite3_column_int(stmt, 2);
-			UserType type = (isEmployee==1) ? Employee : Customer;
+			UserType type = (isEmployee == 1) ? Employee : Customer;
 
 			result = new User(id, username, type);
 		}
@@ -115,10 +115,10 @@ User* DatabaseManager::createUser(string username, string password, UserType use
 
 	//TODO: check if username is already taken -> return nullptr
 
-	int isEmployee = (userType==Employee) ? 1 : 0;
+	int isEmployee = (userType == Employee) ? 1 : 0;
 	string sql = "insert into Account (Username, Password, IsEmployee) values (" + quotesql(username) + "," + quotesql(password) + "," + quotesql(isEmployee) + ")";
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
-		
+
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
 			int id = (int)sqlite3_last_insert_rowid(db);
 			newUser = new User(id, username, userType);
@@ -132,7 +132,7 @@ User* DatabaseManager::createUser(string username, string password, UserType use
 /// Stores ///
 
 bool DatabaseManager::deleteStore(Store *store) {
-	
+
 	// Preliminary check if the store exists
 	Store *dbStore = getStore(store->getId());
 	if (dbStore == nullptr || *store != *dbStore) {
@@ -156,8 +156,8 @@ bool DatabaseManager::deleteStore(Store *store) {
 Store* DatabaseManager::createStore(int id, string address, string city, string state, int zipCode, int priorityLevel) {
 	sqlite3_stmt *stmt;
 	Store *newStore = nullptr;
-	
-	string sql = "insert into Store (Id, Address, City, State, ZipCode, PriorityLevel) values (" + quotesql(id) + "," + quotesql(address) + "," + quotesql(city) + ","+ quotesql(state) + "," + quotesql(zipCode) + "," + quotesql(priorityLevel) + ")";
+
+	string sql = "insert into Store (Id, Address, City, State, ZipCode, PriorityLevel) values (" + quotesql(id) + "," + quotesql(address) + "," + quotesql(city) + "," + quotesql(state) + "," + quotesql(zipCode) + "," + quotesql(priorityLevel) + ")";
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
 			newStore = new Store(id, address, city, state, zipCode, priorityLevel);
@@ -209,11 +209,11 @@ Store* DatabaseManager::getStore(int storeId) {
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 
 		if (sqlite3_step(stmt) == SQLITE_ROW) {
-			int id            = sqlite3_column_int(stmt, 0);
-			string address    = sqlToString(sqlite3_column_text(stmt, 1));
-			string city       = sqlToString(sqlite3_column_text(stmt, 2));
-			string state      = sqlToString(sqlite3_column_text(stmt, 3));
-			int zipCode       = sqlite3_column_int(stmt, 4);
+			int id = sqlite3_column_int(stmt, 0);
+			string address = sqlToString(sqlite3_column_text(stmt, 1));
+			string city = sqlToString(sqlite3_column_text(stmt, 2));
+			string state = sqlToString(sqlite3_column_text(stmt, 3));
+			int zipCode = sqlite3_column_int(stmt, 4);
 			int priorityLevel = sqlite3_column_int(stmt, 5);
 
 			result = new Store(id, address, city, state, zipCode, priorityLevel);
@@ -296,36 +296,44 @@ Item* DatabaseManager::createItem(string name, string description, int price, st
 	return newItem;
 }
 
+bool AllSpaces(string str) {
+	for (int i = 0; i < str.size(); i++)
+		if (str[i] != ' ')
+			return false;
+
+	return true;
+}
+
 Item* DatabaseManager::updateItem(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, bool isActive) {
 	sqlite3_stmt *stmt;
 	Item* updatingItem = nullptr;
 
 	string baseSql = "UPDATE Item SET Id = " + quotesql(id);
-	if (!name.empty()) {
+	if (!name.empty() && !AllSpaces(name)) {
 		baseSql += ", Name = " + quotesql(name);
 	}
-	if (!description.empty()) {
+	if (!description.empty() && !AllSpaces(description)) {
 		baseSql += ", Description = " + quotesql(description);
 	}
-	if (price != NULL) {
+	if (price != NULL && price >= 0) {
 		baseSql += ", Price = " + quotesql(price);
 	}
-	if (!dosage.empty()) {
+	if (!dosage.empty() && !AllSpaces(dosage)) {
 		baseSql += ", Dosage = " + quotesql(dosage);
 	}
-	if (vendorId != NULL) {
+	if (vendorId != NULL && vendorId >= 0) {
 		baseSql += ", VendorId = " + quotesql(vendorId);
 	}
-	if (!expectedDeliveryDate.empty()) {
+	if (!expectedDeliveryDate.empty() && !AllSpaces(expectedDeliveryDate)) {
 		baseSql += ", ExpectedDeliveryDate = " + quotesql(expectedDeliveryDate);
 	}
-	if (whRefillLevel != NULL) {
+	if (whRefillLevel != NULL && whRefillLevel >= 0) {
 		baseSql += ", WhRefillLevel = " + quotesql(whRefillLevel);
 	}
-	if (whRefillQty != NULL) {
+	if (whRefillQty != NULL & whRefillQty >= 0) {
 		baseSql += ", WhRefillQty = " + quotesql(whRefillQty);
 	}
-	if (whLevel != NULL) {
+	if (whLevel != NULL && whLevel >= 0) {
 		baseSql += ", WhLevel = " + quotesql(whLevel);
 	}
 	if (isActive != NULL) {
