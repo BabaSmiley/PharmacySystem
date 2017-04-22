@@ -5,6 +5,7 @@ using namespace std;
 #include <vector>
 #include <string>
 #include "DatabaseManager.h"
+#include <algorithm>
 
 string ZeroFillNumber(string str, int digits) {
 	while (str.size() < digits)
@@ -13,9 +14,16 @@ string ZeroFillNumber(string str, int digits) {
 	return str;
 }
 
+string SpaceFillString(string str, int size) {
+	while (str.size() < size)
+		str += " ";
+
+	return str;
+}
+
 vector<string> getRecords(ofstream &batchLog, int sequenceNo, string fileName) /*
 Function to return all data strings for items received in a file. Used by inventory to store request
-to concatenate all data records from the 3 sources to a single file
+to concatenate all data records from the 3 sources to a single file. Used by warehouse inventory update too.
 */ {
 	vector<string> records;
 	string line;
@@ -43,19 +51,25 @@ to concatenate all data records from the 3 sources to a single file
 	return records;
 }
 
-void writeInventoryToStoreFile(vector<string> records, int sequenceNo) {
-	ofstream output("storeupdate.txt");
+void writeFile(vector<string> records, int sequenceNo, string fileName) {
+	ofstream output(fileName);
 
-	output << "HD " << ZeroFillNumber(to_string(sequenceNo), 4);
-
-	output << to_string(sequenceNo) << endl;
+	output << "HD " << ZeroFillNumber(to_string(sequenceNo), 4) << endl;
 
 	for (int i = 0; i < (int)records.size(); i++)
 		output << records[i] << endl;
 
-	output << "T ";
+	output << "T " << ZeroFillNumber(to_string(records.size()), 4) << endl;
+}
 
-	output << ZeroFillNumber(to_string(records.size()), 4);
+void writeWarehouseInventoryUpdateFile(int sequenceNo) {
+	ofstream output("warehouseinventoryupdate.txt");
+
+	output << "HD " << ZeroFillNumber(to_string(sequenceNo), 4) << endl;
+
+	int trailerCount = 0;
+
+	output << "T " << ZeroFillNumber(to_string(trailerCount), 0);
 }
 
 int incSeqNo(int s) {
@@ -65,6 +79,22 @@ int incSeqNo(int s) {
 	return s;
 }
 
+vector<string> SortRecords(vector<string> records) { //SORTS RECORDS BY ITEM CODE BY PRIORITY LEVEL
+	for (int i = 0; i < records.size(); i++) { //reorders to: (Item code|priority level| source|storeID|requested quantity) in order to sort
+		string tmp = records[i];
+		records[i] = tmp.substr(8, 9) + tmp.substr(6, 2) + tmp.substr(0, 6) + tmp.substr(17, 10);
+	}
+
+	sort(records.begin(), records.end());
+
+	for (int i = 0; i < records.size(); i++) { //Converts to original form |source|store id|store priority level|item code|requested quantity|
+		string tmp = records[i];
+		records[i] = tmp.substr(11, 6) + tmp.substr(9, 2) + tmp.substr(0, 9) + tmp.substr(17, 10);
+	}
+
+	return records;
+}
+
 ///BATCH FUNCTIONS
 void updateItemData(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) { //Where items are added/changed/deleted from the database
 	batchLog << "=====Update Item Data=====";
@@ -72,7 +102,7 @@ void updateItemData(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) {
 	ifstream input("items.txt");
 
 	string line;
-	int trailerCount = 0;
+	int trailerCount = 0, controlCount = 0;
 
 	//Header check
 	getline(input, line);
@@ -84,14 +114,53 @@ void updateItemData(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) {
 	}
 
 	getline(input, line);
-
-	while (line[0] != 'T') {
-		trailerCount++;
-
-		//TODO: WRITE BATCH FUNCTIONALITY
+	while (line[0] != 'N') { //Add item
+		if (line[0] == 'A') {
+			trailerCount++; controlCount++;
+			//TODO: ADD ITEM. Need to fix function. remove autoincrement
+		}
+		else batchLog << "Unexpected action code '" << line[0] << "'. Skip line." << endl;
 
 		getline(input, line);
 	}
+	if (stoi(line.substr(2, 4)) != controlCount)
+		batchLog << "Add item trailer mismatch. Expected" + line.substr(2, 4)
+		+ " got " + to_string(controlCount);
+
+
+	getline(input, line);
+	controlCount = 0;
+	while (line[0] != 'N') { //Change item
+		if (line[0] == 'C') {
+			trailerCount++; controlCount++;
+			//TODO: change ITEM. Need a function/fix a function
+		}
+		else batchLog << "Unexpected action code '" << line[0] << "'. Skip line." << endl;
+		
+		getline(input, line);
+	}
+	if (stoi(line.substr(2, 4)) != controlCount)
+		batchLog << "change item trailer mismatch. Expected" + line.substr(2, 4)
+		+ " got " + to_string(controlCount);
+
+	getline(input, line);
+	controlCount = 0;
+	while (line[0] != 'N') { //delete item
+		if (line[0] == 'D') {
+			trailerCount++; controlCount++;
+			//TODO: delete ITEM. Need to make item inactive and remove item from all stores.
+		}
+		else batchLog << "Unexpected action code '" << line[0] << "'. Skip line." << endl;
+
+		getline(input, line);
+	}
+	if (stoi(line.substr(2, 4)) != controlCount)
+		batchLog << "delete item trailer mismatch. Expected" + line.substr(2, 4)
+		+ " got " + to_string(controlCount);
+
+	if (stoi(line.substr(2, 4)) != trailerCount) //Trailer check
+		batchLog << "items.txt trailer mismatch. Expected" + line.substr(2, 4)
+		+ " got " + to_string(trailerCount);
 
 	sequenceNo = incSeqNo(sequenceNo);
 }
@@ -170,7 +239,7 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo
 
 	if (stoi(line.substr(2, 4)) != trailerCount)
 		batchLog << "adddeletestore.txt trailer mismatch. Expected" + line.substr(2, 4)
-			+ " got " + to_string(trailerCount);
+		+ " got " + to_string(trailerCount);
 
 	outInvToStoreReq << "T ";
 	outInvToStoreReq << ZeroFillNumber(to_string(InvToStoreReqCounter), 4);
@@ -185,8 +254,14 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo
 
 void inventoryReceivedAtWarehouse(DatabaseManager *dbm, ofstream &batchLog, int sequenceNoDeleteStoreItems, int &sequenceNoItemReceived, int &sequenceNoWarehouseInventoryUpdate) { //Where warehouse item quantities are replenished
 	batchLog << "=====Inventory Received at Warehouse=====";
-	//TODO: Merge files into warehouseinventoryupdate
-	ifstream input("itemreceived.txt");
+
+	vector<string> tmp;
+	vector<string> records = getRecords(batchLog, sequenceNoDeleteStoreItems, "deletestoreitems.txt");
+	tmp = getRecords(batchLog, sequenceNoItemReceived, "itemreceived.txt");
+	records.insert(records.begin(), tmp.begin(), tmp.end());
+	writeFile(records, sequenceNoWarehouseInventoryUpdate, "warehouseinventoryupdate.txt");
+
+	ifstream input("warehouseinventoryupdate.txt");
 	string line;
 	int trailerCount = 0;
 
@@ -201,7 +276,7 @@ void inventoryReceivedAtWarehouse(DatabaseManager *dbm, ofstream &batchLog, int 
 	getline(input, line);
 
 	while (line[0] != 'T') {
-		//TODO: INCREMENT WAREHOUSE ITEM QUANTITIES
+		//TODO: INCREMENT WAREHOUSE ITEM QUANTITIES VIA BATCH FUNCTION
 		getline(input, line);
 		trailerCount++;
 	}
@@ -228,7 +303,9 @@ and add them to the stores
 	records.insert(records.begin(), tmp.begin(), tmp.end());
 	tmp = getRecords(batchLog, sequenceNoBatchRev, "batchreview.txt");
 	records.insert(records.begin(), tmp.begin(), tmp.end());
-	writeInventoryToStoreFile(records, sequenceNoStoreUpdate);
+
+	records = SortRecords(records);
+	writeFile(records, sequenceNoStoreUpdate, "storeupdate.txt");
 
 	ifstream input("storeupdate.txt");
 	string line;
@@ -246,7 +323,7 @@ and add them to the stores
 	getline(input, line);
 
 	while (line[0] != 'T') {
-		//TODO: INCREASE STORE QUANTITIES AND LOWER WAREHOUSE QUANTITIES
+		//TODO: INCREASE STORE QUANTITIES AND LOWER WAREHOUSE QUANTITIES. NEEDS A DB FUNCTION.
 		getline(input, line);
 		trailerCount++;
 	}
@@ -260,14 +337,30 @@ and add them to the stores
 	sequenceNoBatchRev = incSeqNo(sequenceNoBatchRev);
 }
 
-void inventoryGeneration(DatabaseManager *dbm, int &sequenceNo) { //Where warehouse items are requested from the vendors
+//DONE
+void inventoryGeneration(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) { //Where warehouse items are requested from the vendors
+	batchLog << "=====Inventory Generation=====" << endl;
+
 	ofstream output("vendororder.txt");
 
-	//TODO: ITERATE THROUGH ALL WAREHOUSE ITEMS AND REORDER ITEMS THAT ARE BELOW REORDER QUANTITIES
+	output << "HD " << ZeroFillNumber(to_string(sequenceNo), 4);
+
+	vector<Item*> items = dbm->getItems(0);
+
+	int trailerCount = 0;
+
+	for (int i = 0; i < items.size(); i++)
+		if (items[i]->getWhLevel() <= items[i]->getWhRefillQty()) {
+			output << ZeroFillNumber(to_string(items[i]->getVendorId()), 4) << ZeroFillNumber(to_string(items[i]->getId()), 9) << ZeroFillNumber(to_string(items[i]->getWhRefillQty()), 10) << endl;
+			trailerCount++;
+		}
+
+	output << "T " << ZeroFillNumber(to_string(trailerCount), 4);
 
 	sequenceNo = incSeqNo(sequenceNo);
 }
 
+//DONE
 void yearlySales(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) { //Calculate sales for specified items
 	batchLog << "=====Yearly Sales=====";
 
@@ -294,7 +387,44 @@ void yearlySales(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) { //
 	while (line[0] != 'T') {
 		trailerCount++;
 
-		//TODO: SELECT PRESCRIPTIONS BASED ON ITEM ID, SORT BY DATE!
+		string itemCode = line.substr(0, 4);
+		vector<Sale*> sales = dbm->getSalesByItem(stoi(itemCode)); //Sales for an item sorted by date
+		out << "=====" << itemCode << "=====";
+
+		string year = "0000", month = "00";
+
+		int salesM = 0, salesY = 0, salesT = 0,
+			qtyM = 0, qtyY = 0, qtyT = 0;
+
+		for (int i = 0; i < sales.size(); i++) {
+			string yeartmp = (sales[i]->getDate()).substr(0, 4),
+				monthtmp = (sales[i]->getDate()).substr(5, 2);
+
+			if (yeartmp > year) { //If new year, then set new year, and roll over month, and reset counters
+				out << year << "-" << month << qtyM << " " << salesM << endl;
+				out << year << qtyY << salesY;
+
+				year = yeartmp;
+				month = monthtmp;
+
+				salesM = 0; salesY = 0; qtyM = 0; qtyY = 0; //reset counters
+			}
+			else if (monthtmp > month) { //If new month, then set new month, and reset month counter
+				out << year << "-" << month << qtyM << " $" << salesM << endl;
+
+				month = monthtmp;
+
+				salesM = 0; qtyM = 0; //reset counters
+			}
+
+			int qty = sales[i]->getQuantity();
+			int salesAmt = sales[i]->getSalePrice() * qty;
+
+			salesM += salesAmt; salesY += salesAmt; salesT += salesAmt;
+			qtyM += qty; qtyY += qty; qtyT += qty;
+		}
+
+		out << "GRAND TOTAL: " << qtyT << " $" << salesT << endl;
 
 		getline(input, line);
 	}
@@ -334,7 +464,7 @@ void runBatchSequence(DatabaseManager *dbm) { //Calls all of the batch sequences
 	createDeleteStore(dbm, batchLog, sequenceNos[1], sequenceNos[2], sequenceNos[3]);
 	inventoryReceivedAtWarehouse(dbm, batchLog, oldsequenceNos[3], sequenceNos[4], sequenceNos[10]);
 	inventoryToStoreRequest(dbm, batchLog, sequenceNos[7], oldsequenceNos[2], sequenceNos[6], sequenceNos[5]);
-	inventoryGeneration(dbm, sequenceNos[8]);
+	inventoryGeneration(dbm, batchLog, sequenceNos[8]);
 	yearlySales(dbm, batchLog, sequenceNos[9]);
 
 	ofstream sequencesOut("sequences.txt"); //Writes new sequence numbers to same file
