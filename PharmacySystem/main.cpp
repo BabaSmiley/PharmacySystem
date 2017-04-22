@@ -130,8 +130,8 @@ User* DebugGetEmployeeUser() {
 
 int main() {
 	DatabaseManager *dbm = DatabaseManager::shared();
-	runTests(dbm);
-
+	//runTests(dbm);
+	dbm->createDiscount(1, 25, 10, "some", "another");
 	
 	/* Start Login & Registration Process */
 	/* DEBUG - commented out so dont have to repeatadly sign in. Uncomment to reactivate the login feature
