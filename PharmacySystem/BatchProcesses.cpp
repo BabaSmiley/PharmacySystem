@@ -21,6 +21,17 @@ string SpaceFillString(string str, int size) {
 	return str;
 }
 
+string RemoveSpaces(string str) { //Removes spaces only if there is something other than a space at the first character
+	if (str.size() == 0)
+		return str;
+
+	if (str[0] != ' ')
+		while (str[str.size() - 1] == ' ')
+			str = str.substr(0, str.size() - 1);
+
+	return str;
+}
+
 vector<string> getRecords(ofstream &batchLog, int sequenceNo, string fileName) /*
 Function to return all data strings for items received in a file. Used by inventory to store request
 to concatenate all data records from the 3 sources to a single file. Used by warehouse inventory update too.
@@ -114,29 +125,45 @@ void updateItemData(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) {
 	}
 
 	getline(input, line);
-	while (line[0] != 'N') { //Add item
-		if (line[0] == 'A') {
+	while (line[0] != 'N') { //delete item
+		if (line[0] == 'D') {
 			trailerCount++; controlCount++;
-			//TODO: ADD ITEM. Need to fix function. remove autoincrement
+			dbm->deleteItem(stoi(line.substr(1, 9)));
 		}
 		else batchLog << "Unexpected action code '" << line[0] << "'. Skip line." << endl;
 
 		getline(input, line);
 	}
 	if (stoi(line.substr(2, 4)) != controlCount)
-		batchLog << "Add item trailer mismatch. Expected" + line.substr(2, 4)
+		batchLog << "delete item trailer mismatch. Expected" + line.substr(2, 4)
 		+ " got " + to_string(controlCount);
-
 
 	getline(input, line);
 	controlCount = 0;
 	while (line[0] != 'N') { //Change item
 		if (line[0] == 'C') {
 			trailerCount++; controlCount++;
-			//TODO: change ITEM. Need a function/fix a function
+			string itemCode = line.substr(1, 9);
+			string itemName = line.substr(10, 20);
+			string itemDesc = line.substr(30, 100);
+			string itemDosage = line.substr(130, 20);
+			string whReorderLevel = line.substr(150, 10);
+			string vendorCode = line.substr(160, 4);
+			string whReorderQuantity = line.substr(164, 10);
+			string expDelivery = line.substr(174, 20);
+
+			if (RemoveSpaces(whReorderLevel) == "")
+				whReorderLevel = "-1";
+			if (RemoveSpaces(vendorCode) == "")
+				vendorCode = "-1";
+			if (RemoveSpaces(whReorderQuantity) == "")
+				whReorderQuantity = "-1";
+
+			dbm->updateItem(stoi(itemCode), RemoveSpaces(itemName), RemoveSpaces(itemDesc), -1, RemoveSpaces(itemDosage),
+				stoi(vendorCode), RemoveSpaces(expDelivery), stol(whReorderLevel), stol(whReorderQuantity), -1, NULL);
 		}
 		else batchLog << "Unexpected action code '" << line[0] << "'. Skip line." << endl;
-		
+
 		getline(input, line);
 	}
 	if (stoi(line.substr(2, 4)) != controlCount)
@@ -145,17 +172,28 @@ void updateItemData(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) {
 
 	getline(input, line);
 	controlCount = 0;
-	while (line[0] != 'N') { //delete item
-		if (line[0] == 'D') {
+	while (line[0] != 'N') { //Add item
+		if (line[0] == 'A') {
 			trailerCount++; controlCount++;
-			//TODO: delete ITEM. Need to make item inactive and remove item from all stores.
+			string itemCode = line.substr(1, 9);
+			string itemName = line.substr(10, 20);
+			string itemDesc = line.substr(30, 100);
+			string itemDosage = line.substr(130, 20);
+			string whReorderLevel = line.substr(150, 10);
+			string vendorCode = line.substr(160, 4);
+			string whReorderQuantity = line.substr(164, 10);
+			string expDelivery = line.substr(174, 20);
+
+			//int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, int isActive
+			//dbm->createItem(stoi(itemCode), RemoveSpaces(itemName), RemoveSpaces(itemDesc), 5, RemoveSpaces(itemDosage),
+				//stoi(vendorCode), RemoveSpaces(expDelivery), stol(whReorderLevel), stol(whReorderQuantity), 0, 1);
 		}
 		else batchLog << "Unexpected action code '" << line[0] << "'. Skip line." << endl;
 
 		getline(input, line);
 	}
 	if (stoi(line.substr(2, 4)) != controlCount)
-		batchLog << "delete item trailer mismatch. Expected" + line.substr(2, 4)
+		batchLog << "Add item trailer mismatch. Expected" + line.substr(2, 4)
 		+ " got " + to_string(controlCount);
 
 	if (stoi(line.substr(2, 4)) != trailerCount) //Trailer check
