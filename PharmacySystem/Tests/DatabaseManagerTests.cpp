@@ -41,13 +41,14 @@ void testDatabaseUser(DatabaseManager *dbm) {
 
 bool testCreateStore(DatabaseManager *dbm) {
 	//Test Create
-	Store *newStore = dbm->createStore(13, "123 Alley", "NewTown", "NY", 34592, 199);
+	Store *newStore = dbm->createStore(69, "123 Alley", "NewTown", "NY", 34592, 199, 1);
 	if (newStore) {
 		cout << endl << "New store created" << endl;
 		cout << "ID: " << newStore->getId() << endl;
 		cout << "Address: " << newStore->getAddress() << endl;
 		cout << "City/State: " << newStore->getCity() << "/" << newStore->getState() << " " << newStore->getZipCode() << endl;
 		cout << "Priority: " << newStore->getPriorityLevel() << endl;
+		cout << "Is Active: " << (newStore->getIsActive() == 1 ? "True" : "False") << endl;
 		return true;
 	}
 	else {
@@ -57,7 +58,7 @@ bool testCreateStore(DatabaseManager *dbm) {
 }
 
 bool testUpdateStore(DatabaseManager *dbm) {
-	Store *updatingStore = dbm->updateStore(13, "", "", "NY", 42069, NULL);
+	Store *updatingStore = dbm->updateStore(13, "", "", "NY", 42069, NULL, 1);
 	if (updatingStore) {
 		cout << endl << "Store updated" << endl;
 		cout << "ID: " << updatingStore->getId() << endl;

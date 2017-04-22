@@ -153,14 +153,14 @@ bool DatabaseManager::deleteStore(Store *store) {
 	return result;
 }
 
-Store* DatabaseManager::createStore(int id, string address, string city, string state, int zipCode, int priorityLevel) {
+Store* DatabaseManager::createStore(int id, string address, string city, string state, int zipCode, int priorityLevel, int isActive) {
 	sqlite3_stmt *stmt;
 	Store *newStore = nullptr;
 	
-	string sql = "insert into Store (Id, Address, City, State, ZipCode, PriorityLevel) values (" + quotesql(id) + "," + quotesql(address) + "," + quotesql(city) + ","+ quotesql(state) + "," + quotesql(zipCode) + "," + quotesql(priorityLevel) + ")";
+	string sql = "insert into Store (Id, Address, City, State, ZipCode, PriorityLevel, IsActive) values (" + quotesql(id) + "," + quotesql(address) + "," + quotesql(city) + ","+ quotesql(state) + "," + quotesql(zipCode) + "," + quotesql(priorityLevel) + "," + quotesql(isActive) + ")";
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
-			newStore = new Store(id, address, city, state, zipCode, priorityLevel);
+			newStore = new Store(id, address, city, state, zipCode, priorityLevel, isActive);
 		}
 	}
 	sqlite3_finalize(stmt);
@@ -168,7 +168,7 @@ Store* DatabaseManager::createStore(int id, string address, string city, string 
 	return newStore;
 }
 
-Store* DatabaseManager::updateStore(int id, string address = NULL, string city = NULL, string state = NULL, int zipCode = NULL, int priorityLevel = NULL) {
+Store* DatabaseManager::updateStore(int id, string address = NULL, string city = NULL, string state = NULL, int zipCode = NULL, int priorityLevel = NULL, int isActive = NULL) {
 	sqlite3_stmt *stmt;
 	Store *updatingStore = nullptr;
 
@@ -188,7 +188,7 @@ Store* DatabaseManager::updateStore(int id, string address = NULL, string city =
 	if (priorityLevel != NULL) {
 		baseSql += ", PriorityLevel = " + quotesql(priorityLevel);
 	}
-	baseSql += " WHERE Id = " + quotesql(id);
+	baseSql += ", IsActive = " + quotesql(isActive) + " WHERE Id = " + quotesql(id);
 
 	if (sqlite3_prepare_v2(db, baseSql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
@@ -205,7 +205,7 @@ Store* DatabaseManager::getStore(int storeId) {
 	sqlite3_stmt *stmt;
 	Store *result = nullptr;
 
-	string sql = "select Id, Address, City, State, ZipCode, PriorityLevel from Store where Id=" + quotesql(storeId);
+	string sql = "select Id, Address, City, State, ZipCode, PriorityLevel, IsActive from Store where Id=" + quotesql(storeId);
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 
 		if (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -215,8 +215,9 @@ Store* DatabaseManager::getStore(int storeId) {
 			string state      = sqlToString(sqlite3_column_text(stmt, 3));
 			int zipCode       = sqlite3_column_int(stmt, 4);
 			int priorityLevel = sqlite3_column_int(stmt, 5);
+			int isActive	  = sqlite3_column_int(stmt, 6);
 
-			result = new Store(id, address, city, state, zipCode, priorityLevel);
+			result = new Store(id, address, city, state, zipCode, priorityLevel, isActive);
 		}
 	}
 	sqlite3_finalize(stmt);
@@ -233,7 +234,7 @@ vector<Store*> DatabaseManager::getStores(unsigned int count) {
 		limitingSQL = " limit " + to_string(count);
 	}
 
-	string sql = "select Id, Address, City, State, ZipCode, PriorityLevel from Store" + limitingSQL;
+	string sql = "select Id, Address, City, State, ZipCode, PriorityLevel, IsActive from Store" + limitingSQL;
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 
@@ -246,8 +247,9 @@ vector<Store*> DatabaseManager::getStores(unsigned int count) {
 			string state = sqlToString(sqlite3_column_text(stmt, 3));
 			int zipCode = sqlite3_column_int(stmt, 4);
 			int priorityLevel = sqlite3_column_int(stmt, 5);
+			int isActive = sqlite3_column_int(stmt, 6);
 
-			store = new Store(id, address, city, state, zipCode, priorityLevel);
+			store = new Store(id, address, city, state, zipCode, priorityLevel, isActive);
 			stores.push_back(store);
 		}
 	}

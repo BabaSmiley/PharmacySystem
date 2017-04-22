@@ -6,13 +6,14 @@ using namespace std;
 struct Store {
 public:
 
-	Store(int id, string address, string city, string state, int zipCode, int priorityLevel) {
+	Store(int id, string address, string city, string state, int zipCode, int priorityLevel, int isActive) {
 		this->id = id;
 		this->address = address;
 		this->city = city;
 		this->state = state;
 		this->zipCode = zipCode;
 		this->priorityLevel = priorityLevel;
+		this->isActive = isActive;
 	}
 
 	int getId() { return id; }
@@ -26,6 +27,8 @@ public:
 	int getZipCode() { return zipCode; }
 
 	int getPriorityLevel() { return priorityLevel; }
+
+	int getIsActive() { return isActive; }
 
 	bool operator == (const Store& s) {
 		if (id == s.id && address == s.address && city == s.city &&
@@ -56,4 +59,5 @@ private:
 	string state;
 	int zipCode;
 	int priorityLevel;
+	int isActive;
 };
