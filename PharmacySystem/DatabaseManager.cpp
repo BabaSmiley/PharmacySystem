@@ -756,7 +756,7 @@ Discount* DatabaseManager::createDiscount(int storeId, int itemId, int percentOf
 			newDiscount = new Discount(storeId, itemId, percentOff, startDate, endDate);
 		}
 	}
-	printf("Error with SQL command: %s", sqlite3_errmsg(db));
+	
 	sqlite3_finalize(stmt);
 
 	return newDiscount;
