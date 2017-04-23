@@ -271,12 +271,12 @@ void runTests(DatabaseManager *dbm) {
 	//cout << testGetPrescription(dbm) << endl;
 
 	///INVENTORY DB FUNCTIONALITY
-	cout << testCreateInventory(dbm) << endl;
+	//cout << testCreateInventory(dbm) << endl;
 	//cout << testDeleteInventory(dbm) << endl;
 	//cout << testGetInventory(dbm) << endl;
 
 	///DISCOUNT DB FUNCTIONALITY
-	//cout << testCreateDiscount(dbm) << endl;
+	cout << testCreateDiscount(dbm) << endl;
 	//cout << testGetDiscount(dbm) << endl;
 	//cout << testDeleteDiscount(dbm) << endl;
 }
