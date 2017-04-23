@@ -225,6 +225,7 @@ void updateItemData(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) {
 	sequenceNo = incSeqNo(sequenceNo);
 }
 
+//DONE
 void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNoStoreUpdate, int &sequenceNoCreateStoreItems, int &sequenceNoDeleteStoreItems) {//Where stores are created and deleted in the database
 	batchLog << "=====Create/Delete Store=====";
 
@@ -334,6 +335,7 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo
 	sequenceNoDeleteStoreItems = incSeqNo(sequenceNoDeleteStoreItems);
 }
 
+//DONE
 void inventoryReceivedAtWarehouse(DatabaseManager *dbm, ofstream &batchLog, int sequenceNoDeleteStoreItems, int &sequenceNoItemReceived, int &sequenceNoWarehouseInventoryUpdate) { //Where warehouse item quantities are replenished
 	batchLog << "=====Inventory Received at Warehouse=====";
 
@@ -373,6 +375,7 @@ void inventoryReceivedAtWarehouse(DatabaseManager *dbm, ofstream &batchLog, int 
 	sequenceNoWarehouseInventoryUpdate = incSeqNo(sequenceNoWarehouseInventoryUpdate);
 }
 
+//DONE
 void inventoryToStoreRequest(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNoStoreUpdate, int sequenceNoCreateStoreItems, int &sequenceOnlineReq, int &sequenceNoBatchRev, int &sequenceNoReorder) /*
 Where stores request inventory from the warehouse.
 Note: there is no estimated date. Instantly deduct quantities from the warehouse
@@ -416,8 +419,23 @@ and add them to the stores
 	getline(input, line);
 
 	while (line[0] != 'T') {
-		//TODO: INCREASE STORE QUANTITIES AND LOWER WAREHOUSE QUANTITIES. NEEDS A DB FUNCTION.
-		//TODO: IF ORDER NOT FULFILLED WRITE TO AN ORDER NOT FULFILLED FILE.
+		int storeId = stoi(line.substr(1, 5));
+		int itemCode = stoi(line.substr(8, 9));
+		int requestedQty = stoi(line.substr(17, 10));
+		int qty = dbm->getItem(itemCode)->getWhLevel();
+
+		if (requestedQty <= qty) { //adjust quantites
+			//reduce warehouse qty
+			dbm->updateItem(itemCode, NULL, NULL, -1, NULL, -1, NULL, -1, -1, dbm->getItem(itemCode)->getWhLevel() - requestedQty/*<- increment qty*/, NULL);
+			//increment inventory qty
+			dbm->updateInventory(storeId, itemCode, dbm->getInventory(storeId, itemCode)->getItemLevel() + requestedQty);
+		}
+		else {
+			output << line << endl; //else send to be reordered again
+			batchLog << "Insufficient warehouse quantity to reorder item " << ZeroFillNumber(to_string(itemCode), 4) << " in store " << ZeroFillNumber(to_string(storeId), 4) << 
+				". Reordering next batch cycle" << endl;
+		}
+
 		getline(input, line);
 		trailerCountInput++;
 	}
