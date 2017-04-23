@@ -426,9 +426,9 @@ and add them to the stores
 
 		if (requestedQty <= qty) { //adjust quantites
 			//reduce warehouse qty
-			dbm->updateItem(itemCode, NULL, NULL, -1, NULL, -1, NULL, -1, -1, dbm->getItem(itemCode)->getWhLevel() - requestedQty/*<- increment qty*/, NULL);
+			dbm->updateItem(itemCode, NULL, NULL, -1, NULL, -1, NULL, -1, -1, qty - requestedQty/*<- increment qty*/, NULL);
 			//increment inventory qty
-			dbm->updateInventory(storeId, itemCode, dbm->getInventory(storeId, itemCode)->getItemLevel() + requestedQty);
+			dbm->updateInventory(storeId, itemCode, requestedQty);
 		}
 		else {
 			output << line << endl; //else send to be reordered again
