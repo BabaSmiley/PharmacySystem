@@ -36,6 +36,7 @@ void printHelp(UserType type) {
 		cout << "'manage item {item ID}' : Update the attributes of a item. Specify the item ID to make modifications." << endl;
 		cout << "'manage store {store ID}' : Update the attributes of a store. Specify the store ID to make modifications." << endl;
 		cout << "'create prescription': Will begin process to create a new prescription" << endl;
+		cout << "'create discount {item ID} {store ID}' : Will create a discount for the specified item in the specified store." << endl;
 	}
 	else if (type == Customer) {
 		cout << "'create review': Will begin process to leave a review for a store." << endl;
@@ -131,7 +132,7 @@ User* DebugGetEmployeeUser() {
 
 int main() {
 	DatabaseManager *dbm = DatabaseManager::shared();
-	runTests(dbm);
+	//runTests(dbm);
 	
 	/* Start Login & Registration Process */
 	// DEBUG - commented out so dont have to repeatadly sign in. Uncomment to reactivate the login feature
@@ -233,6 +234,9 @@ int main() {
 			else if (user->isEmployee() && "create prescription" == input.at(0) + " " + input.at(1)) {
 				CreatePrescriptionController prescriptionController;
 				prescriptionController.startCreatePrescription();
+			}
+			else if (user->isEmployee() && "create discount" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
+
 			}
 
 			else {

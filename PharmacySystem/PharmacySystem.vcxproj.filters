@@ -102,6 +102,9 @@
     <ClCompile Include="AddItem.cpp">
       <Filter>Source Files\DB Models</Filter>
     </ClCompile>
+    <ClCompile Include="CreateDiscountController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sqlite3.h">

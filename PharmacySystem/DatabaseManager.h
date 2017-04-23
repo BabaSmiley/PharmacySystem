@@ -160,6 +160,11 @@ public:
 	*/
 	vector<Inventory*> getStoreInventory(int storeId);
 
+	/* Updates a specified inventorys item level in the store
+		Returns: Returns a filled inventory object representing the DB Inventory model
+	*/
+	Inventory* updateInventory(int storeId, int itemId, long quantity);
+
 	/* Deletes all of the inventory for a store
 		Returns: Returns true if all inventory for store was successfully deleted
 	*/

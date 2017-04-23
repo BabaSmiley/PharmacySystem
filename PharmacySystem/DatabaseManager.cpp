@@ -696,6 +696,24 @@ vector<Inventory*> DatabaseManager::getAllInventory() {
 	return result;
 }
 
+Inventory* DatabaseManager::updateInventory(int storeId, int itemId, long quantity) {
+	sqlite3_stmt *stmt;
+	Inventory* result = getInventory(storeId, itemId);
+
+	long newLevel = result->getItemLevel() + quantity;
+
+	string sql = "UPDATE Inventory SET ItemLevel = " + quotesql(newLevel);
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			result = getInventory(storeId, itemId);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
 /// Reviews ///
 
 Review* DatabaseManager::createReview(int accountId, int storeId, int rating, string text, string date) {

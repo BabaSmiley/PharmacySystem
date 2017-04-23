@@ -276,7 +276,7 @@ void runTests(DatabaseManager *dbm) {
 	//cout << testGetInventory(dbm) << endl;
 
 	///DISCOUNT DB FUNCTIONALITY
-	cout << testCreateDiscount(dbm) << endl;
+	//cout << testCreateDiscount(dbm) << endl;
 	//cout << testGetDiscount(dbm) << endl;
 	//cout << testDeleteDiscount(dbm) << endl;
 }
