@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AddItem.cpp" />
     <ClCompile Include="BatchProcesses.cpp" />
     <ClCompile Include="CommonUserPrompts.cpp" />
     <ClCompile Include="Constants.h" />

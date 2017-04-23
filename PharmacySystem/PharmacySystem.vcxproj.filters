@@ -99,6 +99,9 @@
     <ClCompile Include="CommonUserPrompts.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AddItem.cpp">
+      <Filter>Source Files\DB Models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sqlite3.h">

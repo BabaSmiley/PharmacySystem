@@ -819,6 +819,65 @@ vector<Sale*> DatabaseManager::getSalesByItem(int itemId) {
 	return result;
 }
 
+/// Add Item For Reordering ///
+
+AddItem* DatabaseManager::createAddItemOrder(int itemId, int storeId, long quantity) {
+	sqlite3_stmt *stmt;
+	AddItem* result = nullptr;
+
+	string sql = "INSERT INTO AddItem (ItemId, StoreId, Quantity) VALUES (" + quotesql(itemId) + "," + quotesql(storeId) + "," + quotesql(quantity) + ")";
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			result = new AddItem(itemId, storeId, quantity);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
+vector<AddItem*> DatabaseManager::getAllAddItems() {
+	sqlite3_stmt *stmt;
+	vector<AddItem*> result;
+
+	string sql = "SELECT ItemId, StoreId, Quantity FROM AddItem";
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		while (sqlite3_step(stmt) == SQLITE_OK) {
+			AddItem *addItem;
+
+			int itemId = sqlite3_column_int(stmt, 0);
+			int storeId = sqlite3_column_int(stmt, 1);
+			long quantity = sqlite3_column_int(stmt, 2);
+
+			addItem = new AddItem(itemId, storeId, quantity);
+
+			result.push_back(addItem);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
+bool DatabaseManager::clearAddItems() {
+	sqlite3_stmt *stmt;
+	bool result = false;
+	string sql = "DELETE FROM AddItem";
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			result = true;
+		}
+	}
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
 
 
 

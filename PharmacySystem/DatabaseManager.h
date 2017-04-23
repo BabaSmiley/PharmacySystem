@@ -16,6 +16,7 @@
 #include "Review.cpp"
 #include "Sale.cpp"
 #include "Discount.cpp"
+#include "AddItem.cpp"
 
 class DatabaseManager
 {
@@ -194,6 +195,21 @@ public:
 		Returns: Returns a discount object
 	*/
 	Discount* getDiscount(int storeId, int itemId);
+
+	/* Adds item to AddItem database
+		Returns: Returns an add item object representing a DB AddItem model
+	*/
+	AddItem* createAddItemOrder(int itemId, int storeId, long quantity);
+
+	/* Gets list of all items requested in AddItem DB
+		Returns: Returns list of all items in AddItem DB
+	*/
+	vector<AddItem*> getAllAddItems();
+
+	/* Clears AddItems table after retrieving them
+		Returns returns true if table was cleared successfully
+	*/
+	bool clearAddItems();
 
 
 	/* Returns quantity set for an item reorder
