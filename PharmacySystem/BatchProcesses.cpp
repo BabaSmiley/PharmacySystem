@@ -291,7 +291,6 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo
 		}
 		else if (line[0] == 'D') {
 			//|action code 'A' or 'D'|store id|street address|city name|state|zip code|store priority level|
-			//TODO: DELETE STORE AND WRITE ALL ITEM QUANTITIES TO THE DELETESTOREITEMS.txt
 			string storeID = line.substr(1, 5);
 			string storeAddress = line.substr(6, 20);
 			string storeCity = line.substr(26, 20);
@@ -308,9 +307,9 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo
 
 				for (int i = 0; i < storeInventory.size(); i++) {
 					int itemId = storeInventory[i]->getItemId();
-					int storeQty = storeInventory[i]->getItemLevel();
-					//updateItem(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, int isActive)
-					dbm->updateItem(itemId, NULL, NULL, -1, NULL, -1, NULL, -1, -1, dbm->getItem(itemId)->getWhLevel() + storeQty/*<- increment qty*/, NULL);
+					int vendorCode = dbm->getItem(itemId)->getVendorId();
+					outInvRecAtWarehouse << ZeroFillNumber(to_string(vendorCode), 4) << ZeroFillNumber(to_string(itemId), 9) << ZeroFillNumber(to_string(storeInventory[i]->getItemLevel()), 10) << endl;
+					InvRecAtWarehouseCounter++;
 				}
 
 				dbm->deleteStoreInventory(stoi(storeID));
@@ -359,7 +358,9 @@ void inventoryReceivedAtWarehouse(DatabaseManager *dbm, ofstream &batchLog, int 
 	getline(input, line);
 
 	while (line[0] != 'T') {
-		//TODO: INCREMENT WAREHOUSE ITEM QUANTITIES VIA BATCH FUNCTION
+		int itemId = stoi(line.substr(4, 9));
+		//updateItem(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, int isActive)
+		dbm->updateItem(itemId, NULL, NULL, -1, NULL, -1, NULL, -1, -1, dbm->getItem(itemId)->getWhLevel() + stoi(line.substr(13, 10))/*<- increment qty*/, NULL);
 		getline(input, line);
 		trailerCount++;
 	}
