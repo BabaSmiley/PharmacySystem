@@ -79,7 +79,7 @@ void WriteBatchReviewFile(DatabaseManager *dbm, int seqNo) {
 	out << "HD " << ZeroFillNumber(to_string(seqNo), 4) << endl;
 
 	int trailerCounter = 0;
-	vector<Inventory*> inv;//= getAllInventory();
+	vector<Inventory*> inv = dbm->getAllInventory();
 
 	for (int i = 0; i < inv.size(); i++)
 		if (inv[i]->getItemLevel() <= inv[i]->getRefillLevel()) {
@@ -88,6 +88,19 @@ void WriteBatchReviewFile(DatabaseManager *dbm, int seqNo) {
 				ZeroFillNumber(to_string( inv[i]->getItemId()), 9) << ZeroFillNumber(to_string(inv[i]->getRefillQuantity()), 10) << endl;
 			trailerCounter++;
 		}
+
+	out << "T " << ZeroFillNumber(to_string(trailerCounter), 4);
+}
+
+void WriteCreateStoreItemsFile(DatabaseManager *dbm, int seqNo) {
+	ofstream out("createstoreitems.txt");
+
+	out << "HD " << ZeroFillNumber(to_string(seqNo), 4) << endl;
+
+	int trailerCounter = 0;
+
+	//TODO: get AddItem tuples from database, delete additem tuples from database, use loop to write to file.
+	//for (int i = 0; i < )
 
 	out << "T " << ZeroFillNumber(to_string(trailerCounter), 4);
 }
@@ -253,7 +266,7 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo
 			string StorePriority = line.substr(57, 2);
 
 			//|action code 'A' or 'D'|store id|street address|city name|state|zip code|store priority level|
-			dbm->createStore(stoi(storeID), storeAddress, storeCity, storeState, stoi(storeZip), stoi(StorePriority), 1);
+			dbm->createStore(stoi(storeID), RemoveSpaces(storeAddress), RemoveSpaces(storeCity), RemoveSpaces(storeState), stoi(storeZip), stoi(StorePriority), 1);
 			int controlCount = 0;
 			getline(input, line);
 
@@ -279,6 +292,20 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo
 		else if (line[0] == 'D') {
 			//|action code 'A' or 'D'|store id|street address|city name|state|zip code|store priority level|
 			//TODO: DELETE STORE AND WRITE ALL ITEM QUANTITIES TO THE DELETESTOREITEMS.txt
+			string storeID = line.substr(1, 5);
+			string storeAddress = line.substr(6, 20);
+			string storeCity = line.substr(26, 20);
+			string storeState = line.substr(46, 2);
+			string storeZip = line.substr(48, 9);
+			string StorePriority = line.substr(57, 2);
+
+			//Store(int id, string address, string city, string state, int zipCode, int priorityLevel, int isActive)
+			Store* tmp = new Store(stoi(storeID), RemoveSpaces(storeAddress), RemoveSpaces(storeCity), RemoveSpaces(storeState), stoi(storeZip), stoi(StorePriority), 1);
+			Store* store = dbm->getStore(stoi(storeID));
+
+			if (store == tmp) { //All fields match
+
+			}
 		}
 
 		getline(input, line);
@@ -336,7 +363,7 @@ void inventoryReceivedAtWarehouse(DatabaseManager *dbm, ofstream &batchLog, int 
 	sequenceNoWarehouseInventoryUpdate = incSeqNo(sequenceNoWarehouseInventoryUpdate);
 }
 
-void inventoryToStoreRequest(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNoStoreUpdate, int sequenceNoCreateStoreItems, int &sequenceOnlineReq, int &sequenceNoBatchRev) /*
+void inventoryToStoreRequest(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNoStoreUpdate, int sequenceNoCreateStoreItems, int &sequenceOnlineReq, int &sequenceNoBatchRev, int &sequenceNoReorder) /*
 Where stores request inventory from the warehouse.
 Note: there is no estimated date. Instantly deduct quantities from the warehouse
 and add them to the stores
@@ -344,7 +371,7 @@ and add them to the stores
 	batchLog << "=====Inventory To Store Request=====";
 
 	WriteBatchReviewFile(dbm, sequenceNoBatchRev);
-	//WriteOnlineRequestFile();
+	WriteCreateStoreItemsFile(dbm, sequenceNoCreateStoreItems);
 
 	//Code to combine all 3 record files into one file
 	vector<string> records = getRecords(batchLog, sequenceNoCreateStoreItems, "createstoreitems.txt");
@@ -353,13 +380,19 @@ and add them to the stores
 	records.insert(records.begin(), tmp.begin(), tmp.end());
 	tmp = getRecords(batchLog, sequenceNoBatchRev, "batchreview.txt");
 	records.insert(records.begin(), tmp.begin(), tmp.end());
+	tmp = getRecords(batchLog, sequenceNoBatchRev, "reorder.txt");
+	records.insert(records.begin(), tmp.begin(), tmp.end());
 
 	records = SortRecords(records);
-	writeFile( records, sequenceNoStoreUpdate, "storeupdate.txt");
+	writeFile(records, sequenceNoStoreUpdate, "storeupdate.txt");
+
+	ofstream output("reorder.txt");
+	sequenceNoReorder = incSeqNo(sequenceNoReorder);
+	output << "HD " << ZeroFillNumber(to_string(sequenceNoReorder), 4) << endl;
 
 	ifstream input("storeupdate.txt");
 	string line;
-	int trailerCount = 0;
+	int trailerCountInput = 0, trailerCountOutput = 0;
 
 	getline(input, line);
 
@@ -374,13 +407,16 @@ and add them to the stores
 
 	while (line[0] != 'T') {
 		//TODO: INCREASE STORE QUANTITIES AND LOWER WAREHOUSE QUANTITIES. NEEDS A DB FUNCTION.
+		//TODO: IF ORDER NOT FULFILLED WRITE TO AN ORDER NOT FULFILLED FILE.
 		getline(input, line);
-		trailerCount++;
+		trailerCountInput++;
 	}
 
-	if (stoi(line.substr(2, 4)) != trailerCount)
+	if (stoi(line.substr(2, 4)) != trailerCountInput)
 		batchLog << "storeupdate.txt trailer mismatch. Expected" + line.substr(2, 4)
-		+ " got " + to_string(trailerCount);
+		+ " got " + to_string(trailerCountInput);
+
+	output << "T " << ZeroFillNumber(to_string(trailerCountOutput), 4);
 
 	sequenceNoStoreUpdate = incSeqNo(sequenceNoStoreUpdate);
 	sequenceOnlineReq = incSeqNo(sequenceOnlineReq);
@@ -492,7 +528,7 @@ void runBatchSequence(DatabaseManager *dbm) { //Calls all of the batch sequences
 
 	ifstream sequencesIn("sequences.txt"); //reads old sequence numbers
 	vector<int> sequenceNos;
-	for (int i = 1; i <= 11; i++)
+	for (int i = 1; i <= 12; i++)
 		sequencesIn >> sequenceNos[i - 1];
 	vector<int> oldsequenceNos = sequenceNos;
 
@@ -509,15 +545,16 @@ void runBatchSequence(DatabaseManager *dbm) { //Calls all of the batch sequences
 	8: vendororder.txt
 	9: reports.txt
 	10: warehouseinventoryupdate.txt
+	11: reorder.txt
 	*/
 	updateItemData(dbm, batchLog, sequenceNos[0]);
 	createDeleteStore(dbm, batchLog, sequenceNos[1], sequenceNos[2], sequenceNos[3]);
 	inventoryReceivedAtWarehouse(dbm, batchLog, oldsequenceNos[3], sequenceNos[4], sequenceNos[10]);
-	inventoryToStoreRequest(dbm, batchLog, sequenceNos[7], oldsequenceNos[2], sequenceNos[6], sequenceNos[5]);
+	inventoryToStoreRequest(dbm, batchLog, sequenceNos[7], oldsequenceNos[2], sequenceNos[6], sequenceNos[5], sequenceNos[11]);
 	inventoryGeneration(dbm, batchLog, sequenceNos[8]);
 	yearlySales(dbm, batchLog, sequenceNos[9]);
 
 	ofstream sequencesOut("sequences.txt"); //Writes new sequence numbers to same file
-	for (int i = 1; i <= 11; i++)
+	for (int i = 1; i <= 12; i++)
 		sequencesOut << sequenceNos[i - 1];
 }
