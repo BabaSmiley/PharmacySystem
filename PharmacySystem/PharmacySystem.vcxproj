@@ -155,7 +155,7 @@
     <ClCompile Include="BatchProcesses.cpp" />
     <ClCompile Include="CommonUserPrompts.cpp" />
     <ClCompile Include="Constants.h" />
-    <ClCompile Include="CreateDiscountController.cpp" />
+    <ClCompile Include="DiscountController.cpp" />
     <ClCompile Include="CreatePrescriptionController.cpp" />
     <ClCompile Include="CreateReviewController.cpp" />
     <ClCompile Include="DatabaseManager.cpp" />

@@ -14,6 +14,7 @@
 #include "CreatePrescriptionController.cpp"
 #include "ItemViewController.cpp"
 #include "CreateReviewController.cpp";
+#include "DiscountController.cpp"
 using namespace std;
 
 /// Will clear the windows console
@@ -37,6 +38,7 @@ void printHelp(UserType type) {
 		cout << "'manage store {store ID}' : Update the attributes of a store. Specify the store ID to make modifications." << endl;
 		cout << "'create prescription': Will begin process to create a new prescription" << endl;
 		cout << "'create discount {item ID} {store ID}' : Will create a discount for the specified item in the specified store." << endl;
+		cout << "'delete discount {item ID} {store ID}' : Will delete a discount from the database for the specified item ID and store ID." << endl;
 	}
 	else if (type == Customer) {
 		cout << "'create review': Will begin process to leave a review for a store." << endl;
@@ -236,7 +238,12 @@ int main() {
 				prescriptionController.startCreatePrescription();
 			}
 			else if (user->isEmployee() && "create discount" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
-
+				DiscountController discountController;
+				discountController.promptForCreateInput(stoi(input.at(2)), stoi(input.at(3)));
+			}
+			else if (user->isEmployee() && "delete discount" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
+				DiscountController discountController;
+				discountController.deleteDiscount(stoi(input.at(2)), stoi(input.at(3)));
 			}
 
 			else {
