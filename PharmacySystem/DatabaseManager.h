@@ -160,6 +160,11 @@ public:
 	*/
 	vector<Inventory*> getStoreInventory(int storeId);
 
+	/* Deletes all of the inventory for a store
+		Returns: Returns true if all inventory for store was successfully deleted
+	*/
+	bool deleteStoreInventory(int storeId);
+
 	/* Gets a list of all inventory company wide
 		Returns: Returns a vector of inventory objects across the whole company
 	*/
