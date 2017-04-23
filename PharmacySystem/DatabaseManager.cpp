@@ -702,7 +702,7 @@ Inventory* DatabaseManager::updateInventory(int storeId, int itemId, long quanti
 
 	long newLevel = result->getItemLevel() + quantity;
 
-	string sql = "UPDATE Inventory SET ItemLevel = " + quotesql(newLevel);
+	string sql = "UPDATE Inventory SET ItemLevel = " + quotesql(newLevel) + " WHERE StoreId = " + quotesql(storeId) + " AND ItemId = " + quotesql(itemId);
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
 			result = getInventory(storeId, itemId);
