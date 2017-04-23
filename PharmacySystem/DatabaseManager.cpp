@@ -653,6 +653,21 @@ vector<Inventory*> DatabaseManager::getStoreInventory(int storeId) {
 	return result;
 }
 
+bool DatabaseManager::deleteStoreInventory(int storeId) {
+	sqlite3_stmt *stmt;
+	bool result = false;
+	string sql = "DELETE FROM Inventory WHERE StoreId = " + quotesql(storeId);
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			result = true;
+		}
+	}
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
 vector<Inventory*> DatabaseManager::getAllInventory() {
 	sqlite3_stmt *stmt;
 	vector<Inventory*> result;
