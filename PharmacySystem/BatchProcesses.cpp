@@ -304,7 +304,16 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo
 			Store* store = dbm->getStore(stoi(storeID));
 
 			if (store == tmp) { //All fields match
+				vector<Inventory*> storeInventory = dbm->getStoreInventory(stoi(storeID));
 
+				for (int i = 0; i < storeInventory.size(); i++) {
+					int itemId = storeInventory[i]->getItemId();
+					int storeQty = storeInventory[i]->getItemLevel();
+					//updateItem(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, int isActive)
+					dbm->updateItem(itemId, NULL, NULL, -1, NULL, -1, NULL, -1, -1, dbm->getItem(itemId)->getWhLevel() + storeQty/*<- increment qty*/, NULL);
+				}
+
+				dbm->deleteStoreInventory(stoi(storeID));
 			}
 		}
 
