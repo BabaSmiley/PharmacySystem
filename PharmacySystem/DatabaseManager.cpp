@@ -945,8 +945,6 @@ vector<vector<string>> DatabaseManager::query(const char *sql) {
 }
 
 
-
-
 /* ----------------- HELPERS ----------------- */
 
 Item* DatabaseManager::itemFromSQL(sqlite3_stmt *stmt) {

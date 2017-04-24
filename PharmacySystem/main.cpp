@@ -33,7 +33,7 @@ void printHelp(UserType type) {
 	if (type == Employee) {
 		cout << "'create prescription' : Will begin process to create a customer prescription." << endl;
 		cout << "'view history {customer username}' : View the history of a customer. Specify the customer's username to view their history." << endl;
-		cout << "'list items {number of items}': Will list all items in the system. Optionally can state the number of items to show." << endl;
+		cout << "'list items {store ID} {number of items}': Will list all items in given store. Optionally can state the number of items to show." << endl;
 		cout << "'manage item {item ID}' : Update the attributes of a item. Specify the item ID to make modifications." << endl;
 		cout << "'manage store {store ID}' : Update the attributes of a store. Specify the store ID to make modifications." << endl;
 		cout << "'create prescription': Will begin process to create a new prescription" << endl;
@@ -121,8 +121,8 @@ void printHistory(DatabaseManager *dbm, int customerId) {
 	cout << string(40, '-') << endl << endl;
 }
 
-void printItemTable(unsigned int count = NULL) {
-	ItemViewController::printItemTable(count);
+void printItemTable(Store *store, unsigned int count = NULL) {
+	ItemViewController::printItemTable(store, count);
 }
 
 //DEBUG
@@ -213,17 +213,23 @@ int main() {
 			}
 
 			// Employee Specific Commands
-			else if (user->isEmployee() && "list items" == input.at(0) + " " + input.at(1)) {
-				if (input.size() > 2) {
-					int countInput = stoi(input.at(2));
+			else if (user->isEmployee() && "list items" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
+				Store *store = dbm->getStore(stoi(input.at(2)));
+				if (store == nullptr) { //Guard
+					cout << "A store does not exist for this id" << endl << endl;
+					throw exception("Store does not exist.");
+				}
+
+				if (input.size() > 3) {
+					int countInput = stoi(input.at(3));
 					if (countInput <= 0) { //is signed
 						throw exception("Input is a signed int. Expected unsigned.");
 					}
 					unsigned int count = (unsigned int)countInput;
-					printItemTable(count);
+					printItemTable(store, count);
 				}
 				else {
-					printItemTable();
+					printItemTable(store);
 				}
 			}
 			else if (user->isEmployee() && "manage store" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {

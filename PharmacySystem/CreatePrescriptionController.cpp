@@ -35,7 +35,7 @@ public:
 		vector<ItemOrder*> ordersToInclude;
 		ItemOrder *currentOrder;
 		do {
-			currentOrder = getItemOrderFromInput();
+			currentOrder = getItemOrderFromInput(store);
 			if (currentOrder != nullptr) {
 				ordersToInclude.push_back(currentOrder);
 			}
@@ -98,14 +98,16 @@ private:
 	const char *endProcessMessage = "Ended create prescription process.";
 	const char *itemDoesNotExistMessage = "That item does not exist.";
 
-	/// Prompts user for input of an item name and quantity. Will return an ItemOrder if successful, or nullptr if user types 'exit' during method
-	ItemOrder* getItemOrderFromInput() {
+	/* Prompts user for input of an item name and quantity. Will return an ItemOrder if successful, or nullptr if user types 'exit' during method
+		Parameter store: A existing store object to be used for printing items from the store
+	*/
+	ItemOrder* getItemOrderFromInput(Store *store) {
 		ItemOrder *itemOrder = nullptr;
 
 		while (itemOrder == nullptr) {
 
-			cout << endl << "Enter an item's name to add to the prescription:" << endl << "(Or type 'list items' to a view a list of all items) ('exit' to cancel)" << endl;
-			string userInput = getInput("item");
+			cout << endl << "Enter an item's id to add to the prescription:" << endl << "(Or type 'list items' to a view a list of all items) ('exit' to cancel)" << endl;
+			string userInput = getInput("item id");
 
 			vector<string> input = splitString(userInput, " ");
 
@@ -114,10 +116,12 @@ private:
 					return nullptr;
 				}
 				else if (input.size() == 2 &&  "list items" == input.at(0) + " " + input.at(1)) {
-					printItemTable();
+					printItemTable(store);
 				}
 				else {
-					Item *resultForInput = DatabaseManager::shared()->getItem(userInput);
+					int itemId = stoi(userInput);
+
+					Item *resultForInput = DatabaseManager::shared()->getItem(itemId);
 					if (resultForInput == nullptr) {
 						throw exception(); //result nonexistant
 					}
@@ -145,8 +149,8 @@ private:
 
 
 	/* HELPERS */
-	void printItemTable() {
-		ItemViewController::printItemTable();
+	void printItemTable(Store *store) {
+		ItemViewController::printItemTable(store);
 	}
 
 };
