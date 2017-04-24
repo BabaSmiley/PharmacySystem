@@ -899,6 +899,33 @@ vector<AddItem*> DatabaseManager::getAllAddItems() {
 	return result;
 }
 
+AddItem* DatabaseManager::getAddItem(int storeId, int itemId) {
+	sqlite3_stmt *stmt;
+	AddItem* result = nullptr;
+
+	string sql = "SELECT Quantity FROM AddItem WHERE ItemId=" + quotesql(itemId) + " AND StoreId=" + quotesql(storeId) + " LIMIT 1";
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_ROW) {
+			int quantity = sqlite3_column_int(stmt, 0);
+			result = new AddItem(itemId, storeId, quantity);
+		}
+	}
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
+void DatabaseManager::setAddItemQuantity(int storeId, int itemId, int newQuantity) {
+	sqlite3_stmt *stmt;
+
+	string sql = "UPDATE AddItem SET Quantity=" + quotesql(newQuantity) + " WHERE StoreId=" + quotesql(storeId) + " AND ItemId=" + quotesql(itemId);
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		sqlite3_step(stmt);
+	}
+	sqlite3_finalize(stmt);
+}
+
 bool DatabaseManager::clearAddItems() {
 	sqlite3_stmt *stmt;
 	bool result = false;
@@ -914,9 +941,7 @@ bool DatabaseManager::clearAddItems() {
 	return result;
 }
 
-
-
-
+/* Test
 vector<vector<string>> DatabaseManager::query(const char *sql) {
 	sqlite3_stmt *stmt;
 	vector<vector<string>> results;
@@ -942,8 +967,7 @@ vector<vector<string>> DatabaseManager::query(const char *sql) {
 	}
 	sqlite3_finalize(stmt);
 	return results;
-}
-
+} */
 
 /* ----------------- HELPERS ----------------- */
 

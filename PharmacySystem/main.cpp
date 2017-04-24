@@ -155,7 +155,7 @@ int main() {
 					cout << "Reorder was not placed." << endl << endl;
 				}
 				else {
-					cout << "Reorder was placed for store #" << reorder->getStoreId() << ", item #" << reorder->getItemId() << " at quantity " << reorder->getQuantity() << "." << endl << endl;
+					cout << "Reorder was set for store #" << reorder->getStoreId() << ", item #" << reorder->getItemId() << " to quantity " << reorder->getQuantity() << "." << endl << endl;
 				}
 			}
 			else if (user->isEmployee() && "list items" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {

@@ -33,18 +33,24 @@ public:
 		}
 
 		// Reach here if store, item, and quantity have all been entered
-		AddItem *reorder = DatabaseManager::shared()->createAddItemOrder(item->getId(), store->getId(), quantity);
+		AddItem *reorder;
+
+		AddItem *existingReorder = DatabaseManager::shared()->getAddItem(store->getId(), item->getId());
+		if (existingReorder != nullptr) {
+
+			/* Add quantity to the old entry */
+			int updatedQuantity = existingReorder->getQuantity() + quantity;
+			DatabaseManager::shared()->setAddItemQuantity(store->getId(), item->getId(), updatedQuantity);
+			reorder = new AddItem(store->getId(), item->getId(), updatedQuantity); //Create new object with updated qty
+		}
+		else {
+
+			/* Create a new reorder entry */
+			AddItem *newReorder = DatabaseManager::shared()->createAddItemOrder(item->getId(), store->getId(), quantity);
+			reorder = newReorder;
+		}
 
 		return reorder;
 	}
-
-
-private:
-
-	
-
-
-
-	
 
 };

@@ -217,6 +217,15 @@ public:
 	*/
 	vector<AddItem*> getAllAddItems();
 
+	/* Get an AddItem for a given store and item
+		Returns: An AddItem which has the store and item id passed. Or nullptr if none is found.
+	*/
+	AddItem* getAddItem(int storeId, int itemId);
+
+	/* Set the reorder quantity for a given item at a given store
+	*/
+	void setAddItemQuantity(int storeId, int itemId, int newQuantity);
+
 	/* Clears AddItems table after retrieving them
 		Returns returns true if table was cleared successfully
 	*/
@@ -226,17 +235,17 @@ public:
 	/* Returns quantity set for an item reorder
 		Returns: An integer for the current reorder quantity for a given item at a given store
 	*/
-	int getReorderQuantity(int storeId, int itemId);
+	//int getReorderQuantity(int storeId, int itemId);
 
 	/* Set the reorder quantity for a given item at a given store
 		Returns: returns true if value was changed successfully in the database
 	*/
-	bool setReorderQuantity(int storeId, int itemId);
+	//bool setReorderQuantity(int storeId, int itemId);
 
 	/* Deleted a reorder record from the database
 		Returns: returns true if the reorder record delete was successful
 	*/
-	bool deleteReorderRecord(int storeId, int itemId);
+	//bool deleteReorderRecord(int storeId, int itemId);
 
 private:
 	//static DatabaseManager *sharedInstance;

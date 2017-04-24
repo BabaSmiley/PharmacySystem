@@ -51,7 +51,7 @@ private:
 		Post: `authorizedUser` will point to a valid user in the database
 	*/
 	void promptForInput() {
-		bool shouldRepeat = false;
+		bool shouldRepeat = true;
 
 		do {
 			printInitialText();
