@@ -6,7 +6,6 @@
 #include "DatabaseManager.h"
 #include "User.cpp"
 #include "DatabaseManagerTests.h"
-
 // Controllers
 #include "LoginRegistrationController.cpp"
 #include "ManageStore.cpp"
@@ -14,12 +13,10 @@
 #include "PrescriptionController.cpp"
 #include "ReviewController.cpp";
 #include "DiscountController.cpp"
-
 // Utils
 #include "ItemTablePrinter.cpp"
 #include "PrescriptionHistoryTablePrinter.cpp"
 #include "StoresTablePrinter.cpp"
-
 using namespace std;
 
 // String Constants
@@ -94,8 +91,8 @@ int main() {
 	//runTests(dbm);
 	
 	/* Start Login & Registration Process */
-	/* DEBUG - commented out so dont have to repeatadly sign in. Uncomment to reactivate the login feature
-	LoginRegistration lr;
+	// DEBUG - commented out so dont have to repeatadly sign in. Uncomment to reactivate the login feature
+	LoginRegistrationController lr;
 	lr.displayScreen();
 
 	User *user = lr.getAuthorizedUser();
@@ -103,10 +100,9 @@ int main() {
 		cout << "[!] An error occured in logging in. Please close the program and try again." << endl;
 		return 1; //1 is standardly returned for entire program errors 
 	}
-	*/
-	User *user = DebugGetEmployeeUser();
+	
+	//User *user = DebugGetEmployeeUser();
 
-	//clearWindowsConsole();
 	cout << string(8, '*') << " Logged in as: " << user->getUsername() << " " << string(8, '*') << endl;
 	
 	/* Take User Online Input For Commands */
@@ -216,7 +212,7 @@ int main() {
 		}
 		catch (const exception& err) {
 			// Catch any out_of_range errors, etc.
-			cerr << "Caught exception: " << err.what() << endl; //DEBUG
+			//cerr << "Caught exception: " << err.what() << endl; //DEBUG
 			cout << "Invalid command. Type 'help' for a list of available commands." << endl;
 		}
 	}

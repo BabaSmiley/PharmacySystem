@@ -68,8 +68,6 @@ private:
 				}
 				else {
 					cout << "[!] Invalid command." << endl << endl;
-
-					promptForInput(); //re-prompt for input
 				}
 			}
 			catch (const char* msg) {
