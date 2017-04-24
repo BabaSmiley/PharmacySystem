@@ -28,6 +28,9 @@
     <Filter Include="Source Files\Database">
       <UniqueIdentifier>{7db83375-2457-4d79-a71b-5814c2b3100f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Controllers">
+      <UniqueIdentifier>{87343811-3d16-4235-a56e-2aa8366549f5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -50,9 +53,6 @@
     </ClCompile>
     <ClCompile Include="Utils\ASCIIBlockM.cpp">
       <Filter>Source Files\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="LoginRegistration.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Item.cpp">
       <Filter>Source Files\DB Models</Filter>
@@ -78,29 +78,14 @@
     <ClCompile Include="ManageItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CreatePrescriptionController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ItemViewController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Sale.cpp">
       <Filter>Source Files\DB Models</Filter>
     </ClCompile>
     <ClCompile Include="Discount.cpp">
       <Filter>Source Files\DB Models</Filter>
     </ClCompile>
-    <ClCompile Include="CreateReviewController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CommonUserPrompts.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AddItem.cpp">
       <Filter>Source Files\DB Models</Filter>
-    </ClCompile>
-    <ClCompile Include="DiscountController.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DatabaseManager.cpp">
       <Filter>Source Files\Database</Filter>
@@ -110,6 +95,30 @@
     </ClCompile>
     <ClCompile Include="CommandUtils.cpp">
       <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemTablePrinter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DiscountController.cpp">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="LoginRegistrationController.cpp">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonUserPrompts.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="ReviewController.cpp">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="PrescriptionController.cpp">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="PrescriptionHistoryTablePrinter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StoresTablePrinter.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

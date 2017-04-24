@@ -157,14 +157,15 @@
     <ClCompile Include="Constants.h" />
     <ClCompile Include="DatabaseUtils.cpp" />
     <ClCompile Include="DiscountController.cpp" />
-    <ClCompile Include="CreatePrescriptionController.cpp" />
-    <ClCompile Include="CreateReviewController.cpp" />
+    <ClCompile Include="PrescriptionController.cpp" />
+    <ClCompile Include="PrescriptionHistoryTablePrinter.cpp" />
+    <ClCompile Include="ReviewController.cpp" />
     <ClCompile Include="DatabaseManager.cpp" />
     <ClCompile Include="Discount.cpp" />
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Item.cpp" />
-    <ClCompile Include="ItemViewController.cpp" />
-    <ClCompile Include="LoginRegistration.cpp" />
+    <ClCompile Include="ItemTablePrinter.cpp" />
+    <ClCompile Include="LoginRegistrationController.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ManageItem.cpp" />
     <ClCompile Include="ManageStore.cpp" />
@@ -178,6 +179,7 @@
     </ClCompile>
     <ClCompile Include="Store.cpp" />
     <ClCompile Include="CommandUtils.cpp" />
+    <ClCompile Include="StoresTablePrinter.cpp" />
     <ClCompile Include="Tests\DatabaseManagerTests.cpp" />
     <ClCompile Include="User.cpp" />
     <ClCompile Include="Utils\ASCIIBlockM.cpp" />

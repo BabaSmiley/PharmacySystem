@@ -8,18 +8,28 @@
 #include "DatabaseManagerTests.h"
 
 // Controllers
-#include "LoginRegistration.cpp"
+#include "LoginRegistrationController.cpp"
 #include "ManageStore.cpp"
 #include "ManageItem.cpp"
-#include "CreatePrescriptionController.cpp"
-#include "ItemViewController.cpp"
-#include "CreateReviewController.cpp";
+#include "PrescriptionController.cpp"
+#include "ReviewController.cpp";
 #include "DiscountController.cpp"
+
+// Utils
+#include "ItemTablePrinter.cpp"
+#include "PrescriptionHistoryTablePrinter.cpp"
+#include "StoresTablePrinter.cpp"
+
 using namespace std;
+
+// String Constants
+const char *helpMessagePrompt = "Enter a command to begin. Or type 'help' to get a list of available commands.";
+
 
 /// Will clear the windows console
 void clearWindowsConsole() {
 	system("cls");
+	cout << helpMessagePrompt << endl << endl;
 }
 
 void printHelp(UserType type) {
@@ -51,15 +61,6 @@ void printHelp(UserType type) {
 	cout << "#########################" << endl;
 }
 
-void printStores(DatabaseManager *dbm, unsigned int count = NULL) {
-	vector<Store*> stores = dbm->getStores(count);
-	cout << "Stores:" << endl;
-	for (Store* store : stores) {
-		cout << "[id " << store->getId() << "] " << store->getAddress() << " " << store->getCity() << ", " << store->getState() << " " << store->getZipCode() << endl;
-	}
-	cout << endl;
-}
-
 void printStoreReviews(DatabaseManager *dbm, Store *store) {
 	vector<Review*> reviews = dbm->getReviews(store->getId());
 
@@ -74,55 +75,12 @@ void printStoreReviews(DatabaseManager *dbm, Store *store) {
 		cout << "By " << reviewer->getUsername() << " on " << review->getDate() << "\t" << "Rating: " << review->getRating() << "/5" << endl << endl;
 		cout << review->getText() << endl;
 	}
-
 	cout << endl;
 }
 
-void printHistory(DatabaseManager *dbm, int customerId) {
-	vector<Prescription*> prescriptions = dbm->getPrescriptionHistory(customerId);
-
-	cout << "Prescriptions:" << endl;
-	if (prescriptions.size() == 0) {
-		cout << "No prescriptions found for this user." << endl;
-	}
-
-	for (Prescription *p : prescriptions) {
-		User *customer = dbm->getUser(customerId);
-		if (customer == nullptr) { continue; } //Guard
-
-		vector<Purchase*> purchases = dbm->getPurchases(p);
-		if (purchases.size() == 0) { continue; } //Guard
-
-		cout << string(40, '-') << endl;
-		cout << "Prescription on " << p->getDate() << " by " << customer->getUsername() << ". " << "Store: " << p->getStoreId() << endl;
-		
-		const char separator = ' ';
-		const int nameWidth = 32;
-		const int numWidth = 8;
-
-		cout << left << setw(nameWidth) << setfill(separator) << "Name";
-		cout << left << setw(numWidth) << setfill(separator) << "Qty";
-		cout << left << setw(numWidth) << setfill(separator) << "Sale Price" << endl << endl;
-
-		for (Purchase* purchase : purchases) {
-			Item *item = dbm->getItem(purchase->getItemId());
-
-			string parsedName = item->getName();
-			if (parsedName.size() >= nameWidth) {
-				parsedName = parsedName.substr(0, nameWidth - 4) + "...";
-			}
-
-			cout << left << setw(nameWidth) << setfill(separator) << parsedName;
-			cout << left << setw(numWidth) << setfill(separator) << purchase->getQuantity();
-			cout << left << setw(numWidth) << setfill(separator) << "$" + to_string(purchase->getSalePrice());
-			cout << endl;
-		}
-	}
-	cout << string(40, '-') << endl << endl;
-}
-
 void printItemTable(Store *store, unsigned int count = NULL) {
-	ItemViewController::printItemTable(store, count);
+	DatabaseManager *dbm = DatabaseManager::shared();
+	ItemTablePrinter::printItemTable(dbm, store, count);
 }
 
 //DEBUG
@@ -130,7 +88,6 @@ User* DebugGetEmployeeUser() {
 	return DatabaseManager::shared()->getUser("jon", "testpass");
 }
 //END DEBUG
-
 
 int main() {
 	DatabaseManager *dbm = DatabaseManager::shared();
@@ -153,7 +110,7 @@ int main() {
 	cout << string(8, '*') << " Logged in as: " << user->getUsername() << " " << string(8, '*') << endl;
 	
 	/* Take User Online Input For Commands */
-	cout << "Enter a command to begin. Or type 'help' to get a list of available commands." << endl << endl;
+	cout << helpMessagePrompt << endl << endl;
 	string userInput;
 	bool shouldEndProgram = false;
 	
@@ -178,9 +135,9 @@ int main() {
 						throw exception("Input is a signed int. Expected unsigned.");
 					}
 					unsigned int count = (unsigned int)countInput;
-					printStores(dbm, count);
+					StoresTablePrinter::printStoresTable(dbm, count);
 				} else {
-					printStores(dbm);
+					StoresTablePrinter::printStoresTable(dbm);
 				}
 			}
 			else if ("view history" == input.at(0) + " " + input.at(1)) {
@@ -196,7 +153,7 @@ int main() {
 				else { //is customer user
 					customerID = user->getUserID();
 				}
-				printHistory(dbm, customerID);
+				PrescriptionHistoryTablePrinter::printHistoryTable(dbm, customerID);
 			}
 			else if ("view review" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
 				Store *store = dbm->getStore(stoi(input.at(2)));
@@ -208,7 +165,7 @@ int main() {
 			}
 			// Customer Specific Commands
 			else if (user->getUserType() == Customer && "create review" == input.at(0) + " " + input.at(1)) {
-				CreateReviewController reviewController;
+				ReviewController reviewController;
 				reviewController.createReview(user);
 			}
 
@@ -241,7 +198,7 @@ int main() {
 				mi.promptForInput(stoi(input.at(2)));
 			}
 			else if (user->isEmployee() && "create prescription" == input.at(0) + " " + input.at(1)) {
-				CreatePrescriptionController prescriptionController;
+				PrescriptionController prescriptionController;
 				prescriptionController.startCreatePrescription();
 			}
 			else if (user->isEmployee() && "create discount" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {

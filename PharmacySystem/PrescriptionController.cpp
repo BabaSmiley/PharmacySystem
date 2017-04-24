@@ -7,14 +7,17 @@
 #include "CommandUtils.cpp"
 #include "DatabaseUtils.h"
 #include "DatabaseManager.h"
-#include "ItemViewController.cpp"
+#include "ItemTablePrinter.cpp"
 #include "CommonUserPrompts.cpp"
 using namespace std;
 
 
-class CreatePrescriptionController {
+class PrescriptionController {
 public:
 
+	/* Starts the create prescription process of user input
+		Returns: A prescription object if one was created after the entire process and put into the database
+	*/
 	Prescription* startCreatePrescription() {
 		
 		User *customer = CommonUserPrompts::getUserFromInput();
@@ -96,7 +99,7 @@ private:
 
 	const char *exitAnytimeMessage = "Enter 'exit' anytime in order to exit the create prescription process.";
 	const char *endProcessMessage = "Ended create prescription process.";
-	const char *itemDoesNotExistMessage = "That item does not exist.";
+	const char *itemDoesNotExistMessage = "That item does not exist for the given store.";
 
 	/* Prompts user for input of an item name and quantity. Will return an ItemOrder if successful, or nullptr if user types 'exit' during method
 		Parameter store: A existing store object to be used for printing items from the store
@@ -123,7 +126,10 @@ private:
 
 					Item *resultForInput = DatabaseManager::shared()->getItem(itemId);
 					if (resultForInput == nullptr) {
-						throw exception(); //result nonexistant
+						throw exception("Result nonexistant.");
+					}
+					else if (DatabaseManager::shared()->getInventory(store->getId(), resultForInput->getId()) == nullptr) {
+						throw exception("Item is not carried by this store.");
 					}
 
 					cout << "Enter quantity to order: " << endl;
@@ -150,7 +156,8 @@ private:
 
 	/* HELPERS */
 	void printItemTable(Store *store) {
-		ItemViewController::printItemTable(store);
+		DatabaseManager *dbm = DatabaseManager::shared();
+		ItemTablePrinter::printItemTable(dbm, store);
 	}
 
 };

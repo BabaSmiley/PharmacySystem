@@ -8,18 +8,18 @@
 using namespace std;
 
 
-class ItemViewController {
+class ItemTablePrinter {
 public:
 
 	/* Will print a formatted table for items via the database manager
 		Parameter store: The store in which to get a list of item inventory from
 		Parameter count: (Optional) the number of results to show/display
 	*/
-	static void printItemTable(Store *store, unsigned int count = NULL) {
-		vector<Inventory*> storeInventory = DatabaseManager::shared()->getStoreInventory(store->getId());
+	static void printItemTable(DatabaseManager *dbm, Store *store, unsigned int count = NULL) {
+		vector<Inventory*> storeInventory = dbm->getStoreInventory(store->getId());
 		vector<Item*> items;
 		for (Inventory *i : storeInventory) {
-			Item *item = DatabaseManager::shared()->getItem(i->getItemId());
+			Item *item = dbm->getItem(i->getItemId());
 			items.push_back(item);
 		}
 

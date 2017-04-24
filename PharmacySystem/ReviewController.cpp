@@ -9,7 +9,7 @@
 #include "CommonUserPrompts.cpp"
 using namespace std;
 
-class CreateReviewController {
+class ReviewController {
 public:
 
 	/// Returns nullptr if no review was able to be created.

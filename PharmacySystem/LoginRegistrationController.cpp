@@ -1,5 +1,5 @@
 //
-//  LoginRegistration.cpp
+//  LoginRegistrationController.cpp
 //  Some
 //
 //  Created by Cardasis, Jonathan (J.) on 4/13/17.
@@ -15,7 +15,7 @@
 #include "User.cpp"
 using namespace std;
 
-class LoginRegistration {
+class LoginRegistrationController {
 public:
         
     /*Displays login/registration screen and begins taking user input
