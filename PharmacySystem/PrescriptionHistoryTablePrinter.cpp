@@ -14,7 +14,7 @@ public:
 
 		cout << "Prescriptions:" << endl;
 		if (prescriptions.size() == 0) {
-			cout << "No prescriptions found for this user." << endl;
+			cout << "No prescriptions found." << endl;
 		}
 
 		for (Prescription *p : prescriptions) {

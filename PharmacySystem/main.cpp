@@ -38,12 +38,11 @@ void printHelp(UserType type) {
 
 	// User specific commands
 	if (type == Employee) {
-		cout << "'create prescription' : Will begin process to create a customer prescription." << endl;
+		cout << "'create prescription' : Will begin process to create a new customer prescription." << endl;
 		cout << "'view history {customer username}' : View the history of a customer. Specify the customer's username to view their history." << endl;
 		cout << "'list items {store ID} {number of items}': Will list all items in given store. Optionally can state the number of items to show." << endl;
 		cout << "'manage item {item ID}' : Update the attributes of a item. Specify the item ID to make modifications." << endl;
 		cout << "'manage store {store ID}' : Update the attributes of a store. Specify the store ID to make modifications." << endl;
-		cout << "'create prescription': Will begin process to create a new prescription" << endl;
 		cout << "'create discount {item ID} {store ID}' : Will create a discount for the specified item in the specified store." << endl;
 		cout << "'delete discount {item ID} {store ID}' : Will delete a discount from the database for the specified item ID and store ID." << endl;
 	}
