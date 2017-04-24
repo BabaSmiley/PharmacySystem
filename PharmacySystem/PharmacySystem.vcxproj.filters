@@ -25,6 +25,9 @@
     <Filter Include="Source Files\Tests">
       <UniqueIdentifier>{0f729e55-3bea-482c-91a4-eafcdb6a9a2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Database">
+      <UniqueIdentifier>{7db83375-2457-4d79-a71b-5814c2b3100f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -34,9 +37,6 @@
       <Filter>Source Files\SQLite3</Filter>
     </ClCompile>
     <ClCompile Include="BatchProcesses.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DatabaseManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Constants.h">
@@ -65,9 +65,6 @@
     </ClCompile>
     <ClCompile Include="Tests\DatabaseManagerTests.cpp">
       <Filter>Source Files\Tests</Filter>
-    </ClCompile>
-    <ClCompile Include="CommandUtils.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Review.cpp">
       <Filter>Source Files\DB Models</Filter>
@@ -105,6 +102,15 @@
     <ClCompile Include="DiscountController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DatabaseManager.cpp">
+      <Filter>Source Files\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="DatabaseUtils.cpp">
+      <Filter>Source Files\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandUtils.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sqlite3.h">
@@ -117,6 +123,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DatabaseManagerTests.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DatabaseUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -401,13 +401,16 @@ Item* DatabaseManager::getItem(string itemName) {
 	return result;
 }
 
-vector<Item*> DatabaseManager::getItems(unsigned int count) {
+vector<Item*> DatabaseManager::getItems(unsigned int count, bool onlyActiveItems) {
 	sqlite3_stmt *stmt;
 	vector<Item*> items;
 
 	string limitingSQL = "";
+	if (onlyActiveItems) {
+		limitingSQL = " WHERE IsActive = '1'";
+	}
 	if (count != NULL && count > 0) {
-		limitingSQL = " limit " + to_string(count);
+		limitingSQL += " limit " + to_string(count);
 	}
 
 	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item" + limitingSQL;

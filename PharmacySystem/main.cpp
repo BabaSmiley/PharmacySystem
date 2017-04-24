@@ -32,7 +32,7 @@ void printHelp(UserType type) {
 	// User specific commands
 	if (type == Employee) {
 		cout << "'create prescription' : Will begin process to create a customer prescription." << endl;
-		cout << "'view history {customer ID}' : View the history of a customer. Specify the customer ID to view the history of." << endl;
+		cout << "'view history {customer username}' : View the history of a customer. Specify the customer's username to view their history." << endl;
 		cout << "'list items {number of items}': Will list all items in the system. Optionally can state the number of items to show." << endl;
 		cout << "'manage item {item ID}' : Update the attributes of a item. Specify the item ID to make modifications." << endl;
 		cout << "'manage store {store ID}' : Update the attributes of a store. Specify the store ID to make modifications." << endl;
@@ -137,7 +137,7 @@ int main() {
 	//runTests(dbm);
 	
 	/* Start Login & Registration Process */
-	// DEBUG - commented out so dont have to repeatadly sign in. Uncomment to reactivate the login feature
+	/* DEBUG - commented out so dont have to repeatadly sign in. Uncomment to reactivate the login feature
 	LoginRegistration lr;
 	lr.displayScreen();
 
@@ -146,8 +146,8 @@ int main() {
 		cout << "[!] An error occured in logging in. Please close the program and try again." << endl;
 		return 1; //1 is standardly returned for entire program errors 
 	}
-	
-	//User *user = DebugGetEmployeeUser();
+	*/
+	User *user = DebugGetEmployeeUser();
 
 	//clearWindowsConsole();
 	cout << string(8, '*') << " Logged in as: " << user->getUsername() << " " << string(8, '*') << endl;
@@ -186,11 +186,12 @@ int main() {
 			else if ("view history" == input.at(0) + " " + input.at(1)) {
 				int customerID;
 				if (user->isEmployee()) {
-					int inputID = stoi(input.at(2));
-					if (dbm->getUser(inputID) == nullptr) {
-						throw exception("No user available for input id.");
+					string inputString = input.at(2);
+					User *user = dbm->getUser(inputString);
+					if (user == nullptr) {
+						throw exception("No user available for input username.");
 					}
-					customerID = inputID;
+					customerID = user->getUserID();
 				}
 				else { //is customer user
 					customerID = user->getUserID();

@@ -103,9 +103,10 @@ public:
 	Item* getItem(string itemName);
 
 	/* Gets a list of all items in the database
+		Parameter onlyActiveItems: Will return only the items marked as IsActive in the database
 		Returns: a vector of all items in the database. If count is specified it will return items from oldest to newest.
 	*/
-	vector<Item*> getItems(unsigned int count = NULL);
+	vector<Item*> getItems(unsigned int count = NULL, bool onlyActiveItems = true);
 
 
 	/* Delete a prescription from the database

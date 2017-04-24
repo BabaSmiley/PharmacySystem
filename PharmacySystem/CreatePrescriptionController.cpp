@@ -3,7 +3,9 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <algorithm> //for max()
 #include "CommandUtils.cpp"
+#include "DatabaseUtils.h"
 #include "DatabaseManager.h"
 #include "ItemViewController.cpp"
 #include "CommonUserPrompts.cpp"
@@ -56,7 +58,19 @@ public:
 		for (ItemOrder* itemOrder : ordersToInclude) {
 			Item *item = itemOrder->item;
 
-			int salePrice = item->getPrice(); //TODO: account for Discounts on items
+			int salePrice = item->getPrice();
+			
+			//4. Apply any associated discount
+			Discount *discount = DatabaseManager::shared()->getDiscount(store->getId(), item->getId());
+			if (discount != nullptr) {
+				bool discountIsValid = DatabaseUtils::dateStringIsBetweenDates(today, discount->getStartDate(), discount->getEndDate());
+			
+				if (discountIsValid) {
+					int amountOff = (discount->getPercentOff() * salePrice) / 100;
+					int discountedPrice = salePrice - amountOff;
+					salePrice = max(0, discountedPrice);
+				}
+			}
 
 			prescriptionCost += salePrice;
 			DatabaseManager::shared()->createPurchase(prescriptionId, item->getId(), itemOrder->quantity, salePrice);

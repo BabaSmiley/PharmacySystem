@@ -155,6 +155,7 @@
     <ClCompile Include="BatchProcesses.cpp" />
     <ClCompile Include="CommonUserPrompts.cpp" />
     <ClCompile Include="Constants.h" />
+    <ClCompile Include="DatabaseUtils.cpp" />
     <ClCompile Include="DiscountController.cpp" />
     <ClCompile Include="CreatePrescriptionController.cpp" />
     <ClCompile Include="CreateReviewController.cpp" />
@@ -184,6 +185,7 @@
   <ItemGroup>
     <ClInclude Include="DatabaseManager.h" />
     <ClInclude Include="DatabaseManagerTests.h" />
+    <ClInclude Include="DatabaseUtils.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="sqlite3.h" />
   </ItemGroup>
