@@ -27,7 +27,7 @@ public:
 			return nullptr;
 		}
 
-		Store *store = CommonUserPrompts::getStoreFromInput();
+		Store *store = CommonUserPrompts::getStoreFromInput("Enter the store id to order from:");
 		if (store == nullptr) {
 			// Store was not able to be retrived
 			cout << endProcessMessage << endl << endl;

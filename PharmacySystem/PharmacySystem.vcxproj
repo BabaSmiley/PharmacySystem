@@ -159,6 +159,7 @@
     <ClCompile Include="DiscountController.cpp" />
     <ClCompile Include="PrescriptionController.cpp" />
     <ClCompile Include="PrescriptionHistoryTablePrinter.cpp" />
+    <ClCompile Include="ReorderController.cpp" />
     <ClCompile Include="ReviewController.cpp" />
     <ClCompile Include="DatabaseManager.cpp" />
     <ClCompile Include="Discount.cpp" />

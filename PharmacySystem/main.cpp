@@ -1,27 +1,4 @@
-#include <iostream>
-#include <string>
-#include <algorithm>
-#include <stdexcept> // Used for out_of_range error
-#include <iomanip>
-#include "DatabaseManager.h"
-#include "User.cpp"
-#include "DatabaseManagerTests.h"
-// Controllers
-#include "LoginRegistrationController.cpp"
-#include "ManageStore.cpp"
-#include "ManageItem.cpp"
-#include "PrescriptionController.cpp"
-#include "ReviewController.cpp";
-#include "DiscountController.cpp"
-// Utils
-#include "ItemTablePrinter.cpp"
-#include "PrescriptionHistoryTablePrinter.cpp"
-#include "StoresTablePrinter.cpp"
-using namespace std;
-
-// String Constants
-const char *helpMessagePrompt = "Enter a command to begin. Or type 'help' to get a list of available commands.";
-
+#include "main.h"
 
 /// Will clear the windows console
 void clearWindowsConsole() {
@@ -30,7 +7,7 @@ void clearWindowsConsole() {
 }
 
 void printHelp(UserType type) {
-	cout << "#########################" << endl;
+	cout << "##################################" << endl;
 	cout << "Available Commands:" << endl;
 	// General all-user commands
 	cout << "'list stores {number of stores}' : Will list all available stores. Optionally can state the number of stores to show." << endl;
@@ -38,23 +15,25 @@ void printHelp(UserType type) {
 
 	// User specific commands
 	if (type == Employee) {
-		cout << "'create prescription' : Will begin process to create a new customer prescription." << endl;
-		cout << "'view history {customer username}' : View the history of a customer. Specify the customer's username to view their history." << endl;
 		cout << "'list items {store ID} {number of items}': Will list all items in given store. Optionally can state the number of items to show." << endl;
+		cout << "'view history {customer username}' : View the history of a customer. Specify the customer's username to view their history." << endl;
+		cout << "'create prescription' : Will begin process to create a new customer prescription." << endl;
 		cout << "'manage item {item ID}' : Update the attributes of a item. Specify the item ID to make modifications." << endl;
 		cout << "'manage store {store ID}' : Update the attributes of a store. Specify the store ID to make modifications." << endl;
+		cout << "'reorder item' : Will begin process to reorder an item from a store." << endl;
 		cout << "'create discount {item ID} {store ID}' : Will create a discount for the specified item in the specified store." << endl;
 		cout << "'delete discount {item ID} {store ID}' : Will delete a discount from the database for the specified item ID and store ID." << endl;
+		cout << "'start batch' : Will begin the batch file processing for the end of the day. Will logout user afterwords." << endl;
 	}
 	else if (type == Customer) {
-		cout << "'create review': Will begin process to leave a review for a store." << endl;
+		cout << "'create review' : Will begin process to leave a review for a store." << endl;
 		cout << "'view history' : View your purchase history." << endl;
 	}
 
-	cout << "'clear': Will clear the console window to avoid clutter." << endl;
+	cout << "'clear' : Will clear the console window to avoid clutter." << endl;
 	cout << endl << "'help' : Will print this usage statement." << endl;
 	cout << "'logout' : Will log out of the system and close the program." << endl;
-	cout << "#########################" << endl;
+	cout << "##################################" << endl;
 }
 
 void printStoreReviews(DatabaseManager *dbm, Store *store) {
@@ -165,6 +144,20 @@ int main() {
 			}
 
 			// Employee Specific Commands
+			else if (user->isEmployee() && "start batch" == input.at(0) + " " + input.at(1)) {
+				cerr << "[!] CALL NOT YET IMPLMENTED" << endl; //TODO: call batch file processing
+				shouldEndProgram = true;
+			}
+			else if (user->isEmployee() && "reorder item" == input.at(0) + " " + input.at(1)) {
+				ReorderController reorderController;
+				AddItem* reorder = reorderController.placeOrder();
+				if (reorder == nullptr) {
+					cout << "Reorder was not placed." << endl << endl;
+				}
+				else {
+					cout << "Reorder was placed for store #" << reorder->getStoreId() << ", item #" << reorder->getItemId() << " at quantity " << reorder->getQuantity() << "." << endl << endl;
+				}
+			}
 			else if (user->isEmployee() && "list items" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
 				Store *store = dbm->getStore(stoi(input.at(2)));
 				if (store == nullptr) { //Guard

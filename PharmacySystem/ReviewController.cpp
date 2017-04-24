@@ -21,7 +21,7 @@ public:
 			return nullptr;
 		}
 
-		Store *store = CommonUserPrompts::getStoreFromInput();
+		Store *store = CommonUserPrompts::getStoreFromInput("Enter the store id to obtain a review from:");
 		if (store == nullptr) {
 			cout << "Store was not found for this ID." << endl;
 			cout << "Ended create review process." << endl << endl;
