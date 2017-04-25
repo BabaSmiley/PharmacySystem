@@ -9,6 +9,8 @@ using namespace std;
 #include <algorithm>
 
 void printbatchLog() {
+	cout << "BATCH ERROR LOG (batchLog.txt)";
+
 	ifstream batchLog("Batch/batchLog.txt");
 	string line;
 
