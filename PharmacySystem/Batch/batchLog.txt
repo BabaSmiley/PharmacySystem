@@ -1,0 +1,6 @@
+=====Update Item Data=====
+Unexpected action code 'X'. Skip line.
+Unexpected action code 'X'. Skip line.
+Unexpected action code 'D'. Skip line.
+Unexpected action code 'X'. Skip line.
+items.txt trailer mismatch. Expected 0000 got 1
