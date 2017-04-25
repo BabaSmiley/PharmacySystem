@@ -72,13 +72,19 @@ public:
 		Returns: A vector of Store objects representing all stores in the database
 	*/
 	vector<Store*> getStores(unsigned int count = NULL);
+	
+	/* Delete an item from the database (set item isActive to false, delete all store inventory that has item)
+	Parameter itemId: An item id representing the item to delete in the database.
+	Returns: Returns true if `item` is an exact match in the database and was able to successfully delete it
+	*/
+	bool deleteItem(int itemId);
 
-	/* Delete an item from the database
+	/* Delete all of an item's inventory from the database
 		Parameter itemId: An item id representing the item to delete in the database.
 		  Do not delete from sales and item data stores.
 		Returns: Returns true if `item` is an exact match in the database and was able to successfully delete it
 	*/
-	bool deleteItem(int itemId);
+	bool deleteItemInventory(int itemId);
 
 	/* Creates and stores parameters in items database
 		Returns: Returns an item object representing a DB Item model

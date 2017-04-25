@@ -9,7 +9,7 @@ using namespace std;
 #include <algorithm>
 
 void printbatchLog() {
-	cout << "BATCH ERROR LOG (batchLog.txt)";
+	cout << "BATCH ERROR LOG (batchLog.txt)" << endl;
 
 	ifstream batchLog("Batch/batchLog.txt");
 	string line;
@@ -42,7 +42,7 @@ string RemoveSpaces(string str) { //Removes spaces only if there is something ot
 		return str;
 
 	if (str[0] != ' ')
-		while (str[str.size() - 1] == ' ')
+		while (str[str.size() - 1] == ' ' && str.size() > 0)
 			str = str.substr(0, str.size() - 1);
 
 	return str;
@@ -115,20 +115,6 @@ void WriteBatchReviewFile(DatabaseManager *dbm, int seqNo) {
 
 	out << "T " << ZeroFillNumber(to_string(trailerCounter), 4);
 }
-
-//void WriteCreateStoreItemsFile(DatabaseManager *dbm, int seqNo) {
-//	ofstream out("Batch/createstoreitems.txt");
-//
-//	out << "HD " << ZeroFillNumber(to_string(seqNo), 4) << endl;
-//
-//	int trailerCounter = 0;
-//
-//	vector<AddItem*> items = dbm->getAllAddItems();
-//	for (int i = 0; i < items.size(); i++)
-//		cout << ZeroFillNumber(to_string(dbm->getItem(items[i]->getItemId())->getVendorId()), 4) << ZeroFillNumber(to_string(items[i]->getItemId()), 9) << ZeroFillNumber(to_string(items[i]->getQuantity()), 10);
-//
-//	out << "T " << ZeroFillNumber(to_string(trailerCounter), 4);
-//}
 
 void WriteOnlineRequestFile(DatabaseManager *dbm, int seqNo) {
 	ofstream out("Batch/onlinerequest.txt");
@@ -212,9 +198,9 @@ void updateItemData(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) {
 
 		getline(input, line);
 	}
-	if (stoi(line.substr(2, 4)) != controlCount)
-		batchLog << "delete item trailer mismatch. Expected" + line.substr(2, 4)
-		+ " got " + to_string(controlCount);
+	if (stoi(line.substr(3, 4)) != controlCount)
+		batchLog << "delete item trailer mismatch. Expected " + line.substr(3, 4)
+		+ " got " + to_string(controlCount) << endl;
 
 	getline(input, line);
 	controlCount = 0;
@@ -230,11 +216,11 @@ void updateItemData(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) {
 			string whReorderQuantity = line.substr(164, 10);
 			string expDelivery = line.substr(174, 20);
 
-			if (RemoveSpaces(whReorderLevel) == "")
+			if (RemoveSpaces(whReorderLevel) == "          ")
 				whReorderLevel = "-1";
-			if (RemoveSpaces(vendorCode) == "")
+			if (RemoveSpaces(vendorCode) == "    ")
 				vendorCode = "-1";
-			if (RemoveSpaces(whReorderQuantity) == "")
+			if (RemoveSpaces(whReorderQuantity) == "          ")
 				whReorderQuantity = "-1";
 
 			dbm->updateItem(stoi(itemCode), RemoveSpaces(itemName), RemoveSpaces(itemDesc), -1, RemoveSpaces(itemDosage),
@@ -244,9 +230,9 @@ void updateItemData(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) {
 
 		getline(input, line);
 	}
-	if (stoi(line.substr(2, 4)) != controlCount)
-		batchLog << "change item trailer mismatch. Expected" + line.substr(2, 4)
-		+ " got " + to_string(controlCount);
+	if (stoi(line.substr(3, 4)) != controlCount)
+		batchLog << "change item trailer mismatch. Expected " + line.substr(3, 4)
+		+ " got " + to_string(controlCount) << endl;
 
 	getline(input, line);
 	controlCount = 0;
@@ -269,13 +255,14 @@ void updateItemData(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) {
 
 		getline(input, line);
 	}
-	if (stoi(line.substr(2, 4)) != controlCount)
-		batchLog << "Add item trailer mismatch. Expected" + line.substr(2, 4)
-		+ " got " + to_string(controlCount);
+	if (stoi(line.substr(3, 4)) != controlCount)
+		batchLog << "Add item trailer mismatch. Expected " + line.substr(3, 4)
+		+ " got " + to_string(controlCount) << endl;
 
+	getline(input, line);
 	if (stoi(line.substr(2, 4)) != trailerCount) //Trailer check
-		batchLog << "items.txt trailer mismatch. Expected" + line.substr(2, 4)
-		+ " got " + to_string(trailerCount);
+		batchLog << "items.txt trailer mismatch. Expected " + line.substr(2, 4)
+			+ " got " + to_string(trailerCount) << endl;
 
 	sequenceNo = incSeqNo(sequenceNo);
 }
@@ -644,15 +631,15 @@ void runBatchSequence(DatabaseManager *dbm) { //Calls all of the batch sequences
 	11: reorder.txt
 	*/
 	updateItemData(dbm, batchLog, sequenceNos[0]);
-	createDeleteStore(dbm, batchLog, sequenceNos[1], sequenceNos[2], sequenceNos[3]);
-	inventoryReceivedAtWarehouse(dbm, batchLog, oldsequenceNos[3], sequenceNos[4], sequenceNos[10]);
-	inventoryToStoreRequest(dbm, batchLog, sequenceNos[7], oldsequenceNos[2], sequenceNos[6], sequenceNos[5], sequenceNos[11]);
-	inventoryGeneration(dbm, batchLog, sequenceNos[8]);
-	yearlySales(dbm, batchLog, sequenceNos[9]);
+	//createDeleteStore(dbm, batchLog, sequenceNos[1], sequenceNos[2], sequenceNos[3]);
+	//inventoryReceivedAtWarehouse(dbm, batchLog, oldsequenceNos[3], sequenceNos[4], sequenceNos[10]);
+	//inventoryToStoreRequest(dbm, batchLog, sequenceNos[7], oldsequenceNos[2], sequenceNos[6], sequenceNos[5], sequenceNos[11]);
+	//inventoryGeneration(dbm, batchLog, sequenceNos[8]);
+	//yearlySales(dbm, batchLog, sequenceNos[9]);
 
-	ofstream sequencesOut("Batch/sequences.txt"); //Writes new sequence numbers to same file
-	for (int i = 1; i <= 12; i++)
-		sequencesOut << ZeroFillNumber(to_string(sequenceNos[i - 1]), 4) << " ";
+	//ofstream sequencesOut("Batch/sequences.txt"); //Writes new sequence numbers to same file
+	//for (int i = 1; i <= 12; i++)
+	//	sequencesOut << ZeroFillNumber(to_string(sequenceNos[i - 1]), 4) << " ";
 
 	printbatchLog();
 }

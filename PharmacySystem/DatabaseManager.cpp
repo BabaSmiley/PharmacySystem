@@ -265,6 +265,13 @@ vector<Store*> DatabaseManager::getStores(unsigned int count) {
 /// Items ///
 
 bool DatabaseManager::deleteItem(int itemId) {
+	bool b1 = deleteItemInventory(itemId);
+	bool b2 = updateItem(itemId, "", "", 0, "", 0, "", 0, 0, 0, -1);
+
+	return (b1 == true && b2 == true);
+}
+
+bool DatabaseManager::deleteItemInventory(int itemId) {
 	Item *dbItem = getItem(itemId);
 	if (dbItem == nullptr || itemId != dbItem->getId()) {
 		return false;
@@ -272,7 +279,7 @@ bool DatabaseManager::deleteItem(int itemId) {
 
 	sqlite3_stmt *stmt;
 	bool result = false;
-	string sql = "DELETE FROM Inventory WHERE ItemId = " + quotesql(itemId) + "; " + "UPDATE Item Set IsActive = '0' WHERE Id  " + quotesql(itemId);
+	string sql = "DELETE FROM Inventory WHERE ItemId = " + quotesql(itemId) + ";";
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {

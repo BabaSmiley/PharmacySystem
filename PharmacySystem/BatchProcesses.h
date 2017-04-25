@@ -11,8 +11,6 @@ void writeFile(vector<string> records, int sequenceNo, string fileName);
 
 void WriteBatchReviewFile(DatabaseManager *dbm, int seqNo);
 
-void WriteCreateStoreItemsFile(DatabaseManager *dbm, int seqNo);
-
 int incSeqNo(int s);
 
 vector<string> SortRecords(vector<string> records);
