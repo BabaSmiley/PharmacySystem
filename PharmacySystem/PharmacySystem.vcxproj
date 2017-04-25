@@ -186,6 +186,7 @@
     <ClCompile Include="Utils\ASCIIBlockM.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BatchProcesses.h" />
     <ClInclude Include="DatabaseManager.h" />
     <ClInclude Include="DatabaseManagerTests.h" />
     <ClInclude Include="DatabaseUtils.h" />

@@ -1,4 +1,5 @@
 #include "main.h"
+#include "BatchProcesses.h"
 
 /// Will clear the windows console
 void clearWindowsConsole() {
@@ -67,147 +68,149 @@ User* DebugGetEmployeeUser() {
 int main() {
 	DatabaseManager *dbm = DatabaseManager::shared();
 	//runTests(dbm);
+
+	runBatchSequence(dbm);
 	
-	/* Start Login & Registration Process */
-	// DEBUG - commented out so dont have to repeatadly sign in. Uncomment to reactivate the login feature
-	LoginRegistrationController lr;
-	lr.displayScreen();
+	///* Start Login & Registration Process */
+	//// DEBUG - commented out so dont have to repeatadly sign in. Uncomment to reactivate the login feature
+	//LoginRegistrationController lr;
+	//lr.displayScreen();
 
-	User *user = lr.getAuthorizedUser();
-	if (user == nullptr) { //Guard
-		cout << "[!] An error occured in logging in. Please close the program and try again." << endl;
-		return 1; //1 is standardly returned for entire program errors 
-	}
-	
-	//User *user = DebugGetEmployeeUser();
+	//User *user = lr.getAuthorizedUser();
+	//if (user == nullptr) { //Guard
+	//	cout << "[!] An error occured in logging in. Please close the program and try again." << endl;
+	//	return 1; //1 is standardly returned for entire program errors 
+	//}
+	//
+	////User *user = DebugGetEmployeeUser();
 
-	cout << string(8, '*') << " Logged in as: " << user->getUsername() << " " << string(8, '*') << endl;
-	
-	/* Take User Online Input For Commands */
-	cout << helpMessagePrompt << endl << endl;
-	string userInput;
-	bool shouldEndProgram = false;
-	
-	while (!shouldEndProgram) {
-		userInput = getInput();
-		transform(userInput.begin(), userInput.end(), userInput.begin(), ::tolower); //Convert input to all lowercase
-		vector<string> input = splitString(userInput, " ");
-		
-		try { //try for out-of-range input exceptions
-			if ("logout" == input.at(0)) {
-				cout << "Logged out of system." << endl;
-				shouldEndProgram = true;
-			}
-			else if ("help" == input.at(0)) {
-				printHelp(user->getUserType());
-			}
-			else if ("clear" == input.at(0)) { clearWindowsConsole();  }
-			else if ("list stores" == input.at(0) + " " + input.at(1)) {
-				if (input.size() > 2) {
-					int countInput = stoi(input.at(2));
-					if (countInput <= 0) { //is signed
-						throw exception("Input is a signed int. Expected unsigned.");
-					}
-					unsigned int count = (unsigned int)countInput;
-					StoresTablePrinter::printStoresTable(dbm, count);
-				} else {
-					StoresTablePrinter::printStoresTable(dbm);
-				}
-			}
-			else if ("view history" == input.at(0) + " " + input.at(1)) {
-				int customerID;
-				if (user->isEmployee()) {
-					string inputString = input.at(2);
-					User *user = dbm->getUser(inputString);
-					if (user == nullptr) {
-						throw exception("No user available for input username.");
-					}
-					customerID = user->getUserID();
-				}
-				else { //is customer user
-					customerID = user->getUserID();
-				}
-				PrescriptionHistoryTablePrinter::printHistoryTable(dbm, customerID);
-			}
-			else if ("view review" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
-				Store *store = dbm->getStore(stoi(input.at(2)));
-				if (!store) { //gaurd
-					cout << "No store available for that store ID." << endl;
-				} else {
-					printStoreReviews(dbm, store);
-				}
-			}
-			// Customer Specific Commands
-			else if (user->getUserType() == Customer && "create review" == input.at(0) + " " + input.at(1)) {
-				ReviewController reviewController;
-				reviewController.createReview(user);
-			}
+	//cout << string(8, '*') << " Logged in as: " << user->getUsername() << " " << string(8, '*') << endl;
+	//
+	///* Take User Online Input For Commands */
+	//cout << helpMessagePrompt << endl << endl;
+	//string userInput;
+	//bool shouldEndProgram = false;
+	//
+	//while (!shouldEndProgram) {
+	//	userInput = getInput();
+	//	transform(userInput.begin(), userInput.end(), userInput.begin(), ::tolower); //Convert input to all lowercase
+	//	vector<string> input = splitString(userInput, " ");
+	//	
+	//	try { //try for out-of-range input exceptions
+	//		if ("logout" == input.at(0)) {
+	//			cout << "Logged out of system." << endl;
+	//			shouldEndProgram = true;
+	//		}
+	//		else if ("help" == input.at(0)) {
+	//			printHelp(user->getUserType());
+	//		}
+	//		else if ("clear" == input.at(0)) { clearWindowsConsole();  }
+	//		else if ("list stores" == input.at(0) + " " + input.at(1)) {
+	//			if (input.size() > 2) {
+	//				int countInput = stoi(input.at(2));
+	//				if (countInput <= 0) { //is signed
+	//					throw exception("Input is a signed int. Expected unsigned.");
+	//				}
+	//				unsigned int count = (unsigned int)countInput;
+	//				StoresTablePrinter::printStoresTable(dbm, count);
+	//			} else {
+	//				StoresTablePrinter::printStoresTable(dbm);
+	//			}
+	//		}
+	//		else if ("view history" == input.at(0) + " " + input.at(1)) {
+	//			int customerID;
+	//			if (user->isEmployee()) {
+	//				string inputString = input.at(2);
+	//				User *user = dbm->getUser(inputString);
+	//				if (user == nullptr) {
+	//					throw exception("No user available for input username.");
+	//				}
+	//				customerID = user->getUserID();
+	//			}
+	//			else { //is customer user
+	//				customerID = user->getUserID();
+	//			}
+	//			PrescriptionHistoryTablePrinter::printHistoryTable(dbm, customerID);
+	//		}
+	//		else if ("view review" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
+	//			Store *store = dbm->getStore(stoi(input.at(2)));
+	//			if (!store) { //gaurd
+	//				cout << "No store available for that store ID." << endl;
+	//			} else {
+	//				printStoreReviews(dbm, store);
+	//			}
+	//		}
+	//		// Customer Specific Commands
+	//		else if (user->getUserType() == Customer && "create review" == input.at(0) + " " + input.at(1)) {
+	//			ReviewController reviewController;
+	//			reviewController.createReview(user);
+	//		}
 
-			// Employee Specific Commands
-			else if (user->isEmployee() && "start batch" == input.at(0) + " " + input.at(1)) {
-				cerr << "[!] CALL NOT YET IMPLMENTED" << endl; //TODO: call batch file processing
-				shouldEndProgram = true;
-			}
-			else if (user->isEmployee() && "reorder item" == input.at(0) + " " + input.at(1)) {
-				ReorderController reorderController;
-				AddItem* reorder = reorderController.placeOrder();
-				if (reorder == nullptr) {
-					cout << "Reorder was not placed." << endl << endl;
-				}
-				else {
-					cout << "Reorder was set for store #" << reorder->getStoreId() << ", item #" << reorder->getItemId() << " to quantity " << reorder->getQuantity() << "." << endl << endl;
-				}
-			}
-			else if (user->isEmployee() && "list items" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
-				Store *store = dbm->getStore(stoi(input.at(2)));
-				if (store == nullptr) { //Guard
-					cout << "A store does not exist for this id" << endl << endl;
-					throw exception("Store does not exist.");
-				}
+	//		// Employee Specific Commands
+	//		else if (user->isEmployee() && "start batch" == input.at(0) + " " + input.at(1)) {
+	//			cerr << "[!] CALL NOT YET IMPLMENTED" << endl; //TODO: call batch file processing
+	//			shouldEndProgram = true;
+	//		}
+	//		else if (user->isEmployee() && "reorder item" == input.at(0) + " " + input.at(1)) {
+	//			ReorderController reorderController;
+	//			AddItem* reorder = reorderController.placeOrder();
+	//			if (reorder == nullptr) {
+	//				cout << "Reorder was not placed." << endl << endl;
+	//			}
+	//			else {
+	//				cout << "Reorder was set for store #" << reorder->getStoreId() << ", item #" << reorder->getItemId() << " to quantity " << reorder->getQuantity() << "." << endl << endl;
+	//			}
+	//		}
+	//		else if (user->isEmployee() && "list items" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
+	//			Store *store = dbm->getStore(stoi(input.at(2)));
+	//			if (store == nullptr) { //Guard
+	//				cout << "A store does not exist for this id" << endl << endl;
+	//				throw exception("Store does not exist.");
+	//			}
 
-				if (input.size() > 3) {
-					int countInput = stoi(input.at(3));
-					if (countInput <= 0) { //is signed
-						throw exception("Input is a signed int. Expected unsigned.");
-					}
-					unsigned int count = (unsigned int)countInput;
-					printItemTable(store, count);
-				}
-				else {
-					printItemTable(store);
-				}
-			}
-			else if (user->isEmployee() && "manage store" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
-				ManageStore ms;
-				ms.promptForInput(stoi(input.at(2)));
-			}
-			else if (user->isEmployee() && "manage item" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
-				ManageItem mi;
-				mi.promptForInput(stoi(input.at(2)));
-			}
-			else if (user->isEmployee() && "create prescription" == input.at(0) + " " + input.at(1)) {
-				PrescriptionController prescriptionController;
-				prescriptionController.startCreatePrescription();
-			}
-			else if (user->isEmployee() && "create discount" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
-				DiscountController discountController;
-				discountController.promptForCreateInput(stoi(input.at(2)), stoi(input.at(3)));
-			}
-			else if (user->isEmployee() && "delete discount" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
-				DiscountController discountController;
-				discountController.deleteDiscount(stoi(input.at(2)), stoi(input.at(3)));
-			}
+	//			if (input.size() > 3) {
+	//				int countInput = stoi(input.at(3));
+	//				if (countInput <= 0) { //is signed
+	//					throw exception("Input is a signed int. Expected unsigned.");
+	//				}
+	//				unsigned int count = (unsigned int)countInput;
+	//				printItemTable(store, count);
+	//			}
+	//			else {
+	//				printItemTable(store);
+	//			}
+	//		}
+	//		else if (user->isEmployee() && "manage store" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
+	//			ManageStore ms;
+	//			ms.promptForInput(stoi(input.at(2)));
+	//		}
+	//		else if (user->isEmployee() && "manage item" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
+	//			ManageItem mi;
+	//			mi.promptForInput(stoi(input.at(2)));
+	//		}
+	//		else if (user->isEmployee() && "create prescription" == input.at(0) + " " + input.at(1)) {
+	//			PrescriptionController prescriptionController;
+	//			prescriptionController.startCreatePrescription();
+	//		}
+	//		else if (user->isEmployee() && "create discount" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
+	//			DiscountController discountController;
+	//			discountController.promptForCreateInput(stoi(input.at(2)), stoi(input.at(3)));
+	//		}
+	//		else if (user->isEmployee() && "delete discount" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
+	//			DiscountController discountController;
+	//			discountController.deleteDiscount(stoi(input.at(2)), stoi(input.at(3)));
+	//		}
 
-			else {
-				throw exception("User command not recognized in main.");
-			}
-		}
-		catch (const exception& err) {
-			// Catch any out_of_range errors, etc.
-			//cerr << "Caught exception: " << err.what() << endl; //DEBUG
-			cout << "Invalid command. Type 'help' for a list of available commands." << endl;
-		}
-	}
+	//		else {
+	//			throw exception("User command not recognized in main.");
+	//		}
+	//	}
+	//	catch (const exception& err) {
+	//		// Catch any out_of_range errors, etc.
+	//		//cerr << "Caught exception: " << err.what() << endl; //DEBUG
+	//		cout << "Invalid command. Type 'help' for a list of available commands." << endl;
+	//	}
+	//}
 
 	// Do cleanup before end of program...
 

@@ -5,7 +5,21 @@ using namespace std;
 #include <vector>
 #include <string>
 #include "DatabaseManager.h"
+#include "BatchProcesses.h"
 #include <algorithm>
+
+void printbatchLog() {
+	ifstream batchLog("Batch/batchLog.txt");
+	string line;
+
+	if (batchLog.good()) {
+		getline(batchLog, line);
+		while (!batchLog.eof()) {
+			cout << line << endl;
+			getline(batchLog, line);
+		}
+	}
+}
 
 string ZeroFillNumber(string str, int digits) {
 	while (str.size() < digits)
@@ -32,6 +46,8 @@ string RemoveSpaces(string str) { //Removes spaces only if there is something ot
 	return str;
 }
 
+void FileNotFound(ofstream &batchLog, string fileName) { batchLog << "File '" << fileName << "' not found. Skipping." << endl; }
+
 vector<string> getRecords(ofstream &batchLog, int sequenceNo, string fileName) /*
 Function to return all data strings for items received in a file. Used by inventory to store request
 to concatenate all data records from the 3 sources to a single file. Used by warehouse inventory update too.
@@ -39,9 +55,15 @@ to concatenate all data records from the 3 sources to a single file. Used by war
 	vector<string> records;
 	string line;
 	int trailerCount = 0;
-	ifstream input(fileName);
+	ifstream input("Batch/" + fileName);
 
 	getline(input, line);
+
+	if (!input.good()) {
+		FileNotFound(batchLog, fileName);
+		return records;
+	}
+
 	if (stoi(line.substr(3, 4)) != sequenceNo)
 	{
 		batchLog << fileName << " sequence number mismatch. Expected " + to_string(sequenceNo) +
@@ -74,7 +96,7 @@ void writeFile(vector<string> records, int sequenceNo, string fileName) {
 }
 
 void WriteBatchReviewFile(DatabaseManager *dbm, int seqNo) {
-	ofstream out("batchreview.txt");
+	ofstream out("Batch/batchreview.txt");
 
 	out << "HD " << ZeroFillNumber(to_string(seqNo), 4) << endl;
 
@@ -84,23 +106,51 @@ void WriteBatchReviewFile(DatabaseManager *dbm, int seqNo) {
 	for (int i = 0; i < inv.size(); i++)
 		if (inv[i]->getItemLevel() <= inv[i]->getRefillLevel()) {
 			Store* store = dbm->getStore(inv[i]->getStoreId());
-			out << "B" << ZeroFillNumber(to_string(inv[i]->getStoreId()), 5) << ZeroFillNumber(to_string(store->getPriorityLevel()), 2) << 
-				ZeroFillNumber(to_string( inv[i]->getItemId()), 9) << ZeroFillNumber(to_string(inv[i]->getRefillQuantity()), 10) << endl;
+			out << "B" << ZeroFillNumber(to_string(inv[i]->getStoreId()), 5) << ZeroFillNumber(to_string(store->getPriorityLevel()), 2) <<
+				ZeroFillNumber(to_string(inv[i]->getItemId()), 9) << ZeroFillNumber(to_string(inv[i]->getRefillQuantity()), 10) << endl;
 			trailerCounter++;
 		}
 
 	out << "T " << ZeroFillNumber(to_string(trailerCounter), 4);
 }
 
-void WriteCreateStoreItemsFile(DatabaseManager *dbm, int seqNo) {
-	ofstream out("createstoreitems.txt");
+//void WriteCreateStoreItemsFile(DatabaseManager *dbm, int seqNo) {
+//	ofstream out("Batch/createstoreitems.txt");
+//
+//	out << "HD " << ZeroFillNumber(to_string(seqNo), 4) << endl;
+//
+//	int trailerCounter = 0;
+//
+//	vector<AddItem*> items = dbm->getAllAddItems();
+//	for (int i = 0; i < items.size(); i++)
+//		cout << ZeroFillNumber(to_string(dbm->getItem(items[i]->getItemId())->getVendorId()), 4) << ZeroFillNumber(to_string(items[i]->getItemId()), 9) << ZeroFillNumber(to_string(items[i]->getQuantity()), 10);
+//
+//	out << "T " << ZeroFillNumber(to_string(trailerCounter), 4);
+//}
+
+void WriteOnlineRequestFile(DatabaseManager *dbm, int seqNo) {
+	ofstream out("Batch/onlinerequest.txt");
 
 	out << "HD " << ZeroFillNumber(to_string(seqNo), 4) << endl;
 
 	int trailerCounter = 0;
 
-	//TODO: get AddItem tuples from database, delete additem tuples from database, use loop to write to file.
-	//for (int i = 0; i < )
+	vector<Inventory*> inventory = dbm->getAllInventory();
+
+	for (int i = 0; i < inventory.size(); i++) {
+		Inventory* tmp = inventory[i];
+		string storeId = ZeroFillNumber(to_string(tmp->getStoreId()), 5);
+		string priorityLevel = ZeroFillNumber(to_string(dbm->getStore(tmp->getStoreId())->getPriorityLevel()), 2);
+		string itemId = ZeroFillNumber(to_string(tmp->getItemId()), 4);
+		string onOrderQty = ZeroFillNumber(to_string(tmp->getOnOrderQty()), 4);
+
+		if (tmp->getOnOrderQty() > 0)
+		out << "O" << storeId << priorityLevel << itemId << onOrderQty << endl;
+
+		trailerCounter++;
+	}
+
+	//TODO: SET ALL ON ORDER QUANTITIES TO ZERO
 
 	out << "T " << ZeroFillNumber(to_string(trailerCounter), 4);
 }
@@ -129,17 +179,20 @@ vector<string> SortRecords(vector<string> records) { //SORTS RECORDS BY ITEM COD
 }
 
 ///BATCH FUNCTIONS
-//DONE
 void updateItemData(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) { //Where items are added/changed/deleted from the database
-	batchLog << "=====Update Item Data=====";
+	batchLog << "=====Update Item Data=====" << endl;
 
-	ifstream input("items.txt");
+	ifstream input("Batch/items.txt");
 
 	string line;
 	int trailerCount = 0, controlCount = 0;
 
 	//Header check
 	getline(input, line);
+	if (!input.good()) {
+		FileNotFound(batchLog, "items.txt");
+		return;
+	}
 	if (stoi(line.substr(3, 4)) != sequenceNo)
 	{
 		batchLog << "adddeletestore.txt sequence number mismatch. Expected " + to_string(sequenceNo) +
@@ -225,23 +278,20 @@ void updateItemData(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) {
 	sequenceNo = incSeqNo(sequenceNo);
 }
 
-//DONE
 void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNoStoreUpdate, int &sequenceNoCreateStoreItems, int &sequenceNoDeleteStoreItems) {//Where stores are created and deleted in the database
-	batchLog << "=====Create/Delete Store=====";
+	batchLog << "=====Create/Delete Store=====" << endl;
 
-	ifstream input("adddeletestore.txt");
-
-	//Writes two files
-	ofstream outInvToStoreReq("createstoreitems.txt"); //Requests inventory to store
-	int InvToStoreReqCounter = 0;
-	ofstream outInvRecAtWarehouse("deletestoreitems.txt"); //Ships back to warehouse
-	int InvRecAtWarehouseCounter = 0;
+	ifstream input("Batch/adddeletestore.txt");
 
 	string line;
 	int trailerCount = 0;
 
 	getline(input, line);
-
+	if (!input.good())
+	{
+		FileNotFound(batchLog, "adddeletestore.txt");
+		return;
+	}
 	//Header check
 	if (stoi(line.substr(3, 4)) != sequenceNoStoreUpdate)
 	{
@@ -249,6 +299,12 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo
 			" got " + line.substr(3, 4) + ". Terminated program." << endl;
 		return;
 	}
+
+	//Writes two files
+	ofstream outInvToStoreReq("Batch/createstoreitems.txt"); //Requests inventory to store
+	int InvToStoreReqCounter = 0;
+	ofstream outInvRecAtWarehouse("Batch/deletestoreitems.txt"); //Ships back to warehouse
+	int InvRecAtWarehouseCounter = 0;
 
 	outInvToStoreReq << "HD " + ZeroFillNumber(to_string(sequenceNoCreateStoreItems), 4) << endl;
 	outInvRecAtWarehouse << "HD " + ZeroFillNumber(to_string(sequenceNoDeleteStoreItems), 4) << endl;
@@ -335,24 +391,27 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo
 	sequenceNoDeleteStoreItems = incSeqNo(sequenceNoDeleteStoreItems);
 }
 
-//DONE
 void inventoryReceivedAtWarehouse(DatabaseManager *dbm, ofstream &batchLog, int sequenceNoDeleteStoreItems, int &sequenceNoItemReceived, int &sequenceNoWarehouseInventoryUpdate) { //Where warehouse item quantities are replenished
-	batchLog << "=====Inventory Received at Warehouse=====";
+	batchLog << "=====Inventory Received at Warehouse=====" << endl;
 
 	vector<string> tmp;
 	vector<string> records = getRecords(batchLog, sequenceNoDeleteStoreItems, "deletestoreitems.txt");
 	tmp = getRecords(batchLog, sequenceNoItemReceived, "itemreceived.txt");
 	records.insert(records.begin(), tmp.begin(), tmp.end());
-	writeFile(records, sequenceNoWarehouseInventoryUpdate, "warehouseinventoryupdate.txt");
+	writeFile(records, sequenceNoWarehouseInventoryUpdate, "Batch/warehouseinventoryupdate.txt");
 
-	ifstream input("warehouseinventoryupdate.txt");
+	ifstream input("Batch/warehouseinventoryupdate.txt");
 	string line;
 	int trailerCount = 0;
 
 	getline(input, line);
+	if (!input.good()) {
+		FileNotFound(batchLog, "warehouseinventoryupdate.txt");
+		return;
+	}
 	if (stoi(line.substr(3, 4)) != sequenceNoItemReceived)
 	{
-		batchLog << "itemreceived.txt sequence number mismatch. Expected " + to_string(sequenceNoItemReceived) +
+		batchLog << "warehouseinventoryupdate.txt sequence number mismatch. Expected " + to_string(sequenceNoItemReceived) +
 			" got " + line.substr(3, 4) + ". Terminated program." << endl;
 		return;
 	}
@@ -375,16 +434,15 @@ void inventoryReceivedAtWarehouse(DatabaseManager *dbm, ofstream &batchLog, int 
 	sequenceNoWarehouseInventoryUpdate = incSeqNo(sequenceNoWarehouseInventoryUpdate);
 }
 
-//DONE
 void inventoryToStoreRequest(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNoStoreUpdate, int sequenceNoCreateStoreItems, int &sequenceOnlineReq, int &sequenceNoBatchRev, int &sequenceNoReorder) /*
 Where stores request inventory from the warehouse.
 Note: there is no estimated date. Instantly deduct quantities from the warehouse
 and add them to the stores
 */ {
-	batchLog << "=====Inventory To Store Request=====";
+	batchLog << "=====Inventory To Store Request=====" << endl;
 
 	WriteBatchReviewFile(dbm, sequenceNoBatchRev);
-	WriteCreateStoreItemsFile(dbm, sequenceNoCreateStoreItems);
+	WriteOnlineRequestFile(dbm, sequenceOnlineReq);
 
 	//Code to combine all 3 record files into one file
 	vector<string> records = getRecords(batchLog, sequenceNoCreateStoreItems, "createstoreitems.txt");
@@ -397,18 +455,22 @@ and add them to the stores
 	records.insert(records.begin(), tmp.begin(), tmp.end());
 
 	records = SortRecords(records);
-	writeFile(records, sequenceNoStoreUpdate, "storeupdate.txt");
+	writeFile(records, sequenceNoStoreUpdate, "Batch/storeupdate.txt");
 
-	ofstream output("reorder.txt");
+	ofstream output("Batch/reorder.txt");
 	sequenceNoReorder = incSeqNo(sequenceNoReorder);
 	output << "HD " << ZeroFillNumber(to_string(sequenceNoReorder), 4) << endl;
 
-	ifstream input("storeupdate.txt");
+	ifstream input("Batch/storeupdate.txt");
 	string line;
 	int trailerCountInput = 0, trailerCountOutput = 0;
 
 	getline(input, line);
-
+	if (!input.good())
+	{
+		FileNotFound(batchLog, "storeupdate.txt");
+		return;
+	}
 	if (stoi(line.substr(3, 4)) != sequenceNoStoreUpdate)
 	{
 		batchLog << "storeupdate.txt sequence number mismatch. Expected " + to_string(sequenceNoStoreUpdate) +
@@ -432,7 +494,7 @@ and add them to the stores
 		}
 		else {
 			output << line << endl; //else send to be reordered again
-			batchLog << "Insufficient warehouse quantity to reorder item " << ZeroFillNumber(to_string(itemCode), 4) << " in store " << ZeroFillNumber(to_string(storeId), 4) << 
+			batchLog << "Insufficient warehouse quantity to reorder item " << ZeroFillNumber(to_string(itemCode), 4) << " in store " << ZeroFillNumber(to_string(storeId), 4) <<
 				". Reordering next batch cycle" << endl;
 		}
 
@@ -451,13 +513,12 @@ and add them to the stores
 	sequenceNoBatchRev = incSeqNo(sequenceNoBatchRev);
 }
 
-//DONE
 void inventoryGeneration(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) { //Where warehouse items are requested from the vendors
 	batchLog << "=====Inventory Generation=====" << endl;
 
-	ofstream output("vendororder.txt");
+	ofstream output("Batch/vendororder.txt");
 
-	output << "HD " << ZeroFillNumber(to_string(sequenceNo), 4);
+	output << "HD " << ZeroFillNumber(to_string(sequenceNo), 4) << endl;
 
 	vector<Item*> items = dbm->getItems(0);
 
@@ -474,20 +535,22 @@ void inventoryGeneration(DatabaseManager *dbm, ofstream &batchLog, int &sequence
 	sequenceNo = incSeqNo(sequenceNo);
 }
 
-//DONE
 void yearlySales(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) { //Calculate sales for specified items
-	batchLog << "=====Yearly Sales=====";
+	batchLog << "=====Yearly Sales=====" << endl;
 
-	ifstream input("reports.txt");
+	ifstream input("Batch/reports.txt");
 
 	//Writes two files
-	ofstream out("sales.txt");
+	ofstream out("Batch/sales.txt");
 
 	string line;
 	int trailerCount = 0;
 
 	getline(input, line);
-
+	if (!input.good()) {
+		FileNotFound(batchLog, "reports.txt");
+		return;
+	}
 	//Header check
 	if (stoi(line.substr(3, 4)) != sequenceNo)
 	{
@@ -552,13 +615,16 @@ void yearlySales(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) { //
 
 ///CALLS BATCH FUNCTIONS
 void runBatchSequence(DatabaseManager *dbm) { //Calls all of the batch sequences
-	ofstream batchLog("batchLog.txt");
+	ofstream batchLog("Batch/batchLog.txt");
 
-	ifstream sequencesIn("sequences.txt"); //reads old sequence numbers
-	vector<int> sequenceNos;
-	for (int i = 1; i <= 12; i++)
-		sequencesIn >> sequenceNos[i - 1];
-	vector<int> oldsequenceNos = sequenceNos;
+	ifstream sequencesIn("Batch/sequences.txt"); //reads old sequence numbers
+	vector<int> sequenceNos, oldsequenceNos;
+	int tmp;
+	for (int i = 1; i <= 12; i++) {
+		sequencesIn >> tmp;
+		sequenceNos.push_back(tmp);
+		oldsequenceNos.push_back(tmp);
+	}
 
 	/*
 	SEQUENCE NUMBER ORDER of sequences.txt:
@@ -582,7 +648,9 @@ void runBatchSequence(DatabaseManager *dbm) { //Calls all of the batch sequences
 	inventoryGeneration(dbm, batchLog, sequenceNos[8]);
 	yearlySales(dbm, batchLog, sequenceNos[9]);
 
-	ofstream sequencesOut("sequences.txt"); //Writes new sequence numbers to same file
+	ofstream sequencesOut("Batch/sequences.txt"); //Writes new sequence numbers to same file
 	for (int i = 1; i <= 12; i++)
-		sequencesOut << sequenceNos[i - 1];
+		sequencesOut << ZeroFillNumber(to_string(sequenceNos[i - 1]), 4) << " ";
+
+	printbatchLog();
 }
