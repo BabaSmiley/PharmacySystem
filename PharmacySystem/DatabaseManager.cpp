@@ -141,7 +141,7 @@ bool DatabaseManager::deleteStore(Store *store) {
 
 	sqlite3_stmt *stmt;
 	bool result = false;
-	string sql = "delete from Store where Id=" + quotesql(store->getId());
+	string sql = "UPDATE Store SET IsActive = 0 WHERE Id = " + quotesql(store->getId());
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
@@ -208,7 +208,7 @@ Store* DatabaseManager::getStore(int storeId) {
 	sqlite3_stmt *stmt;
 	Store *result = nullptr;
 
-	string sql = "select Id, Address, City, State, ZipCode, PriorityLevel, IsActive from Store where Id=" + quotesql(storeId);
+	string sql = "select Id, Address, City, State, ZipCode, PriorityLevel, IsActive from Store where Id=" + quotesql(storeId) + " AND IsActive = 1";
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 
 		if (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -237,7 +237,7 @@ vector<Store*> DatabaseManager::getStores(unsigned int count) {
 		limitingSQL = " limit " + to_string(count);
 	}
 
-	string sql = "select Id, Address, City, State, ZipCode, PriorityLevel, IsActive from Store" + limitingSQL;
+	string sql = "select Id, Address, City, State, ZipCode, PriorityLevel, IsActive from Store WHERE IsActive = 1" + limitingSQL;
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 
@@ -384,7 +384,7 @@ Item* DatabaseManager::getItem(int itemId) {
 	sqlite3_stmt *stmt;
 	Item *result = nullptr;
 
-	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item WHERE Id = " + quotesql(itemId);
+	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item WHERE IsActive = 1 AND Id = " + quotesql(itemId);
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		result = itemFromSQL(stmt);
@@ -398,7 +398,7 @@ Item* DatabaseManager::getItem(string itemName) {
 	sqlite3_stmt *stmt;
 	Item *result = nullptr;
 
-	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item WHERE Name = " + quotesql(itemName);
+	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item WHERE IsActive = 1 AND Name = " + quotesql(itemName);
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		result = itemFromSQL(stmt);
@@ -420,7 +420,7 @@ vector<Item*> DatabaseManager::getItems(unsigned int count, bool onlyActiveItems
 		limitingSQL += " limit " + to_string(count);
 	}
 
-	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item" + limitingSQL;
+	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item WHERE IsActive = 1" + limitingSQL;
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 
