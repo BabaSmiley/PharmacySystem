@@ -22,8 +22,9 @@ public:
 		ordersToInclude.clear();
 
 		User *customer = CommonUserPrompts::getUserFromInput();
-		if (customer == nullptr) {
+		if (customer == nullptr || customer->getUserType() != Customer) {
 			// Customer user was not able to be retrived
+			cout << "A customer does not exist for the given username" << endl;
 			cout << endProcessMessage << endl << endl;
 			return nullptr;
 		}
@@ -31,6 +32,7 @@ public:
 		Store *store = CommonUserPrompts::getStoreFromInput("Enter the store id to order from:");
 		if (store == nullptr) {
 			// Store was not able to be retrived
+			cout << "A store does not exist for the given id." << endl;
 			cout << endProcessMessage << endl << endl;
 			return nullptr;
 		}
@@ -133,6 +135,11 @@ private:
 					int itemId = stoi(userInput);
 
 					Item *resultForInput = DatabaseManager::shared()->getItem(itemId);
+					if (resultForInput == nullptr) { // Guard
+						cout << "An item does not exist for the entered id." << endl;
+						continue;
+					}
+
 					if (itemIsInItemOrder(resultForInput)) { //Check if item was already added to prescription
 						cout << "[!] This item has already been added to the prescription." << endl;
 						cout << "Item was not re-added to prescription." << endl;
