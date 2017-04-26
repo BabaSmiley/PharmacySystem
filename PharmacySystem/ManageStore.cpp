@@ -76,11 +76,6 @@ private:
 			priorityLevelString = getInput("Priority Level (Max 2 characters and between 0-15)");
 			if (priorityLevelString.size() > 2) {
 				priorityLevelString = priorityLevelString.substr(0, 2);
-
-				int p = stoi(priorityLevelString);
-				if (p < 0 || p > 15) {
-					throw "The input was not within the specified values.";
-				}
 				cout << "Priority Level truncated to: " << priorityLevelString << endl;
 			}
 
@@ -89,6 +84,11 @@ private:
 			}
 			else {
 				priorityLevel = stoi(priorityLevelString);
+
+				if (priorityLevel < 0 || priorityLevel > 15) {
+					cout << "The priority level must be between 0 and 15." << endl;
+					throw "The input was not within the specified values.";
+				}
 			}
 		}
 		catch (const char *e) {
