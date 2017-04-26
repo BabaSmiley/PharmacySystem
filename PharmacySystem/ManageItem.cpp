@@ -30,88 +30,104 @@ private:
 		long whRefillQty;
 		string whLevelString;
 		long whLevel;
-		string isActiveString;
-		int isActive;
 
 		cout << endl << "To update an attribute of the item, enter the new value when prompted. Otherwise, just hit enter." << endl;
-		name = getInput("Name");
-		description = getInput("Description");
-		priceString = getInput("Price");
 		try {
+			name = getInput("Name (Max 20 characters)");
+			if (name.size() > 20)
+			{
+				name = name.substr(0, 20); //truncate
+				cout << "Name truncated to: " << name << endl;
+			}
+
+			description = getInput("Description (Max 100 characters)");
+			if (description.size() > 100)
+			{
+				description = description.substr(0, 100); //truncate
+				cout << "Description truncated to: " << description << endl;
+			}
+
+			priceString= getInput("Price (Max 9 characters)");
+			if (priceString.size() > 9) {
+				priceString = priceString.substr(0, 9);
+				cout << "Price truncated to: " << priceString << endl;
+			}
+
 			if (priceString.empty()) {
 				price = NULL;
 			}
 			else {
 				price = stoi(priceString);
 			}
-		}
-		catch (const char *e) {
-			throw e;
-		}
-		dosage = getInput("Dosage");
-		vendorString = getInput("Vendor ID");
-		try {
+
+			dosage = getInput("Dosage (Max 20 characters)");
+			if (dosage.size() > 20)
+			{
+				dosage = dosage.substr(0, 20); //truncate
+				cout << "dosage truncated to: " << dosage << endl;
+			}
+
+			vendorString = getInput("Vendor ID (Max 4 characters)");
+			if (vendorString.size() > 4) {
+				vendorString = vendorString.substr(0, 4);
+				cout << "Vendor truncated to: " << vendorString << endl;
+			}
 			if (vendorString.empty()) {
 				vendorId = NULL;
 			}
 			else {
 				vendorId = stoi(vendorString);
 			}
-		}
-		catch (const char *e) {
-			throw e;
-		}
-		expectedDeliveryDate = getInput("Expected Delivery Date");
-		whRefillLevelString = getInput("Warehouse Refill Level");
-		try {
+
+			expectedDeliveryDate = getInput("Expected Delivery Date (Max 20 characters)");
+			if (expectedDeliveryDate.size() > 20)
+			{
+				expectedDeliveryDate = expectedDeliveryDate.substr(0, 20); //truncate
+				cout << "Expected Delivery Date truncated to: " << expectedDeliveryDate << endl;
+			}
+
+			whRefillLevelString = getInput("Warehouse Refill Level (Max 10 characters)");
+			if (whRefillLevelString.size() > 10) {
+				whRefillLevelString = whRefillLevelString.substr(0, 10);
+				cout << "Warehouse Refill Level truncated to: " << whRefillLevelString << endl;
+			}
 			if (whRefillLevelString.empty()) {
 				whRefillLevel = NULL;
 			}
 			else {
 				whRefillLevel = stoi(whRefillLevelString);
 			}
-		}
-		catch (const char *e) {
-			throw e;
-		}
-		whRefillQtyString = getInput("Warehouse Refill Quantity");
-		try {
+
+			whRefillQtyString = getInput("Warehouse Refill Quantity (Max 10 characters)");
+			if (whRefillQtyString.size() > 10) {
+				whRefillQtyString = whRefillQtyString.substr(0, 10);
+				cout << "Warehouse Quantity Level truncated to: " << whRefillQtyString << endl;
+			}
 			if (whRefillQtyString.empty()) {
 				whRefillQty = NULL;
 			}
 			else {
 				whRefillQty = stoi(whRefillQtyString);
 			}
-		}
-		catch (const char *e) {
-			throw e;
-		}
-		whLevelString = getInput("Warehouse Level");
-		try {
+
+			whLevelString = getInput("Warehouse Level (Max 10 characters)");
+			if (whLevelString.size() > 10) {
+				whLevelString = whLevelString.substr(0, 10);
+				cout << "Warehouse Level truncated to: " << whLevelString << endl;
+			}
 			if (whLevelString.empty()) {
 				whLevel = NULL;
 			}
 			else {
 				whLevel = stoi(whLevelString);
 			}
-		}
-		catch (const char *e) {
-			throw e;
-		}
-		isActiveString = getInput("Is Active (0 or 1)");
-		try {
-			if (isActiveString.empty()) {
-				isActive = NULL;
-			}
-			else {
-				isActive = stoi(isActiveString);
-			}
+
 		}
 		catch (const char *e) {
 			throw e;
 		}
 
-		Item *item = DatabaseManager::shared()->updateItem(id, name, description, price, dosage, vendorId, expectedDeliveryDate, whRefillLevel, whRefillQty, whLevel, isActive);
+		Item *item = DatabaseManager::shared()->updateItem(id, name, description, price, dosage, vendorId, expectedDeliveryDate, whRefillLevel, whRefillQty, whLevel);
 
 		if (item) {
 			cout << "Item successfully updated." << endl;
