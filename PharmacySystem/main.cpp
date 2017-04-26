@@ -212,7 +212,7 @@ int main() {
 		}
 		catch (const exception& err) {
 			// Catch any out_of_range errors, etc.
-			//cerr << "Caught exception: " << err.what() << endl; //DEBUG
+			cerr << "Caught exception: " << err.what() << endl; //DEBUG
 			cout << "Invalid command. Type 'help' for a list of available commands." << endl;
 		}
 	}

@@ -14,10 +14,10 @@ public:
 		try {
 			bool success = getStoreUpdateInput(storeId);
 			if (success) {
-				cout << "The store's values were updated." << endl;
+				cout << "The store's values were updated." << endl << endl;;
 			}
 			else {
-				cout << "The store was unable to update. The store was not modified." << endl;
+				cout << "The store was unable to update. The store was not modified." << endl << endl;;
 			}
 		}
 		catch (const char* e) {
@@ -29,11 +29,11 @@ private:
 
 	// returns a bool if the process was successful or not
 	bool getStoreUpdateInput(int id) throw(const char*) {
-		string address = NULL;
-		string city = NULL;
-		string state = NULL;
-		int zipCode = NULL;
-		int priorityLevel = NULL;
+		string address;
+		string city;
+		string state;
+		int zipCode;
+		int priorityLevel;
 
 		string zipCodeString;
 		string priorityLevelString;
@@ -73,7 +73,7 @@ private:
 				zipCode = stoi(zipCodeString);
 			}
 
-			priorityLevelString = getInput("Priority Level (Max 2 characters)", 2);
+			priorityLevelString = getInput("Priority Level (Max 2 characters)");
 			if (priorityLevelString.size() > 2) {
 				priorityLevelString = priorityLevelString.substr(0, 2);
 				cout << "Priority Level truncated to: " << priorityLevelString << endl;
