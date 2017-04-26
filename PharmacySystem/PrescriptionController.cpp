@@ -19,7 +19,8 @@ public:
 		Returns: A prescription object if one was created after the entire process and put into the database
 	*/
 	Prescription* startCreatePrescription() {
-		
+		ordersToInclude.clear();
+
 		User *customer = CommonUserPrompts::getUserFromInput();
 		if (customer == nullptr) {
 			// Customer user was not able to be retrived
@@ -35,7 +36,7 @@ public:
 		}
 
 		//1. Prompt and get Items from user to include in the prescription
-		vector<ItemOrder*> ordersToInclude;
+		cout << "Add items to your prescription. Up to 5 may be added." << endl;
 		ItemOrder *currentOrder;
 		do {
 			currentOrder = getItemOrderFromInput(store);
@@ -43,7 +44,7 @@ public:
 				ordersToInclude.push_back(currentOrder);
 			}
 			
-		} while (currentOrder != nullptr);
+		} while (currentOrder != nullptr && ordersToInclude.size() <= 5);
 
 		if (ordersToInclude.size() == 0) { //Guard: No items added for prescription
 			cout << "No items added to prescription." << endl;
@@ -92,7 +93,6 @@ public:
 	}
 
 private:
-
 	struct ItemOrder {
 		Item *item;
 		int quantity;
@@ -102,6 +102,8 @@ private:
 			this->quantity = quantity;
 		}
 	};
+
+	vector<ItemOrder*> ordersToInclude;
 
 	const char *exitAnytimeMessage = "Enter 'exit' anytime in order to exit the create prescription process.";
 	const char *endProcessMessage = "Ended create prescription process.";
@@ -115,7 +117,7 @@ private:
 
 		while (itemOrder == nullptr) {
 
-			cout << endl << "Enter an item's id to add to the prescription:" << endl << "(Or type 'list items' to a view a list of all items) ('exit' to cancel)" << endl;
+			cout << endl << "Enter an item's id to add to the prescription:" << endl << "(Or type 'list items' to a view a list of all items) ('exit' to end item retrieval)" << endl;
 			string userInput = getInput("item id");
 
 			vector<string> input = splitString(userInput, " ");
@@ -131,6 +133,12 @@ private:
 					int itemId = stoi(userInput);
 
 					Item *resultForInput = DatabaseManager::shared()->getItem(itemId);
+					if (itemIsInItemOrder(resultForInput)) { //Check if item was already added to prescription
+						cout << "[!] This item has already been added to the prescription." << endl;
+						cout << "Item was not re-added to prescription." << endl;
+						continue;
+					}
+
 					Inventory *inventory = DatabaseManager::shared()->getInventory(store->getId(), resultForInput->getId());
 					if (resultForInput == nullptr) {
 						throw exception("Result nonexistant.");
@@ -150,8 +158,8 @@ private:
 							itemOrder = new ItemOrder(resultForInput, quantity);
 						}
 						else {
-							cout << "Quantity is larger than available at the store. Max quantity available is " << currentStoreInventoryLevel << endl;
-							cout << "Item not added to prescription." << endl;
+							cout << "[!] Quantity is larger than available at the store. Max quantity available is " << currentStoreInventoryLevel << endl;
+							cout << "Item was not added to prescription." << endl;
 						}
 					}
 					else {
@@ -170,6 +178,17 @@ private:
 
 
 	/* HELPERS */
+
+	bool itemIsInItemOrder(Item* item) {
+		for (ItemOrder *order : ordersToInclude) {
+			Item *orderItem = order->item;
+			if (*orderItem == *item) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	void printItemTable(Store *store) {
 		DatabaseManager *dbm = DatabaseManager::shared();
 		ItemTablePrinter::printItemTable(dbm, store);

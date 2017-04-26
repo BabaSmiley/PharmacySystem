@@ -48,7 +48,7 @@ private:
 		const int dosageWidth = 30;
 		const int priceWidth = 20;
 
-		cout << string(40, '-') << endl;
+		cout << string(50, '-') << endl;
 		cout << left << setw(idWidth) << setfill(separator) << "Id";
 		if(store)
 			cout << left << setw(idWidth) << setfill(separator) << "StoreId";
@@ -68,7 +68,7 @@ private:
 			cout << left << setw(priceWidth) << setfill(separator) << "$" + to_string(item->getPrice());
 			cout << left << setw(dosageWidth) << setfill(separator) << itemDosage << endl;
 		}
-		cout << string(40, '-') << endl << endl;
+		cout << string(50, '-') << endl << endl;
 	}
 
 
