@@ -17,7 +17,7 @@ string sqlToString(const unsigned char* str) {
 DatabaseManager::DatabaseManager() {
 
 	/* Attempt to open connection to file */
-	int returnCode = sqlite3_open(DatabaseConstants::DatabaseName, &db);
+	int returnCode = sqlite3_open(DatabaseConstants::BetaDatabaseName, &db);
 
 	sqlite3_exec(db, "PRAGMA foreign_keys = ON;", 0, 0, 0);
 
@@ -141,7 +141,7 @@ bool DatabaseManager::deleteStore(Store *store) {
 
 	sqlite3_stmt *stmt;
 	bool result = false;
-	string sql = "delete from Store where Id=" + quotesql(store->getId());
+	string sql = "UPDATE Store SET IsActive = 0 WHERE Id = " + quotesql(store->getId());
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
@@ -168,7 +168,7 @@ Store* DatabaseManager::createStore(int id, string address, string city, string 
 	return newStore;
 }
 
-Store* DatabaseManager::updateStore(int id, string address = NULL, string city = NULL, string state = NULL, int zipCode = NULL, int priorityLevel = NULL, int isActive = NULL) {
+Store* DatabaseManager::updateStore(int id, string address = NULL, string city = NULL, string state = NULL, int zipCode = -1, int priorityLevel = -1) {
 	sqlite3_stmt *stmt;
 	Store *updatingStore = nullptr;
 
@@ -182,14 +182,11 @@ Store* DatabaseManager::updateStore(int id, string address = NULL, string city =
 	if (!state.empty()) {
 		baseSql += ", State = " + quotesql(state);
 	}
-	if (zipCode != NULL) {
+	if (zipCode != -1) {
 		baseSql += ", ZipCode = " + quotesql(zipCode);
 	}
-	if (priorityLevel != NULL) {
+	if (priorityLevel != -1) {
 		baseSql += ", PriorityLevel = " + quotesql(priorityLevel);
-	}
-	if (isActive != NULL) {
-		baseSql += ", IsActive = " + quotesql(isActive);
 	}
 	baseSql += " WHERE Id = " + quotesql(id);
 
@@ -208,7 +205,7 @@ Store* DatabaseManager::getStore(int storeId) {
 	sqlite3_stmt *stmt;
 	Store *result = nullptr;
 
-	string sql = "select Id, Address, City, State, ZipCode, PriorityLevel, IsActive from Store where Id=" + quotesql(storeId);
+	string sql = "select Id, Address, City, State, ZipCode, PriorityLevel, IsActive from Store where Id=" + quotesql(storeId) + " AND IsActive = 1";
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 
 		if (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -237,7 +234,7 @@ vector<Store*> DatabaseManager::getStores(unsigned int count) {
 		limitingSQL = " limit " + to_string(count);
 	}
 
-	string sql = "select Id, Address, City, State, ZipCode, PriorityLevel, IsActive from Store" + limitingSQL;
+	string sql = "select Id, Address, City, State, ZipCode, PriorityLevel, IsActive from Store WHERE IsActive = 1" + limitingSQL;
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 
@@ -343,28 +340,28 @@ Item* DatabaseManager::updateItem(int id, string name, string description, int p
 	if (!description.empty() && !AllSpaces(description)) {
 		baseSql += ", Description = " + quotesql(description);
 	}
-	if (price != NULL && price >= 0) {
+	if (price != -1 && price >= 0) {
 		baseSql += ", Price = " + quotesql(price);
 	}
 	if (!dosage.empty() && !AllSpaces(dosage)) {
 		baseSql += ", Dosage = " + quotesql(dosage);
 	}
-	if (vendorId != NULL && vendorId >= 0) {
+	if (vendorId != -1 && vendorId >= 0) {
 		baseSql += ", VendorId = " + quotesql(vendorId);
 	}
 	if (!expectedDeliveryDate.empty() && !AllSpaces(expectedDeliveryDate)) {
 		baseSql += ", ExpectedDeliveryDate = " + quotesql(expectedDeliveryDate);
 	}
-	if (whRefillLevel != NULL && whRefillLevel >= 0) {
+	if (whRefillLevel != -1 && whRefillLevel >= 0) {
 		baseSql += ", WhRefillLevel = " + quotesql(whRefillLevel);
 	}
-	if (whRefillQty != NULL & whRefillQty >= 0) {
+	if (whRefillQty != -1 & whRefillQty >= 0) {
 		baseSql += ", WhRefillQty = " + quotesql(whRefillQty);
 	}
-	if (whLevel != NULL && whLevel >= 0) {
+	if (whLevel != -1 && whLevel >= 0) {
 		baseSql += ", WhLevel = " + quotesql(whLevel);
 	}
-	if (isActive != NULL) {
+	if (isActive != -1) {
 		baseSql += ", IsActive = " + quotesql(isActive);
 	}
 	baseSql += " WHERE Id = " + quotesql(id);
@@ -384,7 +381,7 @@ Item* DatabaseManager::getItem(int itemId) {
 	sqlite3_stmt *stmt;
 	Item *result = nullptr;
 
-	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item WHERE Id = " + quotesql(itemId);
+	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item WHERE IsActive = 1 AND Id = " + quotesql(itemId);
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		result = itemFromSQL(stmt);
@@ -398,7 +395,7 @@ Item* DatabaseManager::getItem(string itemName) {
 	sqlite3_stmt *stmt;
 	Item *result = nullptr;
 
-	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item WHERE Name = " + quotesql(itemName);
+	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item WHERE IsActive = 1 AND Name = " + quotesql(itemName);
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		result = itemFromSQL(stmt);
@@ -420,7 +417,7 @@ vector<Item*> DatabaseManager::getItems(unsigned int count, bool onlyActiveItems
 		limitingSQL += " limit " + to_string(count);
 	}
 
-	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item" + limitingSQL;
+	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item WHERE IsActive = 1" + limitingSQL;
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 

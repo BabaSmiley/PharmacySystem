@@ -72,12 +72,6 @@
     <ClCompile Include="Purchase.cpp">
       <Filter>Source Files\DB Models</Filter>
     </ClCompile>
-    <ClCompile Include="ManageStore.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ManageItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Sale.cpp">
       <Filter>Source Files\DB Models</Filter>
     </ClCompile>
@@ -121,6 +115,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ReorderController.cpp">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="ManageStore.cpp">
+      <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="ManageItem.cpp">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
   </ItemGroup>

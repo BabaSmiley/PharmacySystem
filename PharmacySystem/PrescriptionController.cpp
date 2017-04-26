@@ -76,6 +76,12 @@ public:
 			}
 
 			prescriptionCost += salePrice;
+
+			// 5. Create purchase in the database and update the inventory (quantity is promised to be <= to inventory quantity)
+			Inventory *inventory = DatabaseManager::shared()->getInventory(store->getId(), item->getId());
+			long newQuantity = inventory->getItemLevel() - itemOrder->quantity;
+
+			DatabaseManager::shared()->updateInventory(store->getId(), item->getId(), newQuantity);
 			DatabaseManager::shared()->createPurchase(prescriptionId, item->getId(), itemOrder->quantity, salePrice);
 		}
 
@@ -125,10 +131,11 @@ private:
 					int itemId = stoi(userInput);
 
 					Item *resultForInput = DatabaseManager::shared()->getItem(itemId);
+					Inventory *inventory = DatabaseManager::shared()->getInventory(store->getId(), resultForInput->getId());
 					if (resultForInput == nullptr) {
 						throw exception("Result nonexistant.");
 					}
-					else if (DatabaseManager::shared()->getInventory(store->getId(), resultForInput->getId()) == nullptr) {
+					else if (inventory == nullptr) {
 						throw exception("Item is not carried by this store.");
 					}
 
@@ -137,10 +144,18 @@ private:
 					int quantity = stoi(quantityStr);
 
 					if (quantity > 0) {
-						itemOrder = new ItemOrder(resultForInput, quantity);
+						int currentStoreInventoryLevel = inventory->getItemLevel();
+
+						if (quantity <= currentStoreInventoryLevel) {
+							itemOrder = new ItemOrder(resultForInput, quantity);
+						}
+						else {
+							cout << "Quantity is larger than available at the store. Max quantity available is " << currentStoreInventoryLevel << endl;
+							cout << "Item not added to prescription." << endl;
+						}
 					}
 					else {
-						cout << "Invalid quantity entered." << endl;
+						cout << "Invalid quantity entered. Item not added to prescription." << endl;
 					}
 				}
 			}

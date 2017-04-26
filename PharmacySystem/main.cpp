@@ -68,7 +68,6 @@ User* DebugGetEmployeeUser() {
 int main() {
 	DatabaseManager *dbm = DatabaseManager::shared();
 	//runTests(dbm);
-	//runBatchSequence(dbm);
 	
 	/* Start Login & Registration Process */
 	// DEBUG - commented out so dont have to repeatadly sign in. Uncomment to reactivate the login feature
@@ -180,8 +179,15 @@ int main() {
 				}
 			}
 			else if (user->isEmployee() && "manage store" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
-				ManageStore ms;
-				ms.promptForInput(stoi(input.at(2)));
+				int storeId = stoi(input.at(2));
+				Store *store = dbm->getStore(storeId);
+				if (store != nullptr) {
+					ManageStore ms;
+					ms.promptForInput(storeId);
+				}
+				else {
+					cout << "A store does not exist for this id" << endl << endl;
+				}
 			}
 			else if (user->isEmployee() && "manage item" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
 				ManageItem mi;
@@ -206,7 +212,7 @@ int main() {
 		}
 		catch (const exception& err) {
 			// Catch any out_of_range errors, etc.
-			//cerr << "Caught exception: " << err.what() << endl; //DEBUG
+			cerr << "Caught exception: " << err.what() << endl; //DEBUG
 			cout << "Invalid command. Type 'help' for a list of available commands." << endl;
 		}
 	}

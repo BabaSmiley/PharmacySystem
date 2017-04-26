@@ -4,6 +4,7 @@
 
 namespace DatabaseConstants {
 	const char DatabaseName[] = "warehouse.db";
+	const char BetaDatabaseName[] = "warehouse-test.db";
 }
 
 #endif
