@@ -340,28 +340,28 @@ Item* DatabaseManager::updateItem(int id, string name, string description, int p
 	if (!description.empty() && !AllSpaces(description)) {
 		baseSql += ", Description = " + quotesql(description);
 	}
-	if (price != NULL && price >= 0) {
+	if (price != -1 && price >= 0) {
 		baseSql += ", Price = " + quotesql(price);
 	}
 	if (!dosage.empty() && !AllSpaces(dosage)) {
 		baseSql += ", Dosage = " + quotesql(dosage);
 	}
-	if (vendorId != NULL && vendorId >= 0) {
+	if (vendorId != -1 && vendorId >= 0) {
 		baseSql += ", VendorId = " + quotesql(vendorId);
 	}
 	if (!expectedDeliveryDate.empty() && !AllSpaces(expectedDeliveryDate)) {
 		baseSql += ", ExpectedDeliveryDate = " + quotesql(expectedDeliveryDate);
 	}
-	if (whRefillLevel != NULL && whRefillLevel >= 0) {
+	if (whRefillLevel != -1 && whRefillLevel >= 0) {
 		baseSql += ", WhRefillLevel = " + quotesql(whRefillLevel);
 	}
-	if (whRefillQty != NULL & whRefillQty >= 0) {
+	if (whRefillQty != -1 & whRefillQty >= 0) {
 		baseSql += ", WhRefillQty = " + quotesql(whRefillQty);
 	}
-	if (whLevel != NULL && whLevel >= 0) {
+	if (whLevel != -1 && whLevel >= 0) {
 		baseSql += ", WhLevel = " + quotesql(whLevel);
 	}
-	if (isActive != NULL) {
+	if (isActive != -1) {
 		baseSql += ", IsActive = " + quotesql(isActive);
 	}
 	baseSql += " WHERE Id = " + quotesql(id);

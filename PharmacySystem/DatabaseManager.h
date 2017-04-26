@@ -100,7 +100,7 @@ public:
 		Must specific an id, all other fields optional
 		Returns: Returns an item object representing a DB Item model
 	*/
-	Item* updateItem(int id, string name = NULL, string description = NULL, int price = NULL, string dosage = NULL, int vendorId = NULL, string expectedDeliveryDate = NULL, long whRefillLevel = NULL, long whRefillQty = NULL, long whLevel = NULL, int isActive = NULL);
+	Item* updateItem(int id, string name = NULL, string description = NULL, int price = -1, string dosage = NULL, int vendorId = -1, string expectedDeliveryDate = NULL, long whRefillLevel = -1, long whRefillQty = -1, long whLevel = -1, int isActive = -1);
 
 	/* Gets an item from the database
 		Returns: Returns a filled in Item object, or nullptr if no item was found
