@@ -7,6 +7,16 @@ using namespace std;
 #include "DatabaseManager.h"
 #include "BatchProcesses.h"
 #include <algorithm>
+#include <ctime>
+
+string getDate() {
+	time_t t = time(0); 
+	struct tm now;
+	localtime_s(&now, &t);
+	return to_string(now.tm_year + 1900) + '-'
+		+ ZeroFillNumber(to_string(now.tm_mon + 1), 2) + '-'
+		+ ZeroFillNumber(to_string(now.tm_mday), 2);
+}
 
 void printbatchLog() {
 	cout << "BATCH ERROR LOG (batchLog.txt)" << endl;
@@ -89,7 +99,7 @@ to concatenate all data records from the 3 sources to a single file. Used by war
 void writeFile(vector<string> records, int sequenceNo, string fileName) {
 	ofstream output(fileName);
 
-	output << "HD " << ZeroFillNumber(to_string(sequenceNo), 4) << endl;
+	output << "HD " << ZeroFillNumber(to_string(sequenceNo), 4) << " " << getDate() << endl;
 
 	for (int i = 0; i < (int)records.size(); i++)
 		output << records[i] << endl;
@@ -100,7 +110,7 @@ void writeFile(vector<string> records, int sequenceNo, string fileName) {
 void WriteBatchReviewFile(DatabaseManager *dbm, int seqNo) {
 	ofstream out("Batch/batchreview.txt");
 
-	out << "HD " << ZeroFillNumber(to_string(seqNo), 4) << endl;
+	out << "HD " << ZeroFillNumber(to_string(seqNo), 4) << " " << getDate() << endl;
 
 	int trailerCounter = 0;
 	vector<Inventory*> inv = dbm->getAllInventory();
@@ -119,7 +129,7 @@ void WriteBatchReviewFile(DatabaseManager *dbm, int seqNo) {
 void WriteOnlineRequestFile(DatabaseManager *dbm, int seqNo) {
 	ofstream out("Batch/onlinerequest.txt");
 
-	out << "HD " << ZeroFillNumber(to_string(seqNo), 4) << endl;
+	out << "HD " << ZeroFillNumber(to_string(seqNo), 4) << " " << getDate() << endl;
 
 	int trailerCounter = 0;
 
@@ -309,8 +319,8 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo
 	ofstream outInvRecAtWarehouse("Batch/deletestoreitems.txt"); //Ships back to warehouse
 	int InvRecAtWarehouseCounter = 0;
 
-	outInvToStoreReq << "HD " + ZeroFillNumber(to_string(sequenceNoCreateStoreItems), 4) << endl;
-	outInvRecAtWarehouse << "HD " + ZeroFillNumber(to_string(sequenceNoDeleteStoreItems), 4) << endl;
+	outInvToStoreReq << "HD " + ZeroFillNumber(to_string(sequenceNoCreateStoreItems), 4) << " " << getDate() << endl;
+	outInvRecAtWarehouse << "HD " + ZeroFillNumber(to_string(sequenceNoDeleteStoreItems), 4) << " " << getDate() << endl;
 
 	getline(input, line);
 
@@ -463,7 +473,7 @@ and add them to the stores
 
 	ofstream output("Batch/reorder.txt");
 	sequenceNoReorder = incSeqNo(sequenceNoReorder);
-	output << "HD " << ZeroFillNumber(to_string(sequenceNoReorder), 4) << endl;
+	output << "HD " << ZeroFillNumber(to_string(sequenceNoReorder), 4) << " " << getDate() << endl;
 
 	ifstream input("Batch/storeupdate.txt");
 	string line;
@@ -522,14 +532,14 @@ void inventoryGeneration(DatabaseManager *dbm, ofstream &batchLog, int &sequence
 
 	ofstream output("Batch/vendororder.txt");
 
-	output << "HD " << ZeroFillNumber(to_string(sequenceNo), 4) << endl;
+	output << "HD " << ZeroFillNumber(to_string(sequenceNo), 4) << " " << getDate() << endl;
 
-	vector<Item*> items = dbm->getItems(0);
+	vector<Item*> items = dbm->getItems(0, 1);
 
 	int trailerCount = 0;
 
 	for (int i = 0; i < items.size(); i++)
-		if (items[i]->getWhLevel() <= items[i]->getWhRefillQty()) {
+		if (items[i]->getWhLevel() <= items[i]->getWhRefillLevel()) {
 			output << ZeroFillNumber(to_string(items[i]->getVendorId()), 4) << ZeroFillNumber(to_string(items[i]->getId()), 9) << ZeroFillNumber(to_string(items[i]->getWhRefillQty()), 10) << endl;
 			trailerCount++;
 		}
@@ -568,51 +578,73 @@ void yearlySales(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) { //
 	while (line[0] != 'T') {
 		trailerCount++;
 
-		string itemCode = line.substr(0, 4);
+		string itemCode = line.substr(0, 9);
 		vector<Sale*> sales = dbm->getSalesByItem(stoi(itemCode)); //Sales for an item sorted by date
-		out << "=====" << itemCode << "=====";
+		out << "=====" << itemCode << "=====" << endl;
 
-		string year = "0000", month = "00";
+		if (sales.size() > 0) {
 
-		int salesM = 0, salesY = 0, salesT = 0,
-			qtyM = 0, qtyY = 0, qtyT = 0;
+			string year = (sales[0]->getDate()).substr(0, 4), month = (sales[0]->getDate()).substr(5, 2);
 
-		for (int i = 0; i < sales.size(); i++) {
-			string yeartmp = (sales[i]->getDate()).substr(0, 4),
-				monthtmp = (sales[i]->getDate()).substr(5, 2);
+			int salesM = 0, salesY = 0, salesT = 0,
+				qtyM = 0, qtyY = 0, qtyT = 0;
 
-			if (yeartmp > year) { //If new year, then set new year, and roll over month, and reset counters
-				out << year << "-" << month << qtyM << " " << salesM << endl;
-				out << year << qtyY << salesY;
+			for (int i = 0; i < sales.size(); i++) {
+				string monthtmp = (sales[i]->getDate()).substr(5, 2);
+				string yeartmp = (sales[i]->getDate()).substr(0, 4);
 
-				year = yeartmp;
-				month = monthtmp;
+				if (monthtmp != month || yeartmp != year) { //If new month, then set new month, and reset month counter
+					out << year << "-" << month << " " << qtyM << " $" << salesM << endl;
 
-				salesM = 0; salesY = 0; qtyM = 0; qtyY = 0; //reset counters
+					month = monthtmp;
+					year = yeartmp;
+
+					salesM = 0; qtyM = 0; //reset counters
+				}
+
+				int qty = sales[i]->getQuantity();
+				int salesAmt = sales[i]->getSalePrice() * qty;
+
+				salesM += salesAmt; salesT += salesAmt;
+				qtyM += qty; qtyT += qty;
 			}
-			else if (monthtmp > month) { //If new month, then set new month, and reset month counter
-				out << year << "-" << month << qtyM << " $" << salesM << endl;
 
-				month = monthtmp;
+			if (qtyM > 0 || salesM > 0)
+				out << year << "-" << month << " " << qtyM << " $" << salesM << endl;
 
-				salesM = 0; qtyM = 0; //reset counters
+			out << endl;
+
+			year = (sales[0]->getDate()).substr(0, 4);
+
+			for (int i = 0; i < sales.size(); i++) {
+				string yeartmp = (sales[i]->getDate()).substr(0, 4);
+
+				if (yeartmp != year) { //If new year, then set new year, and roll over month, and reset counters
+					out << year << " " << qtyY << " $" << salesY << endl;
+
+					year = yeartmp;
+
+					salesY = 0; qtyY = 0; //reset counters
+				}
+
+				int qty = sales[i]->getQuantity();
+				int salesAmt = sales[i]->getSalePrice() * qty;
+
+				salesY += salesAmt; qtyY += qty;
 			}
 
-			int qty = sales[i]->getQuantity();
-			int salesAmt = sales[i]->getSalePrice() * qty;
+			if (qtyY > 0 || salesY > 0)
+			out << year << " " << qtyY << " $" << salesY << endl;
 
-			salesM += salesAmt; salesY += salesAmt; salesT += salesAmt;
-			qtyM += qty; qtyY += qty; qtyT += qty;
+			out << endl << "GRAND TOTAL: " << qtyT << " $" << salesT << endl << endl;
+
+			getline(input, line);
 		}
-
-		out << "GRAND TOTAL: " << qtyT << " $" << salesT << endl;
-
-		getline(input, line);
 	}
 
 	if (stoi(line.substr(2, 4)) != trailerCount)
-		batchLog << "reports.txt trailer mismatch. Expected" + line.substr(2, 4)
-		+ " got " + to_string(trailerCount);
+		batchLog << "reports.txt trailer mismatch. Expected " + line.substr(2, 4)
+			+ " got " + to_string(trailerCount) << endl;
 
 	sequenceNo = incSeqNo(sequenceNo);
 }
@@ -645,8 +677,9 @@ void runBatchSequence(DatabaseManager *dbm) { //Calls all of the batch sequences
 	10: warehouseinventoryupdate.txt
 	11: reorder.txt
 	*/
+
 	//updateItemData(dbm, batchLog, sequenceNos[0]);
-	createDeleteStore(dbm, batchLog, sequenceNos[1], sequenceNos[2], sequenceNos[3]);
+	//createDeleteStore(dbm, batchLog, sequenceNos[1], sequenceNos[2], sequenceNos[3]);
 	//inventoryReceivedAtWarehouse(dbm, batchLog, oldsequenceNos[3], sequenceNos[4], sequenceNos[10]);
 	//inventoryToStoreRequest(dbm, batchLog, sequenceNos[7], oldsequenceNos[2], sequenceNos[6], sequenceNos[5], sequenceNos[11]);
 	//inventoryGeneration(dbm, batchLog, sequenceNos[8]);

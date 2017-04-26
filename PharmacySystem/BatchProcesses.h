@@ -1,4 +1,7 @@
 #pragma once
+
+void printbatchLog();
+
 string ZeroFillNumber(string str, int digits);
 
 string SpaceFillString(string str, int size);
