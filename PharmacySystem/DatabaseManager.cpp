@@ -418,7 +418,7 @@ vector<Item*> DatabaseManager::getItems(unsigned int count, bool onlyActiveItems
 		limitingSQL += " limit " + to_string(count);
 	}
 
-	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item WHERE IsActive = 1" + limitingSQL;
+	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item" + limitingSQL;
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 
@@ -838,7 +838,7 @@ vector<Sale*> DatabaseManager::getSalesByItem(int itemId) {
 	sqlite3_stmt *stmt;
 	vector<Sale*> result;
 
-	string sql = "SELECT Purchase.PrescriptionId, Purchase.Quantity, Purchase.SalePrice, Prescription.Date FROM Purchase LEFT JOIN Prescription ON Purchase.PrescriptionId = Prescription.Id WHERE Purchase.ItemId = " + quotesql(itemId);
+	string sql = "SELECT Purchase.PrescriptionId, Purchase.Quantity, Purchase.SalePrice, Prescription.Date FROM Purchase LEFT JOIN Prescription ON Purchase.PrescriptionId = Prescription.Id WHERE Purchase.ItemId = " + quotesql(itemId) + " ORDER BY Prescription.Date;";
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		while (sqlite3_step(stmt) == SQLITE_ROW) {
