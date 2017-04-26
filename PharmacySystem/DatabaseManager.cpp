@@ -263,7 +263,8 @@ vector<Store*> DatabaseManager::getStores(unsigned int count) {
 
 bool DatabaseManager::deleteItem(int itemId) {
 	bool b1 = deleteItemInventory(itemId);
-	bool b2 = updateItem(itemId, "", "", 0, "", 0, "", 0, 0, 0, -1);
+	bool isActive = false;
+	bool b2 = updateItem(itemId, "", "", -1, "", -1, "", -1, -1, -1, isActive);
 
 	return (b1 == true && b2 == true);
 }

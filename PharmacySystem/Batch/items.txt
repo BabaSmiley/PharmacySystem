@@ -1,10 +1,9 @@
 HD 9999 2017-04-25
-D123456789
-ND 0001
-X123456789ItemNameCHANGE      CHANGEptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptioCHANGEDosageDosagage000000888899990000000123CHANGEekWeekWeekWeek
-X123456789ONLy CHANGE                                                                                                                                                                             
+D000000028
+ND 0000
+C123456789ItemNameCHANGE      CHANGEptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptioCHANGEDosageDosagage000000888899990000000123CHANGEekWeekWeekWeek
+C123456789ONLy CHANGE                                                                                                                                                                             
 NC 0000
-D123456789
-X123456789ItemName            descriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptioDosageDosageDosagage000000000099990000000000WeekWeekWeekWeekWeek
+A123456789ItemName            descriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptioDosageDosageDosagage000000000099990000000000WeekWeekWeekWeekWeek
 NC 0000
 T 0000

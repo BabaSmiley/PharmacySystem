@@ -373,7 +373,7 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo
 				}
 
 				dbm->deleteStoreInventory(stoi(storeID));
-				dbm->updateStore(stoi(storeID), "", "", "", 0, 0, 0);
+				dbm->deleteStore(store);
 			}
 		}
 
