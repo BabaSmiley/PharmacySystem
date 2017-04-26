@@ -168,7 +168,7 @@ Store* DatabaseManager::createStore(int id, string address, string city, string 
 	return newStore;
 }
 
-Store* DatabaseManager::updateStore(int id, string address = NULL, string city = NULL, string state = NULL, int zipCode = NULL, int priorityLevel = NULL) {
+Store* DatabaseManager::updateStore(int id, string address = NULL, string city = NULL, string state = NULL, int zipCode = -1, int priorityLevel = -1) {
 	sqlite3_stmt *stmt;
 	Store *updatingStore = nullptr;
 
@@ -182,10 +182,10 @@ Store* DatabaseManager::updateStore(int id, string address = NULL, string city =
 	if (!state.empty()) {
 		baseSql += ", State = " + quotesql(state);
 	}
-	if (zipCode != NULL) {
+	if (zipCode != -1) {
 		baseSql += ", ZipCode = " + quotesql(zipCode);
 	}
-	if (priorityLevel != NULL) {
+	if (priorityLevel != -1) {
 		baseSql += ", PriorityLevel = " + quotesql(priorityLevel);
 	}
 	baseSql += " WHERE Id = " + quotesql(id);
