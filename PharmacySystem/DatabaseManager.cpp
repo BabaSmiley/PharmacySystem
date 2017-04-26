@@ -633,11 +633,16 @@ Inventory* DatabaseManager::getInventory(int storeId, int itemId) {
 	return result;
 }
 
-vector<Inventory*> DatabaseManager::getStoreInventory(int storeId) {
+vector<Inventory*> DatabaseManager::getStoreInventory(int storeId, unsigned int count) {
 	sqlite3_stmt *stmt;
 	vector<Inventory*> result;
 
-	string sql = "SELECT StoreId, ItemId, ItemLevel, RefillLevel, RefillQuantity, onOrderQty FROM Inventory WHERE StoreId = " + quotesql(storeId);
+	string limitingSQL = "";
+	if (count != NULL && count > 0) {
+		limitingSQL += " LIMIT " + to_string(count);
+	}
+
+	string sql = "SELECT StoreId, ItemId, ItemLevel, RefillLevel, RefillQuantity, onOrderQty FROM Inventory WHERE StoreId = " + quotesql(storeId) + limitingSQL;
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		while (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -708,9 +713,9 @@ Inventory* DatabaseManager::updateInventory(int storeId, int itemId, long quanti
 	sqlite3_stmt *stmt;
 	Inventory* result = getInventory(storeId, itemId);
 
-	long newLevel = result->getItemLevel() + quantity;
+	//long newLevel = result->getItemLevel() + quantity;
 
-	string sql = "UPDATE Inventory SET ItemLevel = " + quotesql(newLevel) + " WHERE StoreId = " + quotesql(storeId) + " AND ItemId = " + quotesql(itemId);
+	string sql = "UPDATE Inventory SET ItemLevel = " + quotesql(quantity) + " WHERE StoreId = " + quotesql(storeId) + " AND ItemId = " + quotesql(itemId);
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
 			result = getInventory(storeId, itemId);

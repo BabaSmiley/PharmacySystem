@@ -16,7 +16,8 @@ void printHelp(UserType type) {
 
 	// User specific commands
 	if (type == Employee) {
-		cout << "'list items {store ID} {number of items}': Will list all items in given store. Optionally can state the number of items to show." << endl;
+		cout << "'list items {store ID} {number of items}' : Will list all items in given store. Optionally can state the number of items to show." << endl;
+		cout << "'list all items {number of items}' : Will list all items available at a company level. Optionally can state the number of items to show." << endl;
 		cout << "'view history {customer username}' : View the history of a customer. Specify the customer's username to view their history." << endl;
 		cout << "'create prescription' : Will begin process to create a new customer prescription." << endl;
 		cout << "'manage item {item ID}' : Update the attributes of a item. Specify the item ID to make modifications." << endl;
@@ -59,6 +60,11 @@ void printItemTable(Store *store, unsigned int count = NULL) {
 	ItemTablePrinter::printItemTable(dbm, store, count);
 }
 
+void printCompanyItemTable(unsigned int count = NULL) {
+	DatabaseManager *dbm = DatabaseManager::shared();
+	ItemTablePrinter::printCompanyItemTable(dbm, count);
+}
+
 //DEBUG
 User* DebugGetEmployeeUser() {
 	return DatabaseManager::shared()->getUser("jon", "testpass");
@@ -68,8 +74,7 @@ User* DebugGetEmployeeUser() {
 int main() {
 	DatabaseManager *dbm = DatabaseManager::shared();
 	//runTests(dbm);
-
-	runBatchSequence(dbm);
+	//runBatchSequence(dbm);
 	
 	/* Start Login & Registration Process */
 	// DEBUG - commented out so dont have to repeatadly sign in. Uncomment to reactivate the login feature
@@ -104,7 +109,7 @@ int main() {
 			else if ("help" == input.at(0)) {
 				printHelp(user->getUserType());
 			}
-			else if ("clear" == input.at(0)) { clearWindowsConsole();  }
+			else if ("clear" == input.at(0)) { clearWindowsConsole(); }
 			else if ("list stores" == input.at(0) + " " + input.at(1)) {
 				if (input.size() > 2) {
 					int countInput = stoi(input.at(2));
@@ -113,7 +118,8 @@ int main() {
 					}
 					unsigned int count = (unsigned int)countInput;
 					StoresTablePrinter::printStoresTable(dbm, count);
-				} else {
+				}
+				else {
 					StoresTablePrinter::printStoresTable(dbm);
 				}
 			}
@@ -121,11 +127,12 @@ int main() {
 				int customerID;
 				if (user->isEmployee()) {
 					string inputString = input.at(2);
-					User *user = dbm->getUser(inputString);
-					if (user == nullptr) {
+					User *userSpecified = dbm->getUser(inputString);
+					if (userSpecified == nullptr) {
+						cout << "No user available for input username." << endl << endl;
 						throw exception("No user available for input username.");
 					}
-					customerID = user->getUserID();
+					customerID = userSpecified->getUserID();
 				}
 				else { //is customer user
 					customerID = user->getUserID();
@@ -136,7 +143,8 @@ int main() {
 				Store *store = dbm->getStore(stoi(input.at(2)));
 				if (!store) { //gaurd
 					cout << "No store available for that store ID." << endl;
-				} else {
+				}
+				else {
 					printStoreReviews(dbm, store);
 				}
 			}
@@ -161,14 +169,17 @@ int main() {
 					cout << "Reorder was set for store #" << reorder->getStoreId() << ", item #" << reorder->getItemId() << " to quantity " << reorder->getQuantity() << "." << endl << endl;
 				}
 			}
+			else if (user->isEmployee() && "create prescription" == input.at(0) + " " + input.at(1)) {
+				PrescriptionController prescriptionController;
+				prescriptionController.startCreatePrescription();
+			}
 			else if (user->isEmployee() && "list items" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
 				Store *store = dbm->getStore(stoi(input.at(2)));
 				if (store == nullptr) { //Guard
-					cout << "A store does not exist for this id" << endl << endl;
-					throw exception("Store does not exist.");
+					cout << "A store does not exist for this id." << endl << endl;
+					//throw exception("Store does not exist.");
 				}
-
-				if (input.size() > 3) {
+				else if (input.size() > 3) {
 					int countInput = stoi(input.at(3));
 					if (countInput <= 0) { //is signed
 						throw exception("Input is a signed int. Expected unsigned.");
@@ -179,6 +190,16 @@ int main() {
 				else {
 					printItemTable(store);
 				}
+			}
+			else if (user->isEmployee() && "list all items" == input.at(0) + " " + input.at(1) + " " + input.at(2)) {
+				if (input.size() > 3) {
+					int count = stoi(input.at(3));
+					printCompanyItemTable(count);
+				}
+				else {
+					printCompanyItemTable();
+				}
+				
 			}
 			else if (user->isEmployee() && "manage store" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
 				int storeId = stoi(input.at(2));
@@ -195,10 +216,6 @@ int main() {
 				ManageItem mi;
 				mi.promptForInput(stoi(input.at(2)));
 			}
-			else if (user->isEmployee() && "create prescription" == input.at(0) + " " + input.at(1)) {
-				PrescriptionController prescriptionController;
-				prescriptionController.startCreatePrescription();
-			}
 			else if (user->isEmployee() && "create discount" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
 				DiscountController discountController;
 				discountController.promptForCreateInput(stoi(input.at(2)), stoi(input.at(3)));
@@ -214,7 +231,7 @@ int main() {
 		}
 		catch (const exception& err) {
 			// Catch any out_of_range errors, etc.
-			cerr << "Caught exception: " << err.what() << endl; //DEBUG
+			//cerr << "Caught exception: " << err.what() << endl; //DEBUG
 			cout << "Invalid command. Type 'help' for a list of available commands." << endl;
 		}
 	}
