@@ -418,7 +418,7 @@ vector<Item*> DatabaseManager::getItems(unsigned int count, bool onlyActiveItems
 		limitingSQL += " limit " + to_string(count);
 	}
 
-	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item WHERE IsActive = 1" + limitingSQL;
+	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item" + limitingSQL;
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 
@@ -633,11 +633,16 @@ Inventory* DatabaseManager::getInventory(int storeId, int itemId) {
 	return result;
 }
 
-vector<Inventory*> DatabaseManager::getStoreInventory(int storeId) {
+vector<Inventory*> DatabaseManager::getStoreInventory(int storeId, unsigned int count) {
 	sqlite3_stmt *stmt;
 	vector<Inventory*> result;
 
-	string sql = "SELECT StoreId, ItemId, ItemLevel, RefillLevel, RefillQuantity, onOrderQty FROM Inventory WHERE StoreId = " + quotesql(storeId);
+	string limitingSQL = "";
+	if (count != NULL && count > 0) {
+		limitingSQL += " LIMIT " + to_string(count);
+	}
+
+	string sql = "SELECT StoreId, ItemId, ItemLevel, RefillLevel, RefillQuantity, onOrderQty FROM Inventory WHERE StoreId = " + quotesql(storeId) + limitingSQL;
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		while (sqlite3_step(stmt) == SQLITE_ROW) {

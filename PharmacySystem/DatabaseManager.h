@@ -165,7 +165,7 @@ public:
 	/* Gets a list of all inventory at a store
 		Returns: Returns a vector of inventory objects associated with a `storeId`
 	*/
-	vector<Inventory*> getStoreInventory(int storeId);
+	vector<Inventory*> getStoreInventory(int storeId, unsigned int count = NULL);
 
 	/* Updates a specified inventorys item level in the store
 		Returns: Returns a filled inventory object representing the DB Inventory model

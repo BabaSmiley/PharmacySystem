@@ -16,13 +16,32 @@ public:
 		Parameter count: (Optional) the number of results to show/display
 	*/
 	static void printItemTable(DatabaseManager *dbm, Store *store, unsigned int count = NULL) {
-		vector<Inventory*> storeInventory = dbm->getStoreInventory(store->getId());
+		vector<Inventory*> storeInventory = dbm->getStoreInventory(store->getId(), count);
 		vector<Item*> items;
 		for (Inventory *i : storeInventory) {
 			Item *item = dbm->getItem(i->getItemId());
 			items.push_back(item);
 		}
+		
+		printTable(items, store);
+	}
 
+	/* Will print a formatted table for all items accessible via the database manager.
+		Parameter count: (Optional) the number of results to show/display
+		Paramater onlyActiveItems: (Optional) whether or not active items should be printed or not. Default is to only print active items
+	*/
+	static void printCompanyItemTable(DatabaseManager *dbm, unsigned int count = NULL, bool onlyActiveItems = true) {
+		vector<Item*> items = dbm->getItems(count, onlyActiveItems);
+		printTable(items);
+	}
+
+
+private:
+
+	/* Will print out a table for an array of Items
+		Paramater store: (Optional) can specify the store in which the items array is located in. Do not specify if at an entire database level
+	*/
+	static void printTable(vector<Item*> items, Store *store = nullptr) {
 		const char separator = ' ';
 		const int idWidth = 8;
 		const int nameWidth = 20;
@@ -31,7 +50,8 @@ public:
 
 		cout << string(40, '-') << endl;
 		cout << left << setw(idWidth) << setfill(separator) << "Id";
-		cout << left << setw(idWidth) << setfill(separator) << "StoreId";
+		if(store)
+			cout << left << setw(idWidth) << setfill(separator) << "StoreId";
 		cout << left << setw(nameWidth) << setfill(separator) << "Name";
 		cout << left << setw(priceWidth) << setfill(separator) << "Wholesale Price";
 		cout << left << setw(dosageWidth) << setfill(separator) << "Dosage" << endl << endl;
@@ -42,7 +62,8 @@ public:
 			string itemDosage = truncatedString(item->getDosage(), dosageWidth);
 
 			cout << left << setw(idWidth) << setfill(separator) << item->getId();
-			cout << left << setw(idWidth) << setfill(separator) << store->getId();
+			if (store)
+				cout << left << setw(idWidth) << setfill(separator) << store->getId();
 			cout << left << setw(nameWidth) << setfill(separator) << itemName;
 			cout << left << setw(priceWidth) << setfill(separator) << "$" + to_string(item->getPrice());
 			cout << left << setw(dosageWidth) << setfill(separator) << itemDosage << endl;
@@ -50,7 +71,6 @@ public:
 		cout << string(40, '-') << endl << endl;
 	}
 
-private:
 
 	// Returns a truncated string with '...' which fits inside 'clipLength' size
 	static string truncatedString(string s, int clipLength) {
