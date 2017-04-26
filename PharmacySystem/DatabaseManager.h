@@ -60,7 +60,7 @@ public:
 	/* Updates and stores parameters in stores database
 		Returns: Returns an updated store object representing a DB Store model
 	*/
-	Store* updateStore(int id, string address, string city, string state, int zipCode, int priorityLevel, int isActive);
+	Store* updateStore(int id, string address, string city, string state, int zipCode, int priorityLevel);
 
 	/* Get a store from the database
 		Returns: returns a filled in Store object, or nullptr if no store was found for `storeId`

@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <iomanip>
 #include <sstream>
 #include <ctime>
 #include <iterator>
@@ -8,15 +9,26 @@
 using namespace std;
 
 //Note: static will cause compiler to determine if it will inline. Move to .h later to avoid
-static string getInput(string preceeedingString = "") {
+// Paramater preceedingString: The string to print before the prompt. (Optional)
+// Parameter limitLength: the max length an input string can be. (Optional)
+static string getInput(string preceedingString = "", int limitLength=-1) {
 	string input;
-	if (preceeedingString != "") {
-		std::cout << preceeedingString << " > ";
+	if (preceedingString != "") {
+		std::cout << preceedingString << " > ";
 	}
 	else {
 		std::cout << "> ";
 	}
-	std::getline(std::cin, input); //Will get entire line
+
+	if (limitLength > 0) {
+		cin >> setw(limitLength) >> input;
+		//char *s = new char[limitLength + 1]; //plus null terminator
+		//cin.getline(s, limitLength);
+		//input = s;
+	}
+	else {
+		std::getline(std::cin, input); //Will get entire line
+	}
 	return input;
 }
 
