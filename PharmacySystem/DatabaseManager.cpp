@@ -685,10 +685,10 @@ vector<Inventory*> DatabaseManager::getAllInventory() {
 	sqlite3_stmt *stmt;
 	vector<Inventory*> result;
 
-	string sql = "SELECT StoreId, ItemId, ItemLevel, RefillLevel, RefillQuantity, onOrderQty FROM Inventory";
+	string sql = "SELECT Inventory.StoreId, Inventory.ItemId, Inventory.ItemLevel, Inventory.RefillLevel, Inventory.RefillQuantity, Inventory.onOrderQty FROM Inventory LEFT JOIN Store ON Inventory.StoreId = Store.Id WHERE Store.IsActive = 1;";
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
-		while (sqlite3_step(stmt) == SQLITE_OK) {
+		while (sqlite3_step(stmt) == SQLITE_ROW) {
 			Inventory *inventory;
 
 			int storeId = sqlite3_column_int(stmt, 0);
@@ -715,10 +715,27 @@ Inventory* DatabaseManager::updateInventory(int storeId, int itemId, long quanti
 
 	//long newLevel = result->getItemLevel() + quantity;
 
-	string sql = "UPDATE Inventory SET ItemLevel = " + quotesql(quantity) + " WHERE StoreId = " + quotesql(storeId) + " AND ItemId = " + quotesql(itemId);
+	string sql = "UPDATE Inventory SET ItemLevel = ItemLevel + " + quotesql(quantity) + " WHERE StoreId = " + quotesql(storeId) + " AND ItemId = " + quotesql(itemId);
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
 			result = getInventory(storeId, itemId);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
+bool DatabaseManager::zeroInventoryOnOrderQty(int storeId, int itemId) {
+	sqlite3_stmt *stmt;
+	bool result = false;
+
+	string sql = "UPDATE Inventory SET onOrderQty = 0 WHERE StoreId = " + quotesql(storeId) + " AND ItemId = " + quotesql(itemId);
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			result = getInventory(storeId, itemId);
+			result = true;
 		}
 	}
 

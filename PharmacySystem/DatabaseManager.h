@@ -172,6 +172,12 @@ public:
 	*/
 	Inventory* updateInventory(int storeId, int itemId, long quantity);
 
+	/*
+		Zeros an onorderqty for a store-item
+		Returns: a boolean on whether it was done or not
+	*/
+	bool DatabaseManager::zeroInventoryOnOrderQty(int storeId, int itemId);
+
 	/* Deletes all of the inventory for a store
 		Returns: Returns true if all inventory for store was successfully deleted
 	*/
