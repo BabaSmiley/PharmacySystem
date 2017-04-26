@@ -1,2 +1,5 @@
-=====Create/Delete Store=====
-adddeletestore.txt trailer mismatch. Expected0003 got 5
+=====Inventory To Store Request=====
+createstoreitems.txt trailer mismatch. Expected 0003 got 0
+onlinerequest.txt trailer mismatch. Expected 0010 got 0
+reorder.txt sequence number mismatch. Expected 9999 got 0000. Terminated record gathering from reorder.txt.
+Insufficient warehouse quantity to reorder item 0029 in store 0107. Reordering next batch cycle
