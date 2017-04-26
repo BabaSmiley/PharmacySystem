@@ -17,7 +17,7 @@ string sqlToString(const unsigned char* str) {
 DatabaseManager::DatabaseManager() {
 
 	/* Attempt to open connection to file */
-	int returnCode = sqlite3_open(DatabaseConstants::DatabaseName, &db);
+	int returnCode = sqlite3_open(DatabaseConstants::BetaDatabaseName, &db);
 
 	sqlite3_exec(db, "PRAGMA foreign_keys = ON;", 0, 0, 0);
 
