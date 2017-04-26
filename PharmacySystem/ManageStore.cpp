@@ -85,7 +85,7 @@ private:
 			else {
 				priorityLevel = stoi(priorityLevelString);
 
-				if (priorityLevel < 0 || priorityLevel > 15) {
+				if (priorityLevel < 1 || priorityLevel > 15) {
 					cout << "The priority level must be between 0 and 15." << endl;
 					throw "The input was not within the specified values.";
 				}

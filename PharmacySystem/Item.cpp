@@ -39,8 +39,6 @@ public:
 
 	long getWhLevel() { return whLevel; }
 
-	bool getIsActive() { return isActive; }
-
 	bool operator == (const Item& i) {
 		if (id == i.id && name == i.name && description == i.description && price == i.price && dosage == i.dosage && vendorId == i.vendorId &&
 			expectedDeliveryDate == i.expectedDeliveryDate && whRefillLevel == i.whRefillLevel && whRefillQty == i.whRefillQty && whLevel == i.whLevel && isActive == i.isActive) {

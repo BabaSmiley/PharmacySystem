@@ -109,7 +109,7 @@ int main() {
 			else if ("help" == input.at(0)) {
 				printHelp(user->getUserType());
 			}
-			else if ("clear" == input.at(0)) { clearWindowsConsole();  }
+			else if ("clear" == input.at(0)) { clearWindowsConsole(); }
 			else if ("list stores" == input.at(0) + " " + input.at(1)) {
 				if (input.size() > 2) {
 					int countInput = stoi(input.at(2));
@@ -118,7 +118,8 @@ int main() {
 					}
 					unsigned int count = (unsigned int)countInput;
 					StoresTablePrinter::printStoresTable(dbm, count);
-				} else {
+				}
+				else {
 					StoresTablePrinter::printStoresTable(dbm);
 				}
 			}
@@ -142,7 +143,8 @@ int main() {
 				Store *store = dbm->getStore(stoi(input.at(2)));
 				if (!store) { //gaurd
 					cout << "No store available for that store ID." << endl;
-				} else {
+				}
+				else {
 					printStoreReviews(dbm, store);
 				}
 			}
@@ -166,6 +168,10 @@ int main() {
 				else {
 					cout << "Reorder was set for store #" << reorder->getStoreId() << ", item #" << reorder->getItemId() << " to quantity " << reorder->getQuantity() << "." << endl << endl;
 				}
+			}
+			else if (user->isEmployee() && "create prescription" == input.at(0) + " " + input.at(1)) {
+				PrescriptionController prescriptionController;
+				prescriptionController.startCreatePrescription();
 			}
 			else if (user->isEmployee() && "list items" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
 				Store *store = dbm->getStore(stoi(input.at(2)));
@@ -209,10 +215,6 @@ int main() {
 			else if (user->isEmployee() && "manage item" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
 				ManageItem mi;
 				mi.promptForInput(stoi(input.at(2)));
-			}
-			else if (user->isEmployee() && "create prescription" == input.at(0) + " " + input.at(1)) {
-				PrescriptionController prescriptionController;
-				prescriptionController.startCreatePrescription();
 			}
 			else if (user->isEmployee() && "create discount" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
 				DiscountController discountController;
