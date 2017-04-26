@@ -132,13 +132,27 @@ void WriteOnlineRequestFile(DatabaseManager *dbm, int seqNo) {
 		string itemId = ZeroFillNumber(to_string(tmp->getItemId()), 4);
 		string onOrderQty = ZeroFillNumber(to_string(tmp->getOnOrderQty()), 4);
 
-		if (tmp->getOnOrderQty() > 0)
-		out << "O" << storeId << priorityLevel << itemId << onOrderQty << endl;
+		if (tmp->getOnOrderQty() > 0) {
+			out << "O" << storeId << priorityLevel << itemId << onOrderQty << endl;
+			dbm->updateItem(tmp->getItemId(), "", "", 0, "", 0, "", 0, 0, 0, 1); //Sets on order qty to zero
+		}
 
 		trailerCounter++;
 	}
 
-	//TODO: SET ALL ON ORDER QUANTITIES TO ZERO
+	vector<AddItem*> addItems = dbm->getAllAddItems();
+	for (int i = 0; i < addItems.size(); i++) {
+		string storeId = ZeroFillNumber(to_string(addItems[i]->getStoreId()), 5);
+		string priorityLevel = ZeroFillNumber(to_string(dbm->getStore(addItems[i]->getStoreId())->getPriorityLevel()), 5);
+		string itemId = ZeroFillNumber(to_string(addItems[i]->getItemId()), 4);
+		string qty = ZeroFillNumber(to_string(addItems[i]->getQuantity()), 4);
+
+		out << "O" << storeId << priorityLevel << itemId << qty << endl;
+
+		trailerCounter++;
+	}
+
+	dbm->clearAddItems();
 
 	out << "T " << ZeroFillNumber(to_string(trailerCounter), 4);
 }
@@ -318,7 +332,7 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo
 
 			while (line[0] != 'C') {
 				if (line[0] == 'D')
-					batchLog << "Unexpected delete store during store-item creation. Skipping.";
+					batchLog << "Unexpected delete store during store-item creation. Skipping." << endl;
 				else if (line[0] == 'I') {
 					string ICode = line.substr(1, 9);
 					string IdefaultQty = line.substr(10, 10);
@@ -329,11 +343,11 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo
 					outInvToStoreReq << "A" + storeID + StorePriority + ICode + IReorderQty << endl;
 					InvToStoreReqCounter++;
 					controlCount++;
-				}
-
-				if (stoi(line.substr(2, 4)) != trailerCount)
-					batchLog << "Control mismatch for store creation.";
+				}	
+				getline(input, line);
 			}
+			if (stoi(line.substr(2, 4)) != controlCount)
+				batchLog << "Control mismatch for store creation." << endl;
 		}
 		else if (line[0] == 'D') {
 			//|action code 'A' or 'D'|store id|street address|city name|state|zip code|store priority level|
@@ -348,7 +362,7 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo
 			Store* tmp = new Store(stoi(storeID), RemoveSpaces(storeAddress), RemoveSpaces(storeCity), RemoveSpaces(storeState), stoi(storeZip), stoi(StorePriority), 1);
 			Store* store = dbm->getStore(stoi(storeID));
 
-			if (store == tmp) { //All fields match
+			if (store && *store == *tmp) { //All fields match
 				vector<Inventory*> storeInventory = dbm->getStoreInventory(stoi(storeID));
 
 				for (int i = 0; i < storeInventory.size(); i++) {
@@ -359,6 +373,7 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo
 				}
 
 				dbm->deleteStoreInventory(stoi(storeID));
+				dbm->updateStore(stoi(storeID), "", "", "", 0, 0, 0);
 			}
 		}
 
@@ -630,8 +645,8 @@ void runBatchSequence(DatabaseManager *dbm) { //Calls all of the batch sequences
 	10: warehouseinventoryupdate.txt
 	11: reorder.txt
 	*/
-	updateItemData(dbm, batchLog, sequenceNos[0]);
-	//createDeleteStore(dbm, batchLog, sequenceNos[1], sequenceNos[2], sequenceNos[3]);
+	//updateItemData(dbm, batchLog, sequenceNos[0]);
+	createDeleteStore(dbm, batchLog, sequenceNos[1], sequenceNos[2], sequenceNos[3]);
 	//inventoryReceivedAtWarehouse(dbm, batchLog, oldsequenceNos[3], sequenceNos[4], sequenceNos[10]);
 	//inventoryToStoreRequest(dbm, batchLog, sequenceNos[7], oldsequenceNos[2], sequenceNos[6], sequenceNos[5], sequenceNos[11]);
 	//inventoryGeneration(dbm, batchLog, sequenceNos[8]);
