@@ -1,9 +1,9 @@
 HD 9999 2017-04-25
-D000000028
-ND 0000
-C123456789ItemNameCHANGE      CHANGEptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptioCHANGEDosageDosagage000000888899990000000123CHANGEekWeekWeekWeek
-C123456789ONLy CHANGE                                                                                                                                                                             
-NC 0000
-A123456789ItemName            descriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptiodescriptioDosageDosageDosagage000000000099990000000000WeekWeekWeekWeekWeek
-NC 0000
-T 0000
+D000000009
+ND 0001
+C000000007Macrobid V2                                                                                                                                 000000120099990000000123                    
+C000000010                                                                                                                                                      12340000000123                    
+NC 0002
+A000000101Nu Drug             The best out there!                                                                                 Once a day          000000500999900000000300One Week            
+NC 0001
+T 0004
