@@ -30,6 +30,8 @@ void printHelp(UserType type) {
 		cout << "\t'manage store {store ID}' : Update the attributes of an existing store. Specify the store ID to make modifications." << endl;
 		cout << "\t'reorder item' : Will begin process to reorder an item from a store." << endl;
 		cout << "\t'add inventory {item ID} {store ID}' : Will begin process to add an item to a store's inventory." << endl;
+		cout << "\t'add item' : Will begin process to add an item to the company." << endl;
+		cout << "\t'delete item {item ID}' : Will begin process to mark an item as inactive in the company." << endl;
 		
 		cout << endl;
 		cout << "\t'create discount {item ID} {store ID}' : Will create a discount for the specified item in the specified store." << endl;
