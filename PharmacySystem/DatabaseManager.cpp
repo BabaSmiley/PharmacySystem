@@ -156,8 +156,8 @@ bool DatabaseManager::deleteStore(Store *store) {
 Store* DatabaseManager::createStore(int id, string address, string city, string state, int zipCode, int priorityLevel, int isActive) {
 	sqlite3_stmt *stmt;
 	Store *newStore = nullptr;
-	
-	string sql = "insert into Store (Id, Address, City, State, ZipCode, PriorityLevel, IsActive) values (" + quotesql(id) + "," + quotesql(address) + "," + quotesql(city) + ","+ quotesql(state) + "," + quotesql(zipCode) + "," + quotesql(priorityLevel) + "," + quotesql(isActive) + ")";
+
+	string sql = "insert into Store (Id, Address, City, State, ZipCode, PriorityLevel, IsActive) values (" + quotesql(id) + "," + quotesql(address) + "," + quotesql(city) + "," + quotesql(state) + "," + quotesql(zipCode) + "," + quotesql(priorityLevel) + "," + quotesql(isActive) + ")";
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
 			newStore = new Store(id, address, city, state, zipCode, priorityLevel, isActive);
@@ -215,7 +215,7 @@ Store* DatabaseManager::getStore(int storeId) {
 			string state = sqlToString(sqlite3_column_text(stmt, 3));
 			int zipCode = sqlite3_column_int(stmt, 4);
 			int priorityLevel = sqlite3_column_int(stmt, 5);
-			int isActive	  = sqlite3_column_int(stmt, 6);
+			int isActive = sqlite3_column_int(stmt, 6);
 
 			result = new Store(id, address, city, state, zipCode, priorityLevel, isActive);
 		}
@@ -804,7 +804,7 @@ Discount* DatabaseManager::createDiscount(int storeId, int itemId, int percentOf
 			newDiscount = new Discount(storeId, itemId, percentOff, startDate, endDate);
 		}
 	}
-	
+
 	sqlite3_finalize(stmt);
 
 	return newDiscount;
@@ -888,11 +888,13 @@ AddItem* DatabaseManager::createAddItemOrder(int itemId, int storeId, long quant
 	sqlite3_stmt *stmt;
 	AddItem* result = nullptr;
 
-	string sql = "INSERT INTO AddItem (ItemId, StoreId, Quantity) VALUES (" + quotesql(itemId) + "," + quotesql(storeId) + "," + quotesql(quantity) + ")";
+	if (getInventory(storeId, itemId) != nullptr) {
+		string sql = "INSERT INTO AddItem (ItemId, StoreId, Quantity) VALUES (" + quotesql(itemId) + "," + quotesql(storeId) + "," + quotesql(quantity) + ")";
 
-	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
-		if (sqlite3_step(stmt) == SQLITE_DONE) {
-			result = new AddItem(itemId, storeId, quantity);
+		if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+			if (sqlite3_step(stmt) == SQLITE_DONE) {
+				result = new AddItem(itemId, storeId, quantity);
+			}
 		}
 	}
 
