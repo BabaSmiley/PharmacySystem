@@ -18,9 +18,27 @@ public:
 		}
 	}
 
+	void deleteInventory(int itemId, int storeId, long quantityToAdd) {
+		Item *item = DatabaseManager::shared()->getItem(itemId);
+		long newLevel = item->getWhLevel() + quantityToAdd;
+		bool inventoryDeleted = DatabaseManager::shared()->deleteInventory(storeId, itemId);
+		if (inventoryDeleted) {
+			Item *updatedItem = DatabaseManager::shared()->updateItem(itemId, "", "", -1, "", -1, "", -1, -1, newLevel, -1);
+			if (updatedItem != nullptr) {
+				cout << "Inventory deleted successfully." << endl;
+			}
+			else {
+				cout << "Warehouse level not updated." << endl;
+			}
+		}
+		else {
+			cout << "Unsuccessful in deleting inventory" << endl;
+		}
+	}
+
 private:
 
-	void getInventoryAddInput(int itemId, int storeId) throw (const char *e) {
+	void getInventoryAddInput(int itemId, int storeId) throw (const char *) {
 		string quantityString;
 		int quantity;
 		
