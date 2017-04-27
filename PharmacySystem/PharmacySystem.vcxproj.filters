@@ -31,6 +31,9 @@
     <Filter Include="Source Files\Controllers">
       <UniqueIdentifier>{87343811-3d16-4235-a56e-2aa8366549f5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Modals">
+      <UniqueIdentifier>{926418e8-d373-4e52-9472-d8ce70e1da02}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -72,9 +75,6 @@
     <ClCompile Include="Purchase.cpp">
       <Filter>Source Files\DB Models</Filter>
     </ClCompile>
-    <ClCompile Include="Sale.cpp">
-      <Filter>Source Files\DB Models</Filter>
-    </ClCompile>
     <ClCompile Include="Discount.cpp">
       <Filter>Source Files\DB Models</Filter>
     </ClCompile>
@@ -108,9 +108,6 @@
     <ClCompile Include="PrescriptionController.cpp">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
-    <ClCompile Include="PrescriptionHistoryTablePrinter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="StoresTablePrinter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -123,8 +120,11 @@
     <ClCompile Include="ManageItem.cpp">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
-    <ClCompile Include="ManageInventory.cpp">
-      <Filter>Source Files\Controllers</Filter>
+    <ClCompile Include="Sale.cpp">
+      <Filter>Source Files\Modals</Filter>
+    </ClCompile>
+    <ClCompile Include="PurchaseHistoryTablePrinter.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
