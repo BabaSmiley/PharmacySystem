@@ -896,9 +896,8 @@ AddItem* DatabaseManager::createAddItemOrder(int itemId, int storeId, long quant
 				result = new AddItem(itemId, storeId, quantity);
 			}
 		}
+		sqlite3_finalize(stmt);
 	}
-
-	sqlite3_finalize(stmt);
 
 	return result;
 }

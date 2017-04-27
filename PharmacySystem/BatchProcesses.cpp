@@ -692,16 +692,16 @@ void runBatchSequence(DatabaseManager *dbm) { //Calls all of the batch sequences
 	11: reorder.txt
 	*/
 
-	//updateItemData(dbm, batchLog, sequenceNos[0]);
-	//createDeleteStore(dbm, batchLog, sequenceNos[1], sequenceNos[2], sequenceNos[3]);
-	//inventoryReceivedAtWarehouse(dbm, batchLog, oldsequenceNos[3], sequenceNos[4], sequenceNos[10]);
+	updateItemData(dbm, batchLog, sequenceNos[0]);
+	createDeleteStore(dbm, batchLog, sequenceNos[1], sequenceNos[2], sequenceNos[3]);
+	inventoryReceivedAtWarehouse(dbm, batchLog, oldsequenceNos[3], sequenceNos[4], sequenceNos[10]);
 	inventoryToStoreRequest(dbm, batchLog, sequenceNos[7], oldsequenceNos[2], sequenceNos[6], sequenceNos[5], sequenceNos[11]);
-	//inventoryGeneration(dbm, batchLog, sequenceNos[8]);
-	//yearlySales(dbm, batchLog, sequenceNos[9]);
+	inventoryGeneration(dbm, batchLog, sequenceNos[8]);
+	yearlySales(dbm, batchLog, sequenceNos[9]);
 
-	//ofstream sequencesOut("Batch/sequences.txt"); //Writes new sequence numbers to same file
-	//for (int i = 1; i <= 12; i++)
-	//	sequencesOut << ZeroFillNumber(to_string(sequenceNos[i - 1]), 4) << " ";
+	ofstream sequencesOut("Batch/sequences.txt"); //Writes new sequence numbers to same file
+	for (int i = 1; i <= 12; i++)
+		sequencesOut << ZeroFillNumber(to_string(sequenceNos[i - 1]), 4) << " ";
 
 	printbatchLog();
 }
