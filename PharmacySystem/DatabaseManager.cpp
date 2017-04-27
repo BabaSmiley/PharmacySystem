@@ -226,6 +226,30 @@ Store* DatabaseManager::getStore(int storeId) {
 	return result;
 }
 
+Store* DatabaseManager::getStoreRegardlessOfActiveness(int storeId) {
+	sqlite3_stmt *stmt;
+	Store *result = nullptr;
+
+	string sql = "select Id, Address, City, State, ZipCode, PriorityLevel, IsActive from Store where Id=" + quotesql(storeId);
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+
+		if (sqlite3_step(stmt) == SQLITE_ROW) {
+			int id = sqlite3_column_int(stmt, 0);
+			string address = sqlToString(sqlite3_column_text(stmt, 1));
+			string city = sqlToString(sqlite3_column_text(stmt, 2));
+			string state = sqlToString(sqlite3_column_text(stmt, 3));
+			int zipCode = sqlite3_column_int(stmt, 4);
+			int priorityLevel = sqlite3_column_int(stmt, 5);
+			int isActive = sqlite3_column_int(stmt, 6);
+
+			result = new Store(id, address, city, state, zipCode, priorityLevel, isActive);
+		}
+	}
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
 vector<Store*> DatabaseManager::getStores(unsigned int count) {
 	sqlite3_stmt *stmt;
 	vector<Store*> stores;
@@ -383,6 +407,20 @@ Item* DatabaseManager::getItem(int itemId) {
 	Item *result = nullptr;
 
 	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item WHERE IsActive = 1 AND Id = " + quotesql(itemId);
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		result = itemFromSQL(stmt);
+	}
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
+Item* DatabaseManager::getItemRegardlessOfActiveness(int itemId) {
+	sqlite3_stmt *stmt;
+	Item *result = nullptr;
+
+	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item WHERE Id = " + quotesql(itemId);
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		result = itemFromSQL(stmt);

@@ -37,7 +37,7 @@ public:
 			cout << left << setw(numWidth) << setfill(separator) << "Sale Price" << endl << endl;
 
 			for (Purchase* purchase : purchases) {
-				Item *item = dbm->getItem(purchase->getItemId());
+				Item *item = dbm->getItemRegardlessOfActiveness(purchase->getItemId());
 
 				string parsedName = item->getName();
 				if (parsedName.size() >= nameWidth) {

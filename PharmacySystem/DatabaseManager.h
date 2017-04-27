@@ -68,6 +68,11 @@ public:
 	*/
 	Store* getStore(int storeId);
 
+	/* Get a store from the database
+	Returns: returns a filled in Store object, or nullptr if no store was found for `storeId`
+	*/
+	Store* getStoreRegardlessOfActiveness(int storeId);
+
 	/* Gets all stores stored in the database
 		Paramater count: the number of stores to return. Returns historically, oldest first.
 		Returns: A vector of Store objects representing all stores in the database
@@ -109,6 +114,11 @@ public:
 	Item* getItem(int itemId);
 	Item* getItem(string itemName);
 
+
+	/* Gets an item from the database
+	Returns: Returns a filled in Item object, or nullptr if no item was found
+	*/
+	Item* getItemRegardlessOfActiveness(int itemId);
 	/* Gets a list of all items in the database
 		Parameter onlyActiveItems: Will return only the items marked as IsActive in the database
 		Returns: a vector of all items in the database. If count is specified it will return items from oldest to newest.
