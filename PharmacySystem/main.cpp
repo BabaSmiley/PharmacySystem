@@ -242,9 +242,6 @@ int main() {
 					cout << "An item does not exist for this id." << endl;
 				}
 			}
-			else if (user->isEmployee() && "add inventory" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
-
-			}
 			else if (user->isEmployee() && "create discount" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
 				Inventory *inventory = dbm->getInventory(stoi(input.at(3)), stoi(input.at(2)));
 				if (inventory != nullptr) {
@@ -277,8 +274,20 @@ int main() {
 					cout << "This item was already added to the queue." << endl;
 				}
 				else {
-					ManageInventory manageInventoryCtrl;
-					manageInventoryCtrl.promptForInventoryInput(stoi(input.at(2)), stoi(input.at(3)));
+					Item *item = dbm->getItem(stoi(input.at(2)));
+					if (item) {
+						Store *store = dbm->getStore(stoi(input.at(3)));
+						if (store) {
+							ManageInventory manageInventoryCtrl;
+							manageInventoryCtrl.promptForInventoryInput(stoi(input.at(2)), stoi(input.at(3)));
+						}
+						else {
+							cout << "Item and store combination does not exist." << endl;
+						}
+					}
+					else {
+						cout << "Item and store combination does not exist." << endl;
+					}
 				}
 			}
 
