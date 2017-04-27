@@ -916,7 +916,7 @@ AddItem* DatabaseManager::createAddItemOrder(int itemId, int storeId, long quant
 	sqlite3_stmt *stmt;
 	AddItem* result = nullptr;
 
-	if (getInventory(storeId, itemId) != nullptr) {
+	if (getInventory(storeId, itemId) == nullptr) {
 		string sql = "INSERT INTO AddItem (ItemId, StoreId, Quantity) VALUES (" + quotesql(itemId) + "," + quotesql(storeId) + "," + quotesql(quantity) + ")";
 
 		if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
