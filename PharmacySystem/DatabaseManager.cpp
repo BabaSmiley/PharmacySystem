@@ -597,7 +597,7 @@ Inventory* DatabaseManager::createInventory(int storeId, int itemId, long itemLe
 	sqlite3_stmt *stmt;
 	Inventory *newInventory = nullptr;
 
-	string sql = "INSERT INTO Inventory (StoreId, ItemId, ItemLevel, RefillLevel, RefillQuantity) VALUES (" + quotesql(storeId) + "," + quotesql(itemId) + "," + quotesql(itemLevel) + "," + quotesql(refillLevel) + "," + quotesql(refillQuantity) + ")";
+	string sql = "INSERT INTO Inventory (StoreId, ItemId, ItemLevel, RefillLevel, RefillQuantity, onOrderQty) VALUES (" + quotesql(storeId) + "," + quotesql(itemId) + "," + quotesql(itemLevel) + "," + quotesql(refillLevel) + "," + quotesql(refillQuantity) + "," + quotesql(onOrderQty) + ")";
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
 			newInventory = new Inventory(storeId, itemId, itemLevel, refillLevel, refillQuantity, onOrderQty);

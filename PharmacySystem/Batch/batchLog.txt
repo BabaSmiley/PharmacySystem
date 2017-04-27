@@ -1,25 +1,2 @@
-=====Update Item Data=====
 =====Create/Delete Store=====
-=====Inventory Received at Warehouse=====
-Item 9 does not exist. Skipping.
-=====Inventory To Store Request=====
-File 'reorder.txt' not found. Skipping.
-Insufficient warehouse quantity to reorder item 0001 in store 0001. Reordering next batch cycle
-Insufficient warehouse quantity to reorder item 0002 in store 0101. Reordering next batch cycle
-Insufficient warehouse quantity to reorder item 0002 in store 0101. Reordering next batch cycle
-Insufficient warehouse quantity to reorder item 0002 in store 0006. Reordering next batch cycle
-Insufficient warehouse quantity to reorder item 0002 in store 0006. Reordering next batch cycle
-Insufficient warehouse quantity to reorder item 0004 in store 0004. Reordering next batch cycle
-Insufficient warehouse quantity to reorder item 0004 in store 0001. Reordering next batch cycle
-Insufficient warehouse quantity to reorder item 0004 in store 0103. Reordering next batch cycle
-Insufficient warehouse quantity to reorder item 0004 in store 0006. Reordering next batch cycle
-Insufficient warehouse quantity to reorder item 0004 in store 0103. Reordering next batch cycle
-Insufficient warehouse quantity to reorder item 0004 in store 0009. Reordering next batch cycle
-Insufficient warehouse quantity to reorder item 0005 in store 0103. Reordering next batch cycle
-Insufficient warehouse quantity to reorder item 0005 in store 0006. Reordering next batch cycle
-Insufficient warehouse quantity to reorder item 0005 in store 0103. Reordering next batch cycle
-Insufficient warehouse quantity to reorder item 0006 in store 0103. Reordering next batch cycle
-Insufficient warehouse quantity to reorder item 0007 in store 0102. Reordering next batch cycle
-Insufficient warehouse quantity to reorder item 0010 in store 0002. Reordering next batch cycle
-=====Inventory Generation=====
 =====Yearly Sales=====
