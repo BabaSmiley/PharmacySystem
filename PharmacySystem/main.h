@@ -15,6 +15,7 @@
 #include "ReviewController.cpp"
 #include "DiscountController.cpp"
 #include "ReorderController.cpp"
+#include "ManageInventory.cpp"
 
 // Utils
 #include "ItemTablePrinter.cpp"

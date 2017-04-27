@@ -260,7 +260,17 @@ int main() {
 				else {
 					cout << "This discount does not exist." << endl;
 				}
-			} 
+			}
+			else if (user->isEmployee() && "add inventory" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
+				AddItem *addItem = dbm->getAddItem(stoi(input.at(3)), stoi(input.at(2)));
+				if (addItem != nullptr) {
+					cout << "This item was already added to the queue." << endl;
+				}
+				else {
+					ManageInventory manageInventoryCtrl;
+					manageInventoryCtrl.promptForInventoryInput(stoi(input.at(2)), stoi(input.at(3)));
+				}
+			}
 
 			else {
 				throw exception("User command not recognized in main.");
