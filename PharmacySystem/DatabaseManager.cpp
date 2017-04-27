@@ -92,7 +92,7 @@ User* DatabaseManager::getUser(int userID) {
 	sqlite3_stmt *stmt;
 	User *result = nullptr;
 
-	string sql = "selectId, Username, Address, IsEmployee from Account where Id=" + quotesql(userID);
+	string sql = "select Id, Username, Address, IsEmployee from Account where Id=" + quotesql(userID);
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 
 		if (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -105,6 +105,7 @@ User* DatabaseManager::getUser(int userID) {
 			result = new User(id, username, address, type);
 		}
 	}
+
 	sqlite3_finalize(stmt);
 
 	return result;
@@ -392,10 +393,10 @@ Item* DatabaseManager::getItem(int itemId, bool onlyActiveItem) {
 
 	string limitingSQL = "";
 	if (onlyActiveItem) {
-		limitingSQL = " WHERE IsActive = '1'";
+		limitingSQL = " AND IsActive = '1'";
 	}
 
-	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item WHERE IsActive = 1 AND Id = " + quotesql(itemId) + limitingSQL;
+	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item WHERE Id = " + quotesql(itemId) + limitingSQL;
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		result = itemFromSQL(stmt);
