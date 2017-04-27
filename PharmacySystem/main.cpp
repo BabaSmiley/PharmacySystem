@@ -160,6 +160,10 @@ int main() {
 				runBatchSequence(dbm);
 				shouldEndProgram = true;
 			}
+			else if (user->isEmployee() && "add item" == input.at(0) + " " + input.at(1)) {
+				ManageItem manageItem;
+				manageItem.promptForAddInput();
+			}
 			else if (user->isEmployee() && "reorder item" == input.at(0) + " " + input.at(1)) {
 				ReorderController reorderController;
 				reorderController.promptUserToPlaceOrder();
@@ -209,6 +213,10 @@ int main() {
 			else if (user->isEmployee() && "manage item" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
 				ManageItem mi;
 				mi.promptForInput(stoi(input.at(2)));
+			}
+			else if (user->isEmployee() && "delete item" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
+				ManageItem mi;
+				mi.deleteItem(stoi(input.at(2)));
 			}
 			else if (user->isEmployee() && "view item history" == input.at(0) + " " + input.at(1) + " " + input.at(2) && stoi(input.at(3))) {
 				bool returnOnlyActiveItems = false;
