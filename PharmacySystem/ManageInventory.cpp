@@ -10,30 +10,17 @@ class ManageInventory {
 public:
 
 	void promptForInventoryInput(int itemId, int storeId) {
-		getInventoryAddInput(itemId, storeId);
-	}
-
-	void deleteInventory(int itemId, int storeId, long quantityToAdd) {
-		Item *item = DatabaseManager::shared()->getItem(itemId);
-		long newLevel = item->getWhLevel() + quantityToAdd;
-		bool inventoryDeleted = DatabaseManager::shared()->deleteInventory(storeId, itemId);
-		if (inventoryDeleted) {
-			Item *updatedItem = DatabaseManager::shared()->updateItem(itemId, "", "", -1, "", -1, "", -1, -1, newLevel, -1);
-			if (updatedItem != nullptr) {
-				cout << "Inventory deleted successfully." << endl;
-			}
-			else {
-				cout << "Warehouse level not updated." << endl;
-			}
+		try {
+			getInventoryAddInput(itemId, storeId);
 		}
-		else {
-			cout << "Unsuccessful in deleting inventory" << endl;
+		catch (const char *e) {
+			cout << e << endl;
 		}
 	}
 
 private:
 
-	void getInventoryAddInput(int itemId, int storeId) {
+	void getInventoryAddInput(int itemId, int storeId) throw (const char *e) {
 		string quantityString;
 		int quantity;
 		
@@ -42,7 +29,7 @@ private:
 			quantity = stoi(quantityString);
 		}
 		catch (const char *e) {
-			throw e;
+			throw "Unable to add item to queue.";
 		}
 
 		AddItem *addItem = DatabaseManager::shared()->createAddItemOrder(itemId, storeId, quantity);
