@@ -7,7 +7,6 @@
 #include "DatabaseManager.h"
 using namespace std;
 
-
 class ItemTablePrinter {
 public:
 
