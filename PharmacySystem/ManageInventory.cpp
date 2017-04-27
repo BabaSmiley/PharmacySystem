@@ -18,7 +18,7 @@ public:
 		long newLevel = item->getWhLevel() + quantityToAdd;
 		bool inventoryDeleted = DatabaseManager::shared()->deleteInventory(storeId, itemId);
 		if (inventoryDeleted) {
-			Item *updatedItem = DatabaseManager::shared()->updateItem(itemId, NULL, NULL, -1, NULL, -1, NULL, -1, -1, newLevel, -1);
+			Item *updatedItem = DatabaseManager::shared()->updateItem(itemId, "", "", -1, "", -1, "", -1, -1, newLevel, -1);
 			if (updatedItem != nullptr) {
 				cout << "Inventory deleted successfully." << endl;
 			}
