@@ -154,11 +154,13 @@ void WriteOnlineRequestFile(DatabaseManager *dbm, int seqNo) {
 	vector<AddItem*> addItems = dbm->getAllAddItems();
 	for (int i = 0; i < addItems.size(); i++) {
 		string storeId = ZeroFillNumber(to_string(addItems[i]->getStoreId()), 5);
-		string priorityLevel = ZeroFillNumber(to_string(dbm->getStore(addItems[i]->getStoreId())->getPriorityLevel()), 5);
-		string itemId = ZeroFillNumber(to_string(addItems[i]->getItemId()), 4);
-		string qty = ZeroFillNumber(to_string(addItems[i]->getQuantity()), 4);
+		string priorityLevel = ZeroFillNumber(to_string(dbm->getStore(addItems[i]->getStoreId())->getPriorityLevel()), 2);
+		string itemId = ZeroFillNumber(to_string(addItems[i]->getItemId()), 9);
+		string qty = ZeroFillNumber(to_string(addItems[i]->getQuantity()), 10);
+		int refillLevel = addItems[i]->getRefillLevel();
+		int refillQuantity = addItems[i]->getRefillQuantity();
 
-		dbm->createInventory(stoi(storeId), stoi(itemId), 0, 0, 0, 0);
+		dbm->createInventory(stoi(storeId), stoi(itemId), 0, refillLevel, refillQuantity, 0);
 		out << "O" << storeId << priorityLevel << itemId << qty << endl;
 
 		trailerCounter++;
@@ -512,6 +514,7 @@ and add them to the stores
 		int storeId = stoi(line.substr(1, 5));
 		int itemCode = stoi(line.substr(8, 9));
 		int requestedQty = stoi(line.substr(17, 10));
+		int currentInventoryQty = dbm->getInventory(storeId, itemCode)->getItemLevel();
 		Item* itm = dbm->getItem(itemCode);
 		if (itm != nullptr) {
 			int qty = itm->getWhLevel();
@@ -519,8 +522,8 @@ and add them to the stores
 			if (requestedQty <= qty) { //adjust quantites
 				//reduce warehouse qty
 				dbm->updateItem(itemCode, "", "", -1, "", -1, "", -1, -1, qty - requestedQty/*<- increment qty*/, -1);
-				//increment inventory qty
-				dbm->updateInventory(storeId, itemCode, requestedQty);
+				//Set inventory qty
+				dbm->updateInventory(storeId, itemCode, currentInventoryQty + requestedQty);
 				dbm->updateInventoryOnOrderQty(storeId, itemCode, 0);
 			}
 			else {

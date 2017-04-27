@@ -228,7 +228,7 @@ public:
 	/* Adds item to AddItem database
 		Returns: Returns an add item object representing a DB AddItem model
 	*/
-	AddItem* createAddItemOrder(int itemId, int storeId, long quantity);
+	AddItem* createAddItemOrder(int itemId, int storeId, long quantity, long refillLevel, long refillQuantity);
 
 	/* Gets list of all items requested in AddItem DB
 		Returns: Returns list of all items in AddItem DB

@@ -39,20 +39,29 @@ public:
 private:
 
 	void getInventoryAddInput(int itemId, int storeId) throw (const char *) {
-		string quantityString;
-		int quantity;
+		string input;
+		int quantity, refillLevel, refillQuantity;
 		
-		quantityString = getInput("Quantity");
 		try {
-			quantity = stoi(quantityString);
+			input = getInput("Quantity");
+			quantity = stoi(input);
+
+			input = getInput("Refill Level");
+			refillLevel = stoi(input);
+
+			input = getInput("Refill Quantity");
+			refillQuantity = stoi(input);
+
+			if (quantity < 0 || refillQuantity < 0 || refillLevel < 0)
+				throw "Negative value inputted.";
 		}
 		catch (const char *e) {
 			throw "Unable to add item to queue.";
 		}
 
-		AddItem *addItem = DatabaseManager::shared()->createAddItemOrder(itemId, storeId, quantity);
+		AddItem *addItem = DatabaseManager::shared()->createAddItemOrder(itemId, storeId, quantity, refillLevel, refillQuantity);
 
-		if (addItem) {
+		if (addItem != nullptr) {
 			cout << "Item added to inventory queue successfully." << endl;
 		}
 		else {

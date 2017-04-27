@@ -715,7 +715,7 @@ Inventory* DatabaseManager::updateInventory(int storeId, int itemId, long quanti
 
 	//long newLevel = result->getItemLevel() + quantity;
 
-	string sql = "UPDATE Inventory SET ItemLevel = ItemLevel + " + quotesql(quantity) + " WHERE StoreId = " + quotesql(storeId) + " AND ItemId = " + quotesql(itemId);
+	string sql = "UPDATE Inventory SET ItemLevel = " + quotesql(quantity) + " WHERE StoreId = " + quotesql(storeId) + " AND ItemId = " + quotesql(itemId);
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
 			result = getInventory(storeId, itemId);
@@ -912,18 +912,19 @@ vector<Sale*> DatabaseManager::getSalesByStore(int storeId) {
 
 /// Add Item For Reordering ///
 
-AddItem* DatabaseManager::createAddItemOrder(int itemId, int storeId, long quantity) {
+AddItem* DatabaseManager::createAddItemOrder(int itemId, int storeId, long quantity, long refillLevel, long refillQuantity) {
 	sqlite3_stmt *stmt;
 	AddItem* result = nullptr;
 
 	if (getInventory(storeId, itemId) == nullptr) {
-		string sql = "INSERT INTO AddItem (ItemId, StoreId, Quantity) VALUES (" + quotesql(itemId) + "," + quotesql(storeId) + "," + quotesql(quantity) + ")";
+		string sql = "INSERT INTO AddItem (ItemId, StoreId, Quantity, RefillLevel, RefillQuantity) VALUES (" + quotesql(itemId) + "," + quotesql(storeId) + "," + quotesql(quantity) + "," + quotesql(refillLevel) + "," + quotesql(refillQuantity) + ")";
 
 		if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 			if (sqlite3_step(stmt) == SQLITE_DONE) {
-				result = new AddItem(itemId, storeId, quantity);
+				result = new AddItem(itemId, storeId, quantity, refillLevel, refillQuantity);
 			}
 		}
+
 		sqlite3_finalize(stmt);
 	}
 
@@ -934,7 +935,7 @@ vector<AddItem*> DatabaseManager::getAllAddItems() {
 	sqlite3_stmt *stmt;
 	vector<AddItem*> result;
 
-	string sql = "SELECT ItemId, StoreId, Quantity FROM AddItem";
+	string sql = "SELECT ItemId, StoreId, Quantity, RefillLevel, RefillQuantity FROM AddItem";
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		while (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -943,14 +944,14 @@ vector<AddItem*> DatabaseManager::getAllAddItems() {
 			int itemId = sqlite3_column_int(stmt, 0);
 			int storeId = sqlite3_column_int(stmt, 1);
 			long quantity = sqlite3_column_int(stmt, 2);
+			long refillLevel = sqlite3_column_int(stmt, 3);
+			long refillQuantity = sqlite3_column_int(stmt, 4);
 
-			addItem = new AddItem(itemId, storeId, quantity);
+			addItem = new AddItem(itemId, storeId, quantity, refillLevel, refillQuantity);
 
 			result.push_back(addItem);
 		}
 	}
-
-	printf("Error with SQL command: %s", sqlite3_errmsg(db));
 
 	sqlite3_finalize(stmt);
 
@@ -961,12 +962,14 @@ AddItem* DatabaseManager::getAddItem(int storeId, int itemId) {
 	sqlite3_stmt *stmt;
 	AddItem* result = nullptr;
 
-	string sql = "SELECT Quantity FROM AddItem WHERE ItemId=" + quotesql(itemId) + " AND StoreId=" + quotesql(storeId) + " LIMIT 1";
+	string sql = "SELECT Quantity, RefillLevel, RefillQuantity FROM AddItem WHERE ItemId=" + quotesql(itemId) + " AND StoreId=" + quotesql(storeId) + " LIMIT 1";
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_ROW) {
 			int quantity = sqlite3_column_int(stmt, 0);
-			result = new AddItem(itemId, storeId, quantity);
+			int refillLevel = sqlite3_column_int(stmt, 1);
+			int refillQuantity = sqlite3_column_int(stmt, 2);
+			result = new AddItem(itemId, storeId, quantity, refillLevel, refillQuantity);
 		}
 	}
 	sqlite3_finalize(stmt);
