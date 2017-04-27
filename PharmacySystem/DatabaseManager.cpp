@@ -997,6 +997,26 @@ bool DatabaseManager::clearAddItems() {
 	return result;
 }
 
+vector<SideEffect*> DatabaseManager::getSideEffects(int itemId) {
+	sqlite3_stmt *stmt;
+	vector<SideEffect*> results;
+
+	string sql = "SELECT SideEffect FROM SideEffect WHERE ItemId = " + quotesql(itemId);
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		while (sqlite3_step(stmt) == SQLITE_ROW) {
+			string effect = sqlToString(sqlite3_column_text(stmt, 0));
+
+			SideEffect *sideEffect = new SideEffect(itemId, effect);
+			results.push_back(sideEffect);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return results;
+}
+
 /* Test
 vector<vector<string>> DatabaseManager::query(const char *sql) {
 	sqlite3_stmt *stmt;

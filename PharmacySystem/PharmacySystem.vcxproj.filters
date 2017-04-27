@@ -138,6 +138,12 @@
     <ClCompile Include="ManageInventory.cpp">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="SideEffectTablePrinter.cpp">
+      <Filter>Source Files\Printers</Filter>
+    </ClCompile>
+    <ClCompile Include="SideEffect.cpp">
+      <Filter>Source Files\DB Models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sqlite3.h">

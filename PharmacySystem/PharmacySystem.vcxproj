@@ -176,6 +176,8 @@
     <ClCompile Include="Purchase.cpp" />
     <ClCompile Include="Review.cpp" />
     <ClCompile Include="Sale.cpp" />
+    <ClCompile Include="SideEffect.cpp" />
+    <ClCompile Include="SideEffectTablePrinter.cpp" />
     <ClCompile Include="sqlite3.c">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeaderFile>
