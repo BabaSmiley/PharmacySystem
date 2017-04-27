@@ -74,7 +74,7 @@ User* DebugGetEmployeeUser() {
 int main() {
 	DatabaseManager *dbm = DatabaseManager::shared();
 	//runTests(dbm);
-	runBatchSequence(dbm);
+	//runBatchSequence(dbm);
 	
 	/* Start Login & Registration Process */
 	// DEBUG - commented out so dont have to repeatadly sign in. Uncomment to reactivate the login feature
@@ -216,20 +216,34 @@ int main() {
 				ManageItem mi;
 				mi.promptForInput(stoi(input.at(2)));
 			}
+			else if (user->isEmployee() && "add inventory" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
+
+			}
 			else if (user->isEmployee() && "create discount" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
-				Item *item = dbm->getItem(stoi(input.at(2)));
-				Store *store = dbm->getStore(stoi(input.at(3)));
-				if (item != nullptr && store != nullptr) {
-					DiscountController discountController;
-					discountController.promptForCreateInput(stoi(input.at(2)), stoi(input.at(3)));
+				Inventory *inventory = dbm->getInventory(stoi(input.at(3)), stoi(input.at(2)));
+				if (inventory != nullptr) {
+					Discount *discount = dbm->getDiscount(stoi(input.at(3)), stoi(input.at(2)));
+					if (discount != nullptr) {
+						cout << "This discount already exists." << endl;
+					}
+					else {
+						DiscountController discountController;
+						discountController.promptForCreateInput(stoi(input.at(2)), stoi(input.at(3)));
+					}
 				}
 				else {
 					cout << "This item and store combination does not exist." << endl;
 				}
 			}
 			else if (user->isEmployee() && "delete discount" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
-				DiscountController discountController;
-				discountController.deleteDiscount(stoi(input.at(2)), stoi(input.at(3)));
+				Discount *discount = dbm->getDiscount(stoi(input.at(3)), stoi(input.at(2)));
+				if (discount != nullptr) {
+					DiscountController discountController;
+					discountController.deleteDiscount(stoi(input.at(2)), stoi(input.at(3)));
+				}
+				else {
+					cout << "This discount does not exist." << endl;
+				}
 			} 
 
 			else {

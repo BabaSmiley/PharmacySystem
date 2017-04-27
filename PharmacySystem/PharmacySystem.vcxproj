@@ -157,6 +157,7 @@
     <ClCompile Include="Constants.h" />
     <ClCompile Include="DatabaseUtils.cpp" />
     <ClCompile Include="DiscountController.cpp" />
+    <ClCompile Include="ManageInventory.cpp" />
     <ClCompile Include="PrescriptionController.cpp" />
     <ClCompile Include="PrescriptionHistoryTablePrinter.cpp" />
     <ClCompile Include="ReorderController.cpp" />

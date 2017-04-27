@@ -1,5 +1,15 @@
+=====Update Item Data=====
+adddeletestore.txt sequence number mismatch. Expected 0 got 9999. Terminated program.
+=====Create/Delete Store=====
+adddeletestore.txt sequence number mismatch. Expected 0 got 9999. Terminated program.
+=====Inventory Received at Warehouse=====
+deletestoreitems.txt sequence number mismatch. Expected 0 got 9999. Terminated record gathering from deletestoreitems.txt.
+itemreceived.txt sequence number mismatch. Expected 1 got 9999. Terminated record gathering from itemreceived.txt.
 =====Inventory To Store Request=====
-createstoreitems.txt trailer mismatch. Expected 0003 got 0
-onlinerequest.txt trailer mismatch. Expected 0010 got 0
-reorder.txt sequence number mismatch. Expected 9999 got 0000. Terminated record gathering from reorder.txt.
-Insufficient warehouse quantity to reorder item 0029 in store 0107. Reordering next batch cycle
+createstoreitems.txt sequence number mismatch. Expected 0 got 9999. Terminated record gathering from createstoreitems.txt.
+onlinerequest.txt trailer mismatch. Expected 0003 got 0
+Insufficient warehouse quantity to reorder item 0025 in store 0101. Reordering next batch cycle
+Insufficient warehouse quantity to reorder item 0026 in store 0101. Reordering next batch cycle
+=====Inventory Generation=====
+=====Yearly Sales=====
+reports.txt sequence number mismatch. Expected 0 got 9999. Terminated program.
