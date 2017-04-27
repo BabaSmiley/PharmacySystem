@@ -54,7 +54,7 @@ public:
 	}
 
 	//cout << "Prescription history of Store #" << store->getId() << ":" << endl;
-	static void printItemPurchaseHistoryTable(DatabaseManager *dbm, Item *item) {
+	/*static void printItemPurchaseHistoryTable(DatabaseManager *dbm, Item *item) {
 		cout << string(60, '-') << endl;
 		cout << "Item '" << item->getName() << "' Sale History:" << endl;
 
@@ -79,15 +79,112 @@ public:
 		}
 
 		cout << string(60, '-') << endl << endl;
+	}*/
+
+	static void printItemPurchaseHistoryTable(DatabaseManager *dbm, Item *item) {
+		cout << string(60, '-') << endl;
+		cout << "Item '" << item->getName() << "' Sale History:" << endl;
+
+		vector<Sale*> sales = dbm->getSalesByItem(item->getId());
+
+		cout << string(60, '-') << endl;
+
+		if (sales.size() > 0) {
+
+			string year = (sales[0]->getDate()).substr(0, 4), month = (sales[0]->getDate()).substr(5, 2), day = (sales[0]->getDate()).substr(8, 2);
+
+			int salesD = 0, salesM = 0, salesY = 0, salesT = 0,
+				qtyD = 0, qtyM = 0, qtyY = 0, qtyT = 0;
+
+			for (int i = 0; i < sales.size(); i++) {
+				string monthtmp = (sales[i]->getDate()).substr(5, 2);
+				string yeartmp = (sales[i]->getDate()).substr(0, 4);
+				string daytmp = sales[i]->getDate().substr(8, 2);
+
+				if (monthtmp != month || yeartmp != year || daytmp != day) { //If new month, then set new month, and reset month counter
+					cout << year << "-" << month << "-" << day <<  " " << qtyD << " $" << salesD << endl;
+
+					day = daytmp;
+					month = monthtmp;
+					year = yeartmp;
+
+					salesD = 0; qtyD = 0;  //reset counters
+				}
+
+				int qty = sales[i]->getQuantity();
+				int salesAmt = sales[i]->getSalePrice() * qty;
+
+				salesD += salesAmt;
+				qtyD += qty;
+			}
+
+			if (qtyD > 0 || salesD > 0)
+				cout << year << "-" << month << " " << qtyM << " $" << salesM << endl;
+
+			cout << endl;
+
+			year = (sales[0]->getDate()).substr(0, 4);
+			month = (sales[0]->getDate()).substr(5, 2);
+
+			for (int i = 0; i < sales.size(); i++) {
+				string monthtmp = (sales[i]->getDate()).substr(5, 2);
+				string yeartmp = (sales[i]->getDate()).substr(0, 4);
+
+				if (monthtmp != month || yeartmp != year) { //If new month, then set new month, and reset month counter
+					cout << year << "-" << month << " " << qtyM << " $" << salesM << endl;
+
+					month = monthtmp;
+					year = yeartmp;
+
+					salesM = 0; qtyM = 0; //reset counters
+				}
+
+				int qty = sales[i]->getQuantity();
+				int salesAmt = sales[i]->getSalePrice() * qty;
+
+				salesM += salesAmt; salesT += salesAmt;
+				qtyM += qty; qtyT += qty;
+			}
+
+			if (qtyM > 0 || salesM > 0)
+				cout << year << "-" << month << " " << qtyM << " $" << salesM << endl;
+
+			cout << endl;
+
+			year = (sales[0]->getDate()).substr(0, 4);
+
+			for (int i = 0; i < sales.size(); i++) {
+				string yeartmp = (sales[i]->getDate()).substr(0, 4);
+
+				if (yeartmp != year) { //If new year, then set new year, and roll over month, and reset counters
+					cout << year << " " << qtyY << " $" << salesY << endl;
+
+					year = yeartmp;
+
+					salesY = 0; qtyY = 0; //reset counters
+				}
+
+				int qty = sales[i]->getQuantity();
+				int salesAmt = sales[i]->getSalePrice() * qty;
+
+				salesY += salesAmt; qtyY += qty;
+			}
+
+			if (qtyY > 0 || salesY > 0)
+				cout << year << " " << qtyY << " $" << salesY << endl;
+
+			cout << endl << "GRAND TOTAL: " << qtyT << " $" << salesT << endl << endl;
+		}
+
+		cout << string(60, '-') << endl << endl;
 	}
 
-
-	static void printStorePurchaseHistoryTable(DatabaseManager *dbm, Store *store) {
+	/*static void printStorePurchaseHistoryTable(DatabaseManager *dbm, Store *store) {
 		cout << string(60, '-') << endl;
 		cout << "Store #" << store->getId() << " Sale History:" << endl;
 
 		vector<Sale*> storeSales = dbm->getSalesByStore(store->getId());
-		
+
 		cout << string(60, '-') << endl;
 		const char separator = ' ';
 		const int nameWidth = 32;
@@ -107,6 +204,125 @@ public:
 			cout << left << setw(nameWidth) << setfill(separator) << sale->getDate();
 			cout << endl;
 		}
+
+		cout << string(60, '-') << endl << endl;
+	}*/
+
+	static void printStorePurchaseHistoryTable(DatabaseManager *dbm, Store *store) {
+		cout << string(60, '-') << endl;
+		cout << "Store #" << store->getId() << " Sale History:" << endl;
+
+		vector<Sale*> sales = dbm->getSalesByStore(store->getId());
+		
+		cout << string(60, '-') << endl;
+
+
+
+
+
+
+
+
+		if (sales.size() > 0) {
+
+			string year = (sales[0]->getDate()).substr(0, 4), month = (sales[0]->getDate()).substr(5, 2), day = (sales[0]->getDate()).substr(8, 2);
+
+			int salesD = 0, salesM = 0, salesY = 0, salesT = 0,
+				qtyD = 0, qtyM = 0, qtyY = 0, qtyT = 0;
+
+			for (int i = 0; i < sales.size(); i++) {
+				string monthtmp = (sales[i]->getDate()).substr(5, 2);
+				string yeartmp = (sales[i]->getDate()).substr(0, 4);
+				string daytmp = sales[i]->getDate().substr(8, 2);
+
+				if (monthtmp != month || yeartmp != year || daytmp != day) { //If new month, then set new month, and reset month counter
+					cout << year << "-" << month << "-" << day << " " << qtyD << " $" << salesD << endl;
+
+					day = daytmp;
+					month = monthtmp;
+					year = yeartmp;
+
+					salesD = 0; qtyD = 0;  //reset counters
+				}
+
+				int qty = sales[i]->getQuantity();
+				int salesAmt = sales[i]->getSalePrice() * qty;
+
+				salesD += salesAmt;
+				qtyD += qty;
+			}
+
+			if (qtyD > 0 || salesD > 0)
+				cout << year << "-" << month << " " << qtyM << " $" << salesM << endl;
+
+			cout << endl;
+
+			year = (sales[0]->getDate()).substr(0, 4);
+			month = (sales[0]->getDate()).substr(5, 2);
+
+			for (int i = 0; i < sales.size(); i++) {
+				string monthtmp = (sales[i]->getDate()).substr(5, 2);
+				string yeartmp = (sales[i]->getDate()).substr(0, 4);
+
+				if (monthtmp != month || yeartmp != year) { //If new month, then set new month, and reset month counter
+					cout << year << "-" << month << " " << qtyM << " $" << salesM << endl;
+
+					month = monthtmp;
+					year = yeartmp;
+
+					salesM = 0; qtyM = 0; //reset counters
+				}
+
+				int qty = sales[i]->getQuantity();
+				int salesAmt = sales[i]->getSalePrice() * qty;
+
+				salesM += salesAmt; salesT += salesAmt;
+				qtyM += qty; qtyT += qty;
+			}
+
+			if (qtyM > 0 || salesM > 0)
+				cout << year << "-" << month << " " << qtyM << " $" << salesM << endl;
+
+			cout << endl;
+
+			year = (sales[0]->getDate()).substr(0, 4);
+
+			for (int i = 0; i < sales.size(); i++) {
+				string yeartmp = (sales[i]->getDate()).substr(0, 4);
+
+				if (yeartmp != year) { //If new year, then set new year, and roll over month, and reset counters
+					cout << year << " " << qtyY << " $" << salesY << endl;
+
+					year = yeartmp;
+
+					salesY = 0; qtyY = 0; //reset counters
+				}
+
+				int qty = sales[i]->getQuantity();
+				int salesAmt = sales[i]->getSalePrice() * qty;
+
+				salesY += salesAmt; qtyY += qty;
+			}
+
+			if (qtyY > 0 || salesY > 0)
+				cout << year << " " << qtyY << " $" << salesY << endl;
+
+			cout << endl << "GRAND TOTAL: " << qtyT << " $" << salesT << endl << endl;
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		cout << string(60, '-') << endl << endl;
 	}
