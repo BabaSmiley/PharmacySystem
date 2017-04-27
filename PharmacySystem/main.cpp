@@ -211,8 +211,8 @@ int main() {
 				mi.promptForInput(stoi(input.at(2)));
 			}
 			else if (user->isEmployee() && "view item history" == input.at(0) + " " + input.at(1) + " " + input.at(2) && stoi(input.at(3))) {
-				//Item *item = dbm->getItem(stoi(input.at(3)));
-				Item *item = dbm->getItemRegardlessOfActiveness(stoi(input.at(3)));
+				bool returnOnlyActiveItems = false;
+				Item *item = dbm->getItem(stoi(input.at(3)), returnOnlyActiveItems);
 				if (item != nullptr) {
 					PurchaseHistoryTablePrinter::printItemPurchaseHistoryTable(dbm, item);
 				}
@@ -221,8 +221,8 @@ int main() {
 				}
 			}
 			else if (user->isEmployee() && "view store history" == input.at(0) + " " + input.at(1) + " " + input.at(2) && stoi(input.at(3))) {
-				//Store *store = dbm->getStore(stoi(input.at(3)));
-				Store *store = dbm->getStoreRegardlessOfActiveness(stoi(input.at(3)));
+				bool returnOnlyActiveItems = false;
+				Store *store = dbm->getStore(stoi(input.at(3)), returnOnlyActiveItems);
 				if (store != nullptr) {
 					PurchaseHistoryTablePrinter::printStorePurchaseHistoryTable(dbm, store);
 				}
