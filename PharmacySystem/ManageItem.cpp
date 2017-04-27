@@ -125,24 +125,12 @@ private:
 				whRefillQty = stoi(whRefillQtyString);
 			}
 
-			whLevelString = getInput("Warehouse Level (Max 10 characters)");
-			if (whLevelString.size() > 10) {
-				whLevelString = whLevelString.substr(0, 10);
-				cout << "Warehouse Level truncated to: " << whLevelString << endl;
-			}
-			if (whLevelString.empty()) {
-				whLevel = NULL;
-			}
-			else {
-				whLevel = stoi(whLevelString);
-			}
-
 		}
 		catch (const char *e) {
 			throw e;
 		}
 
-		Item *item = DatabaseManager::shared()->createItem(name, description, price, dosage, vendorId, expectedDeliveryDate, whRefillLevel, whRefillQty, whLevel, 1);
+		Item *item = DatabaseManager::shared()->createItem(name, description, price, dosage, vendorId, expectedDeliveryDate, whRefillLevel, whRefillQty, 0, 1);
 
 		if (item) {
 			cout << "Item successfully created." << endl;
