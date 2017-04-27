@@ -4,6 +4,7 @@
 #include "CommandUtils.cpp"
 #include "DatabaseManager.h"
 #include "Discount.cpp"
+#include <ctime>
 using namespace std;
 
 class DiscountController {
@@ -22,7 +23,6 @@ public:
 			throw "Unable to delete discount.";
 		}
 	}
-
 private:
 
 	void getCreateDiscountInput(int itemId, int storeId) throw(const char*) {
@@ -35,6 +35,18 @@ private:
 		percentOffString = getInput("Percent Off");
 		try {
 			percentOff = stoi(percentOffString);
+			if (percentOff < 0)
+			{
+				cout << "Error you have entered a percent that is below 0%" << endl;
+				cout << "Ended discount process" << endl;
+				return;
+			}
+			else if (percentOff > 100)
+			{
+				cout << "Error you have entered a percent that is above 100%" << endl;
+				cout << "Ended discount process" << endl;
+				return;
+			}
 		}
 		catch (const char *e) {
 			throw e;

@@ -11,29 +11,37 @@ void printHelp(UserType type) {
 	cout << "##################################" << endl;
 	cout << "Available Commands:" << endl;
 	// General all-user commands
-	cout << "'list stores {number of stores}' : Will list all available stores. Optionally can state the number of stores to show." << endl;
-	cout << "'view review {store ID}' : Will list store reviews for a store ID. Optionally can state a number of reviews to print." << endl;
+	cout << endl << "## View Data ##" << endl;
+	cout << "\t'list stores {number of stores}' : Will list all available stores. Optionally can state the number of stores to show." << endl;
+	cout << "\t'view review {store ID}' : Will list store reviews for a store ID. Optionally can state a number of reviews to print." << endl;
 
 	// User specific commands
 	if (type == Employee) {
-		cout << "'list items {store ID} {number of items}' : Will list all items in given store. Optionally can state the number of items to show." << endl;
-		cout << "'list all items {number of items}' : Will list all items available at a company level. Optionally can state the number of items to show." << endl;
-		cout << "'view history {customer username}' : View the history of a customer. Specify the customer's username to view their history." << endl;
-		cout << "'create prescription' : Will begin process to create a new customer prescription." << endl;
-		cout << "'manage item {item ID}' : Update the attributes of a item. Specify the item ID to make modifications." << endl;
-		cout << "'manage store {store ID}' : Update the attributes of a store. Specify the store ID to make modifications." << endl;
-		cout << "'reorder item' : Will begin process to reorder an item from a store." << endl;
-		cout << "'create discount {item ID} {store ID}' : Will create a discount for the specified item in the specified store." << endl;
-		cout << "'delete discount {item ID} {store ID}' : Will delete a discount from the database for the specified item ID and store ID." << endl;
-		cout << "'start batch' : Will begin the batch file processing for the end of the day. Will logout user afterwords." << endl;
+		cout << "\t'list items {store ID} {number of items}' : Will list all items in given store. Optionally can state the number of items to show." << endl;
+		cout << "\t'list all items {number of items}' : Will list all items available at a company level. Optionally can state the number of items to show." << endl;
+		cout << "\t'view history {customer username}' : View the purchase history of a customer. Specify the customer's username to view their history." << endl;
+		cout << "\t'view item history {item id}' : View an items sale history for a given item id." << endl;
+		cout << "\t'view store history {store id}' : View a stores sale history for a given store id." << endl;
+
+		cout << endl << "## Create/Manage ##"<< endl;
+		cout << "\t'create prescription' : Will begin process to create a new customer prescription." << endl;
+		cout << "\t'manage item {item ID}' : Update the attributes of a item. Specify the item ID to make modifications." << endl;
+		cout << "\t'manage store {store ID}' : Update the attributes of a store. Specify the store ID to make modifications." << endl;
+		cout << "\t'reorder item' : Will begin process to reorder an item from a store." << endl;
+		
+		cout << endl;
+		cout << "\t'create discount {item ID} {store ID}' : Will create a discount for the specified item in the specified store." << endl;
+		cout << "\t'delete discount {item ID} {store ID}' : Will delete a discount from the database for the specified item ID and store ID." << endl;
+		cout << "\t'start batch' : Will begin the batch file processing for the end of the day. Will logout user afterwords." << endl;
 	}
 	else if (type == Customer) {
-		cout << "'create review' : Will begin process to leave a review for a store." << endl;
-		cout << "'view history' : View your purchase history." << endl;
+		cout << "## Other ##" << endl;
+		cout << "\t'create review' : Will begin process to leave a review for a store." << endl;
+		cout << "\t'view history' : View your purchase history." << endl;
 	}
 
-	cout << "'clear' : Will clear the console window to avoid clutter." << endl;
-	cout << endl << "'help' : Will print this usage statement." << endl;
+	cout << endl << "'clear' : Will clear the console window to avoid clutter." << endl;
+	cout << "'help' : Will print this usage statement." << endl;
 	cout << "'logout' : Will log out of the system and close the program." << endl;
 	cout << "##################################" << endl;
 }
@@ -75,7 +83,7 @@ int main() {
 	DatabaseManager *dbm = DatabaseManager::shared();
 	//runTests(dbm);
 	//runBatchSequence(dbm);
-	
+
 	/* Start Login & Registration Process */
 	// DEBUG - commented out so dont have to repeatadly sign in. Uncomment to reactivate the login feature
 	LoginRegistrationController lr;
@@ -137,7 +145,7 @@ int main() {
 				else { //is customer user
 					customerID = user->getUserID();
 				}
-				PrescriptionHistoryTablePrinter::printHistoryTable(dbm, customerID);
+				PurchaseHistoryTablePrinter::printUserPurchaseHistoryTable(dbm, customerID);
 			}
 			else if ("view review" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
 				Store *store = dbm->getStore(stoi(input.at(2)));
@@ -199,7 +207,7 @@ int main() {
 				else {
 					printCompanyItemTable();
 				}
-				
+
 			}
 			else if (user->isEmployee() && "manage store" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
 				int storeId = stoi(input.at(2));
@@ -215,6 +223,24 @@ int main() {
 			else if (user->isEmployee() && "manage item" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
 				ManageItem mi;
 				mi.promptForInput(stoi(input.at(2)));
+			}
+			else if (user->isEmployee() && "view item history" == input.at(0) + " " + input.at(1) + " " + input.at(2) && stoi(input.at(3))) {
+				Item *item = dbm->getItem(stoi(input.at(3)));
+				if (item != nullptr) {
+					PurchaseHistoryTablePrinter::printItemPurchaseHistoryTable(dbm, item);
+				}
+				else {
+					cout << "An item does not exist for this id." << endl;
+				}
+			}
+			else if (user->isEmployee() && "view store history" == input.at(0) + " " + input.at(1) + " " + input.at(2) && stoi(input.at(3))) {
+				Store *store = dbm->getStore(stoi(input.at(3)));
+				if (store != nullptr) {
+					PurchaseHistoryTablePrinter::printStorePurchaseHistoryTable(dbm, store);
+				}
+				else {
+					cout << "An item does not exist for this id." << endl;
+				}
 			}
 			else if (user->isEmployee() && "add inventory" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
 
