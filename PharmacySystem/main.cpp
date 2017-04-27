@@ -14,6 +14,7 @@ void printHelp(UserType type) {
 	cout << endl << "## View Data ##" << endl;
 	cout << "\t'list stores {number of stores}' : Will list all available stores. Optionally can state the number of stores to show." << endl;
 	cout << "\t'view review {store ID}' : Will list store reviews for a store ID. Optionally can state a number of reviews to print." << endl;
+	cout << "\t'view side effect {item ID}' : Will list all side effects associated with a specified item id." << endl;
 
 	// User specific commands
 	if (type == Employee) {
@@ -226,6 +227,15 @@ int main() {
 					cout << "An item does not exist for this id." << endl;
 				}
 			}
+			else if (user->isEmployee() && "view side effect" == input.at(0) + " " + input.at(1) + " " + input.at(2) && stoi(input.at(3))) {
+				Item *item = dbm->getItem(stoi(input.at(3)));
+				if (item != nullptr) {
+					SideEffectTablePrinter::printSideEffectTable(dbm, item);
+				}
+				else {
+					cout << "An item does not exist for this id." << endl;
+				}
+			}
 			else if (user->isEmployee() && "create discount" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
 				Inventory *inventory = dbm->getInventory(stoi(input.at(3)), stoi(input.at(2)));
 				if (inventory != nullptr) {
@@ -272,6 +282,16 @@ int main() {
 					else {
 						cout << "Item and store combination does not exist." << endl;
 					}
+				}
+			}
+			else if (user->isEmployee() && "delete inventory" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
+				Inventory *inventory = dbm->getInventory(stoi(input.at(3)), stoi(input.at(2)));
+				if (inventory != nullptr) {
+					ManageInventory manageInventoryCtrl;
+					manageInventoryCtrl.deleteInventory(stoi(input.at(2)), stoi(input.at(3)), inventory->getItemLevel());
+				}
+				else {
+					cout << "Inventory not found." << endl;
 				}
 			}
 

@@ -17,6 +17,7 @@
 #include "Sale.cpp"
 #include "Discount.cpp"
 #include "AddItem.cpp"
+#include "SideEffect.cpp"
 
 class DatabaseManager
 {
@@ -247,6 +248,12 @@ public:
 		Returns returns true if table was cleared successfully
 	*/
 	bool clearAddItems();
+
+	/* Gets a list of side effects associated with an item
+		Returns: a vector of SideEffects which coorespond to an item
+	*/
+	vector<SideEffect*> getSideEffects(int itemId);
+
 
 
 private:
