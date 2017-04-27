@@ -4,6 +4,7 @@
 #include "CommandUtils.cpp"
 #include "DatabaseManager.h"
 #include "Discount.cpp"
+#include "Date.cpp"
 #include <ctime>
 using namespace std;
 
@@ -11,7 +12,13 @@ class DiscountController {
 public:
 
 	void promptForCreateInput(int itemId, int storeId) {
-		getCreateDiscountInput(itemId, storeId);
+		try {
+			getCreateDiscountInput(itemId, storeId);
+		}
+		catch(const char *e) {
+			cout << "[!] Discount was not created." << endl;
+			cout << "Ended discount process." << endl << endl;
+		}
 	}
 
 	void deleteDiscount(int itemId, int storeId) {
@@ -34,26 +41,39 @@ private:
 		cout << endl << "Enter the following fields to add a discount" << endl;
 		percentOffString = getInput("Percent Off");
 		try {
+			// Retrieve percent from user
 			percentOff = stoi(percentOffString);
 			if (percentOff < 0)
 			{
-				cout << "Error you have entered a percent that is below 0%" << endl;
-				cout << "Ended discount process" << endl;
-				return;
+				cout << "Error you have entered a percent that is below 0%." << endl;
+				throw "Invalid percent entered";
 			}
 			else if (percentOff > 100)
 			{
-				cout << "Error you have entered a percent that is above 100%" << endl;
-				cout << "Ended discount process" << endl;
-				return;
+				cout << "Error you have entered a percent that is above 100%." << endl;
+				throw "Invalid percent entered";
 			}
+
+			// Retrive dates from user
+			startDate = getInput("Start Date");
+			endDate = getInput("End Date");
+
+			if (!Date::validateDate(startDate) || !Date::validateDate(endDate)) {
+				// Invalid date was entered
+				cout << "An invalid date format was entered. Must be in the form YYYY-MM-DD." << endl;
+				throw "Invalid date format entered.";
+			}
+			else if (endDate < startDate) {
+				cout << "The end date can not come before the start date." << endl;
+				throw "End date is before the start date.";
+			}
+
 		}
 		catch (const char *e) {
 			throw e;
 		}
-		startDate = getInput("Start Date");
-		endDate = getInput("End Date");
-
+		
+		// Attempt to create the discount
 		Discount *discount = DatabaseManager::shared()->createDiscount(storeId, itemId, percentOff, startDate, endDate);
 
 		if (discount) {

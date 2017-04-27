@@ -73,19 +73,12 @@ void printCompanyItemTable(unsigned int count = NULL) {
 	ItemTablePrinter::printCompanyItemTable(dbm, count);
 }
 
-//DEBUG
-User* DebugGetEmployeeUser() {
-	return DatabaseManager::shared()->getUser("jon", "testpass");
-}
-//END DEBUG
-
 int main() {
 	DatabaseManager *dbm = DatabaseManager::shared();
 	//runTests(dbm);
 	//runBatchSequence(dbm);
 
 	/* Start Login & Registration Process */
-	// DEBUG - commented out so dont have to repeatadly sign in. Uncomment to reactivate the login feature
 	LoginRegistrationController lr;
 	lr.displayScreen();
 
@@ -94,8 +87,6 @@ int main() {
 		cout << "[!] An error occured in logging in. Please close the program and try again." << endl;
 		return 1; //1 is standardly returned for entire program errors 
 	}
-	
-	//User *user = DebugGetEmployeeUser();
 
 	cout << string(8, '*') << " Logged in as: " << user->getUsername() << " " << string(8, '*') << endl;
 	
@@ -207,7 +198,6 @@ int main() {
 				else {
 					printCompanyItemTable();
 				}
-
 			}
 			else if (user->isEmployee() && "manage store" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
 				int storeId = stoi(input.at(2));
