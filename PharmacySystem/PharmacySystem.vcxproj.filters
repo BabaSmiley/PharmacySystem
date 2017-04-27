@@ -34,6 +34,12 @@
     <Filter Include="Source Files\Modals">
       <UniqueIdentifier>{926418e8-d373-4e52-9472-d8ce70e1da02}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Printers">
+      <UniqueIdentifier>{f53624c8-c0cf-4c54-9580-696b311939d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Batch">
+      <UniqueIdentifier>{7207c400-ccce-449f-aa77-5469ed6efef5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -41,9 +47,6 @@
     </ClCompile>
     <ClCompile Include="sqlite3.c">
       <Filter>Source Files\SQLite3</Filter>
-    </ClCompile>
-    <ClCompile Include="BatchProcesses.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Constants.h">
       <Filter>Header Files</Filter>
@@ -90,9 +93,6 @@
     <ClCompile Include="CommandUtils.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="ItemTablePrinter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DiscountController.cpp">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
@@ -108,9 +108,6 @@
     <ClCompile Include="PrescriptionController.cpp">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
-    <ClCompile Include="StoresTablePrinter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ReorderController.cpp">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
@@ -123,8 +120,23 @@
     <ClCompile Include="Sale.cpp">
       <Filter>Source Files\Modals</Filter>
     </ClCompile>
+    <ClCompile Include="Date.cpp">
+      <Filter>Source Files\Modals</Filter>
+    </ClCompile>
     <ClCompile Include="PurchaseHistoryTablePrinter.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Printers</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemTablePrinter.cpp">
+      <Filter>Source Files\Printers</Filter>
+    </ClCompile>
+    <ClCompile Include="BatchProcesses.cpp">
+      <Filter>Source Files\Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="StoresTablePrinter.cpp">
+      <Filter>Source Files\Printers</Filter>
+    </ClCompile>
+    <ClCompile Include="ManageInventory.cpp">
+      <Filter>Source Files\Controllers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

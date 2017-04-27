@@ -41,6 +41,7 @@ private:
 		cout << endl << "Enter the following fields to add a discount" << endl;
 		percentOffString = getInput("Percent Off");
 		try {
+			// Retrieve percent from user
 			percentOff = stoi(percentOffString);
 			if (percentOff < 0)
 			{
@@ -52,24 +53,27 @@ private:
 				cout << "Error you have entered a percent that is above 100%." << endl;
 				throw "Invalid percent entered";
 			}
+
+			// Retrive dates from user
+			startDate = getInput("Start Date");
+			endDate = getInput("End Date");
+
+			if (!Date::validateDate(startDate) || !Date::validateDate(endDate)) {
+				// Invalid date was entered
+				cout << "An invalid date format was entered. Must be in the form YYYY-MM-DD." << endl;
+				throw "Invalid date format entered.";
+			}
+			else if (endDate < startDate) {
+				cout << "The end date can not come before the start date." << endl;
+				throw "End date is before the start date.";
+			}
+
 		}
 		catch (const char *e) {
 			throw e;
 		}
-		startDate = getInput("Start Date");
-		endDate = getInput("End Date");
-
-
-		if (!Date::validateDate(startDate) || !Date::validateDate(endDate)) {
-			// Invalid date was entered
-			cout << "An invalid date format was entered. Must be in the form YYYY-MM-DD." << endl;
-			throw "Invalid date format entered.";
-		}
-		else if (endDate < startDate) {
-			cout << "The end date can not come before the start date." << endl;
-			throw "End date is before the start date.";
-		}
-
+		
+		// Attempt to create the discount
 		Discount *discount = DatabaseManager::shared()->createDiscount(storeId, itemId, percentOff, startDate, endDate);
 
 		if (discount) {

@@ -156,6 +156,7 @@
     <ClCompile Include="CommonUserPrompts.cpp" />
     <ClCompile Include="Constants.h" />
     <ClCompile Include="DatabaseUtils.cpp" />
+    <ClCompile Include="Date.cpp" />
     <ClCompile Include="DiscountController.cpp" />
     <ClCompile Include="ManageInventory.cpp" />
     <ClCompile Include="PrescriptionController.cpp" />
