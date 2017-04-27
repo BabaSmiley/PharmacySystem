@@ -26,8 +26,8 @@ void printHelp(UserType type) {
 
 		cout << endl << "## Create/Manage ##"<< endl;
 		cout << "\t'create prescription' : Will begin process to create a new customer prescription." << endl;
-		cout << "\t'manage item {item ID}' : Update the attributes of a item. Specify the item ID to make modifications." << endl;
-		cout << "\t'manage store {store ID}' : Update the attributes of a store. Specify the store ID to make modifications." << endl;
+		cout << "\t'manage item {item ID}' : Update the attributes of an existing item. Specify the item ID to make modifications." << endl;
+		cout << "\t'manage store {store ID}' : Update the attributes of an existing store. Specify the store ID to make modifications." << endl;
 		cout << "\t'reorder item' : Will begin process to reorder an item from a store." << endl;
 		cout << "\t'add inventory {item ID} {store ID}' : Will begin process to add an item to a store's inventory." << endl;
 		

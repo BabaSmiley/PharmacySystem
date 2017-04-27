@@ -29,7 +29,7 @@ void testDatabaseUser(DatabaseManager *dbm) {
 	}
 
 	//Test adding user
-	User *newUser = dbm->createUser("jose2", "siracha", Employee);
+	User *newUser = dbm->createUser("jose2", "siracha", "123s ville", Employee);
 	if (newUser != nullptr) {
 		cout << "User was created!" << endl;
 		cout << "User: " << newUser->getUserID() << ". Type: " << newUser->getUserType();

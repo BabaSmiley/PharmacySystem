@@ -13,9 +13,10 @@ enum UserType {
 class User {
 public:
 
-	User(int userID, string username, UserType userType) {
+	User(int userID, string username, string address, UserType userType) {
 		this->userID = userID; 
 		this->username = username;
+		this->address = address;
 		this->userType = userType;
 	}
 
@@ -28,6 +29,8 @@ public:
 	int getUserID() {
 		return userID;
 	}
+
+	string getAddress() { return address; }
 
 	/// Returns true if the user is an employee
 	bool isEmployee() {
@@ -52,6 +55,7 @@ private:
 	UserType userType;
 	int userID;
 	string username;
+	string address;
 };
 
 #endif 

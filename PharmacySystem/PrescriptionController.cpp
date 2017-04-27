@@ -21,14 +21,65 @@ public:
 	Prescription* startCreatePrescription() {
 		ordersToInclude.clear();
 
-		User *customer = CommonUserPrompts::getUserFromInput();
-		if (customer == nullptr || customer->getUserType() != Customer) {
-			// Customer user was not able to be retrived
-			cout << "A customer does not exist for the given username" << endl;
-			cout << endProcessMessage << endl << endl;
-			return nullptr;
+		string input;
+		cout << "Is the prescription for a new user? (Y/n) > ";
+		cin >> input;
+		cout << endl;
+
+		User *customer = nullptr;
+		if (input.size() > 0 && (input[0] == 'Y' || input[0] == 'y')) {
+			/* Attempt to create a new user */
+
+			User *newlyCreatedUser = promptForNewUserCreation();
+			if (newlyCreatedUser == nullptr) {
+				cout << "A customer account was not created." << endl;
+				cout << endProcessMessage << endl << endl;
+				return nullptr;
+			}
+			else {
+				customer = newlyCreatedUser;
+				cout << "Customer account created successfully. (" << newlyCreatedUser->getUsername() << " id #" << newlyCreatedUser->getUserID() << ")" << endl;
+			}
+		}
+		else {
+			/* Attempt to get an existing user */
+
+			customer = CommonUserPrompts::getUserFromInput();
+			if (customer == nullptr || customer->getUserType() != Customer) {
+				// Customer user was not able to be retrived
+				cout << "A customer does not exist for the given username" << endl;
+				cout << endProcessMessage << endl << endl;
+				return nullptr;
+			}
 		}
 
+		Prescription *prescription = promptForPrescriptionInfo(customer);
+		return prescription;
+	}
+
+private:
+	struct ItemOrder {
+		Item *item;
+		int quantity;
+
+		ItemOrder(Item *item, int quantity) {
+			this->item = item;
+			this->quantity = quantity;
+		}
+	};
+
+	vector<ItemOrder*> ordersToInclude;
+
+	const char *exitAnytimeMessage = "Enter 'exit' anytime in order to exit the create prescription process.";
+	const char *endProcessMessage = "Ended create prescription process.";
+	const char *itemDoesNotExistMessage = "That item does not exist for the given store.";
+
+
+	/* Will prompt the user for items to put in the prescription
+		Parameter customer: A non-null User object
+		Returns: A filled out prescription object, or nullptr if the user cancelled
+	*/
+	Prescription* promptForPrescriptionInfo(User *customer) {
 		Store *store = CommonUserPrompts::getStoreFromInput("Enter the store id to order from:");
 		if (store == nullptr) {
 			// Store was not able to be retrived
@@ -45,7 +96,7 @@ public:
 			if (currentOrder != nullptr) {
 				ordersToInclude.push_back(currentOrder);
 			}
-			
+
 		} while (currentOrder != nullptr && ordersToInclude.size() <= 5);
 
 		if (ordersToInclude.size() == 0) { //Guard: No items added for prescription
@@ -65,12 +116,12 @@ public:
 			Item *item = itemOrder->item;
 
 			int salePrice = item->getPrice();
-			
+
 			//4. Apply any associated discount
 			Discount *discount = DatabaseManager::shared()->getDiscount(store->getId(), item->getId());
 			if (discount != nullptr) {
 				bool discountIsValid = DatabaseUtils::dateStringIsBetweenDates(today, discount->getStartDate(), discount->getEndDate());
-			
+
 				if (discountIsValid) {
 					int amountOff = (discount->getPercentOff() * salePrice) / 100;
 					int discountedPrice = salePrice - amountOff;
@@ -94,22 +145,43 @@ public:
 		return prescription;
 	}
 
-private:
-	struct ItemOrder {
-		Item *item;
-		int quantity;
+	/* Will prompt the user and have them enter a new account info
+		Return: A User object if a user was created. nullptr if account creation failed.
+	*/
+	User* promptForNewUserCreation() {
+		User *result = nullptr;
 
-		ItemOrder(Item *item, int quantity) {
-			this->item = item;
-			this->quantity = quantity;
+		while (result == nullptr) {
+			string username, password, address;
+
+			cout << "Enter a new username for the customer: (Or 'exit' to cancel)" << endl;
+			string input = getInput("username");
+			if (input == "exit") { return nullptr; }
+			username = input;
+
+			User *dbUser = DatabaseManager::shared()->getUser(username);
+			if (dbUser != nullptr) { //Guard for if a user already exists
+				cout << "[!] A user already exists for this username. Try again." << endl;
+				continue;
+			}
+			
+			cout << "Enter a password for the new customer: (Or 'exit' to cancel)" << endl;
+			input = getInput("password");
+			if (input == "exit") { return nullptr; }
+			password = input;
+
+			cout << "Enter an address for the new customer: (Or 'exit' to cancel)" << endl;
+			input = getInput("address");
+			if (input == "exit") { return nullptr; }
+			address = input;
+
+			result = DatabaseManager::shared()->createUser(username, password, address, Customer);
 		}
-	};
 
-	vector<ItemOrder*> ordersToInclude;
+		return result;
+	}
 
-	const char *exitAnytimeMessage = "Enter 'exit' anytime in order to exit the create prescription process.";
-	const char *endProcessMessage = "Ended create prescription process.";
-	const char *itemDoesNotExistMessage = "That item does not exist for the given store.";
+
 
 	/* Prompts user for input of an item name and quantity. Will return an ItemOrder if successful, or nullptr if user types 'exit' during method
 		Parameter store: A existing store object to be used for printing items from the store
@@ -183,9 +255,7 @@ private:
 		return itemOrder;
 	}
 
-
-	/* HELPERS */
-
+	/* --- HELPERS --- */
 	bool itemIsInItemOrder(Item* item) {
 		for (ItemOrder *order : ordersToInclude) {
 			Item *orderItem = order->item;

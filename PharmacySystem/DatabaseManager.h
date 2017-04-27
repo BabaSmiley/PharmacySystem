@@ -43,7 +43,7 @@ public:
 		Returns: returns the User object if it was successfully added to the database. 
 				 Will return nullptr if a username already exists for `username` in the database.
 	*/
-	User* createUser(string username, string password, UserType userType);
+	User* createUser(string username, string password, string address, UserType userType);
 
 
 	/* Delete a store from the database
@@ -104,10 +104,11 @@ public:
 	Item* updateItem(int id, string name = NULL, string description = NULL, int price = -1, string dosage = NULL, int vendorId = -1, string expectedDeliveryDate = NULL, long whRefillLevel = -1, long whRefillQty = -1, long whLevel = -1, int isActive = -1);
 
 	/* Gets an item from the database
+		Parameter onlyActiveItem: Whether or not to only return active items from the database. Default is to only return active items.
 		Returns: Returns a filled in Item object, or nullptr if no item was found
 	*/
-	Item* getItem(int itemId);
-	Item* getItem(string itemName);
+	Item* getItem(int itemId, bool onlyActiveItem = true);
+	Item* getItem(string itemName, bool onlyActiveItem = true);
 
 	/* Gets a list of all items in the database
 		Parameter onlyActiveItems: Will return only the items marked as IsActive in the database
