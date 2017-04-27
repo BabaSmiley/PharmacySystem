@@ -21,6 +21,7 @@
 #include "ItemTablePrinter.cpp"
 #include "PurchaseHistoryTablePrinter.cpp"
 #include "StoresTablePrinter.cpp"
+#include "SideEffectTablePrinter.cpp"
 using namespace std;
 
 

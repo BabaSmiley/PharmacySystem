@@ -228,7 +228,13 @@ int main() {
 				}
 			}
 			else if (user->isEmployee() && "view side effect" == input.at(0) + " " + input.at(1) + " " + input.at(2) && stoi(input.at(3))) {
-
+				Item *item = dbm->getItem(stoi(input.at(3)));
+				if (item != nullptr) {
+					SideEffectTablePrinter::printSideEffectTable(dbm, item);
+				}
+				else {
+					cout << "An item does not exist for this id." << endl;
+				}
 			}
 			else if (user->isEmployee() && "create discount" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
 				Inventory *inventory = dbm->getInventory(stoi(input.at(3)), stoi(input.at(2)));
