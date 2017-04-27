@@ -42,7 +42,7 @@ private:
     
     void printInitialText() {
         cout << "Type \"login\" to login as an existing user, or \"register\" to register as a new user." << endl;
-        cout << string(40, '-') << endl;
+        cout << string(60, '-') << endl;
     }
 
 	/* Prompts user for login or registation command

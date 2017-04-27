@@ -18,7 +18,7 @@
 
 // Utils
 #include "ItemTablePrinter.cpp"
-#include "PrescriptionHistoryTablePrinter.cpp"
+#include "PurchaseHistoryTablePrinter.cpp"
 #include "StoresTablePrinter.cpp"
 using namespace std;
 

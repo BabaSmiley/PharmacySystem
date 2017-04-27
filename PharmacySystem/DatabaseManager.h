@@ -203,6 +203,11 @@ public:
 	*/
 	vector<Sale*> getSalesByItem(int itemId);
 
+	/* Gets an stores sales from the database
+		Returns: Returns a vector of sales objects
+	*/
+	vector<Sale*> getSalesByStore(int storeId);
+
 	/* Creates and stores parameters in discount database
 		Returns: Returns a discount object representing a DB Discount model
 	*/
@@ -243,21 +248,6 @@ public:
 	*/
 	bool clearAddItems();
 
-
-	/* Returns quantity set for an item reorder
-		Returns: An integer for the current reorder quantity for a given item at a given store
-	*/
-	//int getReorderQuantity(int storeId, int itemId);
-
-	/* Set the reorder quantity for a given item at a given store
-		Returns: returns true if value was changed successfully in the database
-	*/
-	//bool setReorderQuantity(int storeId, int itemId);
-
-	/* Deleted a reorder record from the database
-		Returns: returns true if the reorder record delete was successful
-	*/
-	//bool deleteReorderRecord(int storeId, int itemId);
 
 private:
 	//static DatabaseManager *sharedInstance;
