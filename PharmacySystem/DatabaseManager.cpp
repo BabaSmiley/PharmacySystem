@@ -212,7 +212,7 @@ Store* DatabaseManager::getStore(int storeId, bool onlyActiveStore) {
 
 	string limitingSQL = "";
 	if (onlyActiveStore) {
-		limitingSQL = " WHERE IsActive = '1'";
+		limitingSQL = " AND IsActive = '1'";
 	}
 
 	string sql = "select Id, Address, City, State, ZipCode, PriorityLevel, IsActive from Store where Id=" + quotesql(storeId) + limitingSQL;
@@ -413,7 +413,7 @@ Item* DatabaseManager::getItem(string itemName, bool onlyActiveItem) {
 
 	string limitingSQL = "";
 	if (onlyActiveItem) {
-		limitingSQL = " WHERE IsActive = '1'";
+		limitingSQL = " AND IsActive = '1'";
 	}
 
 	string sql = "SELECT Id, Name, Description, Price, Dosage, VendorId, ExpectedDeliveryDate, WhRefillLevel, WhRefillQty, WhLevel, IsActive FROM Item WHERE IsActive = 1 AND Name = " + quotesql(itemName) + limitingSQL;
@@ -1041,6 +1041,24 @@ vector<SideEffect*> DatabaseManager::getSideEffects(int itemId) {
 
 	return results;
 }
+
+SideEffect* DatabaseManager::createSideEffect(int itemId, string effect) {
+	sqlite3_stmt *stmt;
+	SideEffect* result = nullptr;
+
+		string sql = "INSERT INTO SideEffect (ItemId, SideEffect) VALUES (" + quotesql(itemId) + "," + quotesql(effect) + ")";
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		if (sqlite3_step(stmt) == SQLITE_DONE) {
+			result = new SideEffect(itemId, effect);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return result;
+}
+
 
 /* Test
 vector<vector<string>> DatabaseManager::query(const char *sql) {

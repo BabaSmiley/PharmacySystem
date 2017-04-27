@@ -14,7 +14,7 @@ void printHelp(UserType type) {
 	cout << endl << "## View Data ##" << endl;
 	cout << "\t'list stores {number of stores}' : Will list all available stores. Optionally can state the number of stores to show." << endl;
 	cout << "\t'view review {store ID}' : Will list store reviews for a store ID. Optionally can state a number of reviews to print." << endl;
-	cout << "\t'view side effect {item ID}' : Will list all side effects associated with a specified item id." << endl;
+	cout << "\t'view side effects {item ID}' : Will list all side effects associated with a specified item id." << endl;
 
 	// User specific commands
 	if (type == Employee) {
@@ -26,11 +26,11 @@ void printHelp(UserType type) {
 
 		cout << endl << "## Create/Manage ##"<< endl;
 		cout << "\t'create prescription' : Will begin process to create a new customer prescription." << endl;
-		cout << "\t'manage item {item ID}' : Update the attributes of an existing item. Specify the item ID to make modifications." << endl;
 		cout << "\t'manage store {store ID}' : Update the attributes of an existing store. Specify the store ID to make modifications." << endl;
 		cout << "\t'reorder item' : Will begin process to reorder an item from a store." << endl;
 		cout << "\t'add inventory {item ID} {store ID}' : Will begin process to add an item to a store's inventory." << endl;
 		cout << "\t'add item' : Will begin process to add an item to the company." << endl;
+		cout << "\t'manage item {item ID}' : Update the attributes of an existing item. Specify the item ID to make modifications." << endl;
 		cout << "\t'delete item {item ID}' : Will begin process to mark an item as inactive in the company." << endl;
 		
 		cout << endl;
@@ -240,7 +240,7 @@ int main() {
 					cout << "An item does not exist for this id." << endl;
 				}
 			}
-			else if (user->isEmployee() && "view side effect" == input.at(0) + " " + input.at(1) + " " + input.at(2) && stoi(input.at(3))) {
+			else if (user->isEmployee() && "view side effects" == input.at(0) + " " + input.at(1) + " " + input.at(2) && stoi(input.at(3))) {
 				Item *item = dbm->getItem(stoi(input.at(3)));
 				if (item != nullptr) {
 					SideEffectTablePrinter::printSideEffectTable(dbm, item);

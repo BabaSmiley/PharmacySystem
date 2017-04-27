@@ -257,7 +257,10 @@ public:
 	*/
 	vector<SideEffect*> getSideEffects(int itemId);
 
-
+	/* Creates a side effect in the database
+		Returns: a SideEffect object representing the side effect created, or nullptr if it failed to create
+	*/
+	SideEffect* createSideEffect(int itemId, string effect);
 
 private:
 	//static DatabaseManager *sharedInstance;

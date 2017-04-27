@@ -124,7 +124,6 @@ private:
 			else {
 				whRefillQty = stoi(whRefillQtyString);
 			}
-
 		}
 		catch (const char *e) {
 			throw e;
@@ -134,9 +133,21 @@ private:
 
 		if (item) {
 			cout << "Item successfully created." << endl;
+
+			/* Ask user if they want to create any side effects */
+			string input = getInput("Add side effects for this item (Y/N)");
+			cout << endl;
+
+			if (input.size() > 0 && (input[0] == 'Y' || input[0] == 'y')) {
+				int numberOfEffectsAdded = promptToEnterSideEffects(item);
+				cout << numberOfEffectsAdded << " side effects added." << endl;
+			}
+			else {
+				cout << "No side effects added." << endl;
+			}
 		}
 		else {
-			cout << "Item not found" << endl;
+			cout << "Item not found." << endl;
 		}
 	}
 
@@ -260,5 +271,38 @@ private:
 		else {
 			cout << "Item not found" << endl;
 		}
+	}
+
+
+	/// Returns the number of side effects added
+	int promptToEnterSideEffects(Item *forItem) {
+		bool shouldContinue = true;
+		int addedSideEffects = 0;
+
+		if (forItem == nullptr) {
+			cout << "You can not add side effects to a non-existant item" << endl;
+			return 0;
+		}
+
+		while (shouldContinue) {
+			cout << "Enter a string as a side effect for " << forItem->getName() << " (Or 'exit' to stop adding side effects)" << endl;
+			string sideEffect = getInput("side effect");
+
+			if (sideEffect == "exit") {
+				cout << "Stopped adding side effects." << endl;
+				break;
+			}
+
+			SideEffect *se = DatabaseManager::shared()->createSideEffect(forItem->getId(), sideEffect);
+			if (se) {
+				addedSideEffects++;
+				cout << "Added side effect to " << forItem->getName() << "." << endl << endl;
+			}
+			else {
+				cout << "[!] This side effect could not be added to the item." << endl;
+			}
+		}
+
+		return addedSideEffects;
 	}
 };

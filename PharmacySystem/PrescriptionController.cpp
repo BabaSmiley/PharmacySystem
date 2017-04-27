@@ -21,9 +21,7 @@ public:
 	Prescription* startCreatePrescription() {
 		ordersToInclude.clear();
 
-		string input;
-		cout << "Is the prescription for a new user? (Y/n) > ";
-		cin >> input;
+		string input = getInput("Is the prescription for a new user? (Y/N)");
 		cout << endl;
 
 		User *customer = nullptr;
