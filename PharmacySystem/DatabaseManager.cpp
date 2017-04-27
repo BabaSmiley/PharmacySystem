@@ -212,7 +212,7 @@ Store* DatabaseManager::getStore(int storeId, bool onlyActiveStore) {
 
 	string limitingSQL = "";
 	if (onlyActiveStore) {
-		limitingSQL = " WHERE IsActive = '1'";
+		limitingSQL = " AND IsActive = '1'";
 	}
 
 	string sql = "select Id, Address, City, State, ZipCode, PriorityLevel, IsActive from Store where Id=" + quotesql(storeId) + limitingSQL;
