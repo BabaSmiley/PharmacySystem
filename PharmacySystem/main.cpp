@@ -217,8 +217,15 @@ int main() {
 				mi.promptForInput(stoi(input.at(2)));
 			}
 			else if (user->isEmployee() && "create discount" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
-				DiscountController discountController;
-				discountController.promptForCreateInput(stoi(input.at(2)), stoi(input.at(3)));
+				Item *item = dbm->getItem(stoi(input.at(2)));
+				Store *store = dbm->getStore(stoi(input.at(3)));
+				if (item != nullptr && store != nullptr) {
+					DiscountController discountController;
+					discountController.promptForCreateInput(stoi(input.at(2)), stoi(input.at(3)));
+				}
+				else {
+					cout << "This item and store combination does not exist." << endl;
+				}
 			}
 			else if (user->isEmployee() && "delete discount" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
 				DiscountController discountController;
