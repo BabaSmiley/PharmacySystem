@@ -284,6 +284,16 @@ int main() {
 					}
 				}
 			}
+			else if (user->isEmployee() && "delete inventory" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
+				Inventory *inventory = dbm->getInventory(stoi(input.at(3)), stoi(input.at(2)));
+				if (inventory != nullptr) {
+					ManageInventory manageInventoryCtrl;
+					manageInventoryCtrl.deleteInventory(stoi(input.at(2)), stoi(input.at(3)), inventory->getItemLevel());
+				}
+				else {
+					cout << "Inventory not found." << endl;
+				}
+			}
 
 			else {
 				throw exception("User command not recognized in main.");
