@@ -160,13 +160,7 @@ int main() {
 			}
 			else if (user->isEmployee() && "reorder item" == input.at(0) + " " + input.at(1)) {
 				ReorderController reorderController;
-				AddItem* reorder = reorderController.placeOrder();
-				if (reorder == nullptr) {
-					cout << "Reorder was not placed." << endl << endl;
-				}
-				else {
-					cout << "Reorder was set for store #" << reorder->getStoreId() << ", item #" << reorder->getItemId() << " to quantity " << reorder->getQuantity() << "." << endl << endl;
-				}
+				reorderController.promptUserToPlaceOrder();
 			}
 			else if (user->isEmployee() && "create prescription" == input.at(0) + " " + input.at(1)) {
 				PrescriptionController prescriptionController;

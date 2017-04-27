@@ -9,7 +9,8 @@ using namespace std;
 class ReorderController {
 public:
 
-	AddItem* placeOrder() {
+	// Returns true if reorder was able to update sucessfully
+	bool promptUserToPlaceOrder() {
 
 		const char *endProcessMessage = "Ended reorder process.";
 
@@ -17,40 +18,35 @@ public:
 		if (store == nullptr) {
 			cout << "Store was not found for this ID." << endl;
 			cout << endProcessMessage << endl << endl;
-			return nullptr;
+			return false;
 		}
 
 		Item* item = CommonUserPrompts::getItemFromInput("Enter the item id you wish to reorder:", store);
 		if (item == nullptr) {
+			cout << "Item was not found for this ID." << endl;
 			cout << endProcessMessage << endl << endl;
-			return nullptr;
+			return false;
 		}
 
 		int quantity = CommonUserPrompts::getQuantityFromUser("Enter quantity to reorder:");
 		if (quantity < 0) {
+			cout << "Quantity value was not valid." << endl;
 			cout << endProcessMessage << endl << endl;
-			return nullptr;
+			return false;
 		}
+		
+		Inventory *inventory = DatabaseManager::shared()->getInventory(store->getId(), item->getId());
+		int newQuantity = inventory->getOnOrderQty() + quantity;
+		bool success = DatabaseManager::shared()->updateInventoryOnOrderQty(store->getId(), item->getId(), newQuantity);
 
-		// Reach here if store, item, and quantity have all been entered
-		AddItem *reorder;
-
-		AddItem *existingReorder = DatabaseManager::shared()->getAddItem(store->getId(), item->getId());
-		if (existingReorder != nullptr) {
-
-			/* Add quantity to the old entry */
-			int updatedQuantity = existingReorder->getQuantity() + quantity;
-			DatabaseManager::shared()->setAddItemQuantity(store->getId(), item->getId(), updatedQuantity);
-			reorder = new AddItem(store->getId(), item->getId(), updatedQuantity); //Create new object with updated qty
+		if (success) {
+			cout << "Reorder was set for store #" << store->getId() << ", item #" << item->getId() << " to quantity " << quantity << "." << endl << endl;
 		}
 		else {
-
-			/* Create a new reorder entry */
-			AddItem *newReorder = DatabaseManager::shared()->createAddItemOrder(item->getId(), store->getId(), quantity);
-			reorder = newReorder;
+			cout << "Reorder failed and was not placed." << endl << endl;
 		}
 
-		return reorder;
+		return success;
 	}
 
 };

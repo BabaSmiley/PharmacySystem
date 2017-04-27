@@ -520,7 +520,7 @@ and add them to the stores
 				dbm->updateItem(itemCode, "", "", -1, "", -1, "", -1, -1, qty - requestedQty/*<- increment qty*/, -1);
 				//increment inventory qty
 				dbm->updateInventory(storeId, itemCode, requestedQty);
-				dbm->zeroInventoryOnOrderQty(storeId, itemCode);
+				dbm->updateInventoryOnOrderQty(storeId, itemCode, 0);
 			}
 			else {
 				output << line << endl; //else send to be reordered again

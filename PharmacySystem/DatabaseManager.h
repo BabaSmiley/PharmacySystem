@@ -176,7 +176,7 @@ public:
 		Zeros an onorderqty for a store-item
 		Returns: a boolean on whether it was done or not
 	*/
-	bool DatabaseManager::zeroInventoryOnOrderQty(int storeId, int itemId);
+	bool updateInventoryOnOrderQty(int storeId, int itemId, int newOnOrderQty);
 
 	/* Deletes all of the inventory for a store
 		Returns: Returns true if all inventory for store was successfully deleted

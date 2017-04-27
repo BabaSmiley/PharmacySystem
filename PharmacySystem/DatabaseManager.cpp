@@ -727,11 +727,11 @@ Inventory* DatabaseManager::updateInventory(int storeId, int itemId, long quanti
 	return result;
 }
 
-bool DatabaseManager::zeroInventoryOnOrderQty(int storeId, int itemId) {
+bool DatabaseManager::updateInventoryOnOrderQty(int storeId, int itemId, int newOnOrderQty) {
 	sqlite3_stmt *stmt;
 	bool result = false;
 
-	string sql = "UPDATE Inventory SET onOrderQty = 0 WHERE StoreId = " + quotesql(storeId) + " AND ItemId = " + quotesql(itemId);
+	string sql = "UPDATE Inventory SET onOrderQty = " + quotesql(newOnOrderQty) + " WHERE StoreId = " + quotesql(storeId) + " AND ItemId = " + quotesql(itemId);
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		if (sqlite3_step(stmt) == SQLITE_DONE) {
 			result = getInventory(storeId, itemId);

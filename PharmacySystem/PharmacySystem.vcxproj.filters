@@ -31,14 +31,14 @@
     <Filter Include="Source Files\Controllers">
       <UniqueIdentifier>{87343811-3d16-4235-a56e-2aa8366549f5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Modals">
-      <UniqueIdentifier>{926418e8-d373-4e52-9472-d8ce70e1da02}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Printers">
       <UniqueIdentifier>{f53624c8-c0cf-4c54-9580-696b311939d6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Batch">
       <UniqueIdentifier>{7207c400-ccce-449f-aa77-5469ed6efef5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Models">
+      <UniqueIdentifier>{926418e8-d373-4e52-9472-d8ce70e1da02}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -118,10 +118,10 @@
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
     <ClCompile Include="Sale.cpp">
-      <Filter>Source Files\Modals</Filter>
+      <Filter>Source Files\Models</Filter>
     </ClCompile>
     <ClCompile Include="Date.cpp">
-      <Filter>Source Files\Modals</Filter>
+      <Filter>Source Files\Models</Filter>
     </ClCompile>
     <ClCompile Include="PurchaseHistoryTablePrinter.cpp">
       <Filter>Source Files\Printers</Filter>
