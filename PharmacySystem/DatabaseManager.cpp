@@ -937,7 +937,7 @@ vector<AddItem*> DatabaseManager::getAllAddItems() {
 	string sql = "SELECT ItemId, StoreId, Quantity FROM AddItem";
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
-		while (sqlite3_step(stmt) == SQLITE_OK) {
+		while (sqlite3_step(stmt) == SQLITE_ROW) {
 			AddItem *addItem;
 
 			int itemId = sqlite3_column_int(stmt, 0);
@@ -949,6 +949,8 @@ vector<AddItem*> DatabaseManager::getAllAddItems() {
 			result.push_back(addItem);
 		}
 	}
+
+	printf("Error with SQL command: %s", sqlite3_errmsg(db));
 
 	sqlite3_finalize(stmt);
 
