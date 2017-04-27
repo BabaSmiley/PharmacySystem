@@ -146,10 +146,9 @@ void WriteOnlineRequestFile(DatabaseManager *dbm, int seqNo) {
 
 		if (tmp->getOnOrderQty() > 0) {
 			out << "O" << storeId << priorityLevel << itemId << onOrderQty << endl;
-			dbm->updateItem(tmp->getItemId(), "", "", -1, "", -1, "", -1, -1, -1, 1); //Sets on order qty to zero
+			dbm->updateItem(tmp->getItemId(), "", "", -1, "", -1, "", -1, -1, -1, -1); //Sets on order qty to zero
+			trailerCounter++;
 		}
-
-		trailerCounter++;
 	}
 
 	vector<AddItem*> addItems = dbm->getAllAddItems();
@@ -250,7 +249,7 @@ void updateItemData(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) {
 				whReorderQuantity = "-1";
 
 			dbm->updateItem(stoi(itemCode), RemoveSpaces(itemName), RemoveSpaces(itemDesc), -1, RemoveSpaces(itemDosage),
-				stoi(vendorCode), RemoveSpaces(expDelivery), stol(whReorderLevel), stol(whReorderQuantity), -1, NULL);
+				stoi(vendorCode), RemoveSpaces(expDelivery), stol(whReorderLevel), stol(whReorderQuantity), -1, -1);
 		}
 		else batchLog << "Unexpected action code '" << line[0] << "'. Skip line." << endl;
 
@@ -381,12 +380,15 @@ void createDeleteStore(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo
 				if (dbm->getStore(stoi(storeID)) != nullptr) {
 					for (int i = 0; i < storeInventory.size(); i++) {
 						int itemId = storeInventory[i]->getItemId();
-						int vendorCode = dbm->getItem(itemId)->getVendorId();
-						outInvRecAtWarehouse << ZeroFillNumber(to_string(vendorCode), 4) << ZeroFillNumber(to_string(itemId), 9) << ZeroFillNumber(to_string(storeInventory[i]->getItemLevel()), 10) << endl;
-						InvRecAtWarehouseCounter++;
+						Item* itm = dbm->getItem(itemId);
+						if (itm != nullptr) {
+							int vendorCode = dbm->getItem(itemId)->getVendorId();
+							outInvRecAtWarehouse << ZeroFillNumber(to_string(vendorCode), 4) << ZeroFillNumber(to_string(itemId), 9) << ZeroFillNumber(to_string(storeInventory[i]->getItemLevel()), 10) << endl;
+							InvRecAtWarehouseCounter++;
+						}
 					}
-					trailerCount++;
 				}
+				trailerCount++;
 				dbm->deleteStoreInventory(stoi(storeID));
 				dbm->deleteStore(store);
 			}
@@ -430,7 +432,7 @@ void inventoryReceivedAtWarehouse(DatabaseManager *dbm, ofstream &batchLog, int 
 		FileNotFound(batchLog, "warehouseinventoryupdate.txt");
 		return;
 	}
-	if (stoi(line.substr(3, 4)) != sequenceNoItemReceived)
+	if (stoi(line.substr(3, 4)) != sequenceNoWarehouseInventoryUpdate)
 	{
 		batchLog << "warehouseinventoryupdate.txt sequence number mismatch. Expected " + to_string(sequenceNoItemReceived) +
 			" got " + line.substr(3, 4) + ". Terminated program." << endl;
@@ -444,9 +446,9 @@ void inventoryReceivedAtWarehouse(DatabaseManager *dbm, ofstream &batchLog, int 
 		if (dbm->getItem(itemId) != nullptr) {
 			//updateItem(int id, string name, string description, int price, string dosage, int vendorId, string expectedDeliveryDate, long whRefillLevel, long whRefillQty, long whLevel, int isActive)
 			dbm->updateItem(itemId, "", "", -1, "", -1, "", -1, -1, dbm->getItem(itemId)->getWhLevel() + stoi(line.substr(13, 10))/*<- increment qty*/, -1);
-			trailerCount++;
 		}
 		else batchLog << "Item " << to_string(itemId) << " does not exist. Skipping." << endl;
+		trailerCount++;
 
 		getline(input, line);
 	}
@@ -510,22 +512,23 @@ and add them to the stores
 		int itemCode = stoi(line.substr(8, 9));
 		int requestedQty = stoi(line.substr(17, 10));
 		Item* itm = dbm->getItem(itemCode);
-		int qty = itm->getWhLevel();
+		if (itm != nullptr) {
+			int qty = itm->getWhLevel();
 
-		if (requestedQty <= qty) { //adjust quantites
-			//reduce warehouse qty
-			dbm->updateItem(itemCode, "", "", -1, "", -1, "", -1, -1, qty - requestedQty/*<- increment qty*/, -1);
-			//increment inventory qty
-			dbm->updateInventory(storeId, itemCode, requestedQty);
-			dbm->zeroInventoryOnOrderQty(storeId, itemCode);
+			if (requestedQty <= qty) { //adjust quantites
+				//reduce warehouse qty
+				dbm->updateItem(itemCode, "", "", -1, "", -1, "", -1, -1, qty - requestedQty/*<- increment qty*/, -1);
+				//increment inventory qty
+				dbm->updateInventory(storeId, itemCode, requestedQty);
+				dbm->zeroInventoryOnOrderQty(storeId, itemCode);
+			}
+			else {
+				output << line << endl; //else send to be reordered again
+				batchLog << "Insufficient warehouse quantity to reorder item " << ZeroFillNumber(to_string(itemCode), 4) << " in store " << ZeroFillNumber(to_string(storeId), 4) <<
+					". Reordering next batch cycle" << endl;
+				trailerCountOutput++;
+			}
 		}
-		else {
-			output << line << endl; //else send to be reordered again
-			batchLog << "Insufficient warehouse quantity to reorder item " << ZeroFillNumber(to_string(itemCode), 4) << " in store " << ZeroFillNumber(to_string(storeId), 4) <<
-				". Reordering next batch cycle" << endl;
-			trailerCountOutput++;
-		}
-
 		getline(input, line);
 		trailerCountInput++;
 	}
@@ -651,9 +654,8 @@ void yearlySales(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) { //
 			out << year << " " << qtyY << " $" << salesY << endl;
 
 			out << endl << "GRAND TOTAL: " << qtyT << " $" << salesT << endl << endl;
-
-			getline(input, line);
 		}
+		getline(input, line);
 	}
 
 	if (stoi(line.substr(2, 4)) != trailerCount)
@@ -699,7 +701,7 @@ void runBatchSequence(DatabaseManager *dbm) { //Calls all of the batch sequences
 	inventoryGeneration(dbm, batchLog, sequenceNos[8]);
 	yearlySales(dbm, batchLog, sequenceNos[9]);
 
-	ofstream sequencesOut("Batch/sequences.txt"); //Writes new sequence numbers to same file
+	ofstream sequencesOut("Batch/sequences.txt"); //Writes new sequence numbers to same file//
 	for (int i = 1; i <= 12; i++)
 		sequencesOut << ZeroFillNumber(to_string(sequenceNos[i - 1]), 4) << " ";
 

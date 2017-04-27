@@ -17,7 +17,8 @@ string sqlToString(const unsigned char* str) {
 DatabaseManager::DatabaseManager() {
 
 	/* Attempt to open connection to file */
-	int returnCode = sqlite3_open(DatabaseConstants::BetaDatabaseName, &db);
+	int returnCode = sqlite3_open(DatabaseConstants::DatabaseName, &db); //This is prod. db
+	//int returnCode = sqlite3_open(DatabaseConstants::BetaDatabaseName, &db); //This is test db
 
 	sqlite3_exec(db, "PRAGMA foreign_keys = ON;", 0, 0, 0);
 
@@ -263,8 +264,7 @@ vector<Store*> DatabaseManager::getStores(unsigned int count) {
 
 bool DatabaseManager::deleteItem(int itemId) {
 	bool b1 = deleteItemInventory(itemId);
-	bool isActive = false;
-	bool b2 = updateItem(itemId, "", "", -1, "", -1, "", -1, -1, -1, isActive);
+	bool b2 = updateItem(itemId, "", "", -1, "", -1, "", -1, -1, -1, 0);
 
 	return (b1 == true && b2 == true);
 }
