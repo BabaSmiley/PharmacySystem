@@ -107,6 +107,7 @@ private:
 		string userType;
 		string username;
 		string password;
+		string address;
 
 		cout << endl << "Type \"employee\" to register as an employee, or \"customer\" to register as a customer" << endl;
 		userType = getInput();
@@ -120,9 +121,11 @@ private:
 		username = getInput("username");
 		cout << "Please choose a password for your account:" << endl;
 		password = getInput("password");
+		cout << "Please enter a home address for your account:" << endl;
+		address = getInput("address");
 
 		if (userType == "customer") {
-			User *newUser = DatabaseManager::shared()->createUser(username, password, Customer);
+			User *newUser = DatabaseManager::shared()->createUser(username, password, address, Customer);
 			
 			if (!newUser) {
 				throw "A user may already exist for this username. Try again.";
@@ -146,7 +149,7 @@ private:
 			}
 
 			// Employee credentials are valid
-			User *newEmployeeUser = DatabaseManager::shared()->createUser(username, password, Employee);
+			User *newEmployeeUser = DatabaseManager::shared()->createUser(username, password, address, Employee);
 			cout << "Employee account has been created." << endl;
 			authorizedUser = newEmployeeUser;
 		}
