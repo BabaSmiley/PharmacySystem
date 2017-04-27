@@ -1,27 +1,5 @@
 #include "DatabaseUtils.h"
-
-struct Date {
-public:
-	int day;
-	int month;
-	int year;
-
-	// Formatted String in form YYYY-MM-DD
-	// All values will be set to zero if fails to parse
-	Date(string formattedString) {
-		try {
-			year = stoi(formattedString.substr(0, 4));
-			month = stoi(formattedString.substr(5, 2));
-			day = stoi(formattedString.substr(8, 2));
-		}
-		catch (const exception &e) {
-			//cerr << "[ERROR] Could not convert string to date format: " << e.what() << endl;
-			year = 0;
-			month = 0;
-			day = 0;
-		}
-	}
-};
+#include "Date.cpp"
 
 /* Strings formatted in form: 2017-04-24
 	Returns: true if `currentDate` is between date1 (inclusive) and date2 (exclusive)

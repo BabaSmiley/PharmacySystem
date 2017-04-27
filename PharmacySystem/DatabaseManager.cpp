@@ -859,20 +859,21 @@ Discount* DatabaseManager::getDiscount(int storeId, int itemId) {
 vector<Sale*> DatabaseManager::getSalesByItem(int itemId) {
 	sqlite3_stmt *stmt;
 	vector<Sale*> result;
-
-	string sql = "SELECT Purchase.PrescriptionId, Purchase.Quantity, Purchase.SalePrice, Prescription.Date FROM Purchase LEFT JOIN Prescription ON Purchase.PrescriptionId = Prescription.Id WHERE Purchase.ItemId = " + quotesql(itemId) + " ORDER BY Prescription.Date;";
+	
+	string sql = "SELECT Purchase.ItemId, Prescription.StoreId, Purchase.PrescriptionId, Purchase.Quantity, Purchase.SalePrice, Prescription.Date FROM Purchase LEFT JOIN Prescription ON Purchase.PrescriptionId = Prescription.Id WHERE Purchase.ItemId = " + quotesql(itemId) + " ORDER BY Prescription.Date;";
 
 	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
 		while (sqlite3_step(stmt) == SQLITE_ROW) {
 			Sale *sale;
 
-			int prescriptionId = sqlite3_column_int(stmt, 0);
-			int quantity = sqlite3_column_int(stmt, 1);
-			int salePrice = sqlite3_column_int(stmt, 2);
-			string date = sqlToString(sqlite3_column_text(stmt, 3));
+			int itemId = sqlite3_column_int(stmt, 0);
+			int storeId = sqlite3_column_int(stmt, 1);
+			int prescriptionId = sqlite3_column_int(stmt, 2);
+			int quantity = sqlite3_column_int(stmt, 3);
+			int salePrice = sqlite3_column_int(stmt, 4);
+			string date = sqlToString(sqlite3_column_text(stmt, 5));
 
-			sale = new Sale(prescriptionId, quantity, salePrice, date);
-
+			sale = new Sale(itemId, storeId, prescriptionId, quantity, salePrice, date);
 			result.push_back(sale);
 		}
 	}
@@ -880,6 +881,33 @@ vector<Sale*> DatabaseManager::getSalesByItem(int itemId) {
 	sqlite3_finalize(stmt);
 
 	return result;
+}
+
+vector<Sale*> DatabaseManager::getSalesByStore(int storeId) {
+	sqlite3_stmt *stmt;
+	vector<Sale*> results;
+
+	string sql = "SELECT Purchase.ItemId, Prescription.StoreId, Purchase.PrescriptionId, Purchase.Quantity, Purchase.SalePrice, Prescription.Date FROM Purchase LEFT JOIN Prescription ON Purchase.PrescriptionId = Prescription.Id WHERE Prescription.StoreId = " + quotesql(storeId) + " ORDER BY Prescription.Date";
+
+	if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, NULL) == SQLITE_OK) {
+		while (sqlite3_step(stmt) == SQLITE_ROW) {
+			Sale *sale;
+
+			int itemId = sqlite3_column_int(stmt, 0);
+			int storeId = sqlite3_column_int(stmt, 1);
+			int prescriptionId = sqlite3_column_int(stmt, 2);
+			int quantity = sqlite3_column_int(stmt, 3);
+			int salePrice = sqlite3_column_int(stmt, 4);
+			string date = sqlToString(sqlite3_column_text(stmt, 5));
+
+			sale = new Sale(itemId, storeId, prescriptionId, quantity, salePrice, date);
+			results.push_back(sale);
+		}
+	}
+
+	sqlite3_finalize(stmt);
+
+	return results;
 }
 
 /// Add Item For Reordering ///
