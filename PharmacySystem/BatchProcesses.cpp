@@ -146,7 +146,8 @@ void WriteOnlineRequestFile(DatabaseManager *dbm, int seqNo) {
 
 		if (tmp->getOnOrderQty() > 0) {
 			out << "O" << storeId << priorityLevel << itemId << onOrderQty << endl;
-			dbm->updateItem(tmp->getItemId(), "", "", -1, "", -1, "", -1, -1, -1, -1); //Sets on order qty to zero
+			dbm->updateItem(tmp->getItemId(), "", "", -1, "", -1, "", -1, -1, -1, -1);
+			dbm->updateInventoryOnOrderQty(tmp->getStoreId(), tmp->getItemId(), 0);
 			trailerCounter++;
 		}
 	}
@@ -211,7 +212,7 @@ void updateItemData(DatabaseManager *dbm, ofstream &batchLog, int &sequenceNo) {
 	}
 	if (stoi(line.substr(3, 4)) != sequenceNo)
 	{
-		batchLog << "adddeletestore.txt sequence number mismatch. Expected " + to_string(sequenceNo) +
+		batchLog << "items.txt sequence number mismatch. Expected " + to_string(sequenceNo) +
 			" got " + line.substr(3, 4) + ". Terminated program." << endl;
 		return;
 	}
@@ -481,7 +482,7 @@ and add them to the stores
 	records.insert(records.begin(), tmp.begin(), tmp.end());
 	tmp = getRecords(batchLog, sequenceNoBatchRev, "batchreview.txt");
 	records.insert(records.begin(), tmp.begin(), tmp.end());
-	tmp = getRecords(batchLog, sequenceNoBatchRev, "reorder.txt");
+	tmp = getRecords(batchLog, sequenceNoReorder, "reorder.txt");
 	records.insert(records.begin(), tmp.begin(), tmp.end());
 
 	records = SortRecords(records);
@@ -527,10 +528,12 @@ and add them to the stores
 				dbm->updateInventoryOnOrderQty(storeId, itemCode, 0);
 			}
 			else {
-				output << line << endl; //else send to be reordered again
 				batchLog << "Insufficient warehouse quantity to reorder item " << ZeroFillNumber(to_string(itemCode), 4) << " in store " << ZeroFillNumber(to_string(storeId), 4) <<
 					". Reordering next batch cycle" << endl;
-				trailerCountOutput++;
+				if (line[0] != 'B') {
+					output << line << endl; //else send to be reordered again
+					trailerCountOutput++;
+				}
 			}
 		}
 		getline(input, line);
