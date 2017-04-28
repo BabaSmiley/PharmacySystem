@@ -16,10 +16,28 @@ class PrescriptionController {
 public:
 
 	/* Starts the create prescription process of user input
+		Parameter user: A currently logged in user who is an employee
 		Returns: A prescription object if one was created after the entire process and put into the database
 	*/
-	Prescription* startCreatePrescription() {
+	Prescription* startCreatePrescription(User *currentUser) {
 		ordersToInclude.clear();
+
+		if (currentUser == nullptr || !currentUser->isEmployee()) {
+			cout << "[!] Logged in user is not an employee" << endl;
+			cout << endProcessMessage << endl << endl;
+			return nullptr;
+		}
+
+		bool validated = validateForAnotherEmployeeCredential(currentUser);
+		if (validated) {
+			cout << "Employee's credentials validated." << endl << endl;
+		}
+		else {
+			cout << "[!] The employee's credentials were incorrect. Ensure credentials are not your own." << endl;
+			cout << endProcessMessage << endl << endl;
+			return nullptr;
+		}
+
 
 		string input = getInput("Is the prescription for a new user? (Y/N)");
 		cout << endl;
@@ -45,7 +63,7 @@ public:
 			customer = CommonUserPrompts::getUserFromInput();
 			if (customer == nullptr || customer->getUserType() != Customer) {
 				// Customer user was not able to be retrived
-				cout << "A customer does not exist for the given username" << endl;
+				cout << "A customer does not exist for the given username." << endl;
 				cout << endProcessMessage << endl << endl;
 				return nullptr;
 			}
@@ -252,6 +270,20 @@ private:
 		// Reaches here if itemOrder != nullptr
 		return itemOrder;
 	}
+
+	/// Returns true if the user enters a valid "Employee" users credentials who is not the currentUser
+	bool validateForAnotherEmployeeCredential(User *currentUser) {
+		cout << endl << "Enter another employee's credentials to start a purchase:" << endl;
+		string employeeUsername = getInput("employee username");
+		string employeePassword = getInput("employee password");
+
+		User *employee = DatabaseManager::shared()->getUser(employeeUsername, employeePassword);
+		if (employee == nullptr || !employee->isEmployee() || employee->getUserID() == currentUser->getUserID()) {
+			return false;
+		}
+		return true;
+	}
+
 
 	/* --- HELPERS --- */
 	bool itemIsInItemOrder(Item* item) {

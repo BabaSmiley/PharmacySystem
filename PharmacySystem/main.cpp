@@ -173,7 +173,7 @@ int main() {
 			}
 			else if (user->isEmployee() && "create prescription" == input.at(0) + " " + input.at(1)) {
 				PrescriptionController prescriptionController;
-				prescriptionController.startCreatePrescription();
+				prescriptionController.startCreatePrescription(user);
 			}
 			else if (user->isEmployee() && "list items" == input.at(0) + " " + input.at(1) && stoi(input.at(2))) {
 				Store *store = dbm->getStore(stoi(input.at(2)));
