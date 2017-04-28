@@ -239,7 +239,7 @@ int main() {
 					PurchaseHistoryTablePrinter::printStorePurchaseHistoryTable(dbm, store);
 				}
 				else {
-					cout << "An item does not exist for this id." << endl;
+					cout << "A store does not exist for this id." << endl;
 				}
 			}
 			else if (user->isEmployee() && "view side effects" == input.at(0) + " " + input.at(1) + " " + input.at(2) && stoi(input.at(3))) {
