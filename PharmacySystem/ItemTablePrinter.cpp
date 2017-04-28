@@ -19,7 +19,8 @@ public:
 		vector<Item*> items;
 		for (Inventory *i : storeInventory) {
 			Item *item = dbm->getItem(i->getItemId());
-			items.push_back(item);
+			if(item != nullptr)
+				items.push_back(item);
 		}
 		
 		printTable(items, store);
