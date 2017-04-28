@@ -18,6 +18,10 @@ public:
 		}
 	}
 
+	void promptForUpdateInput(int itemId, int storeId) {
+		getInventoryUpdateInput(itemId, storeId);
+	}
+
 	void deleteInventory(int itemId, int storeId, long quantityToAdd) {
 		Item *item = DatabaseManager::shared()->getItem(itemId);
 		long newLevel = item->getWhLevel() + quantityToAdd;
@@ -66,6 +70,44 @@ private:
 		}
 		else {
 			throw "Unable to add item to queue.";
+		}
+	}
+
+	void getInventoryUpdateInput(int itemId, int storeId) throw(const char*) {
+		string quantityString;
+		long quantity;
+
+		cout << endl << "To update the quantity of the inventory, enter the new value when prompted. Otherwise, just hit enter." << endl;
+		try {
+			quantityString = getInput("Quantity (Max 10 characters)");
+			if (quantityString.size() > 10) {
+				quantityString = quantityString.substr(0, 10);
+				cout << "Quantity truncated to: " << quantityString << endl;
+			}
+			if (quantityString.empty()) {
+				quantity = NULL;
+			}
+			else {
+				quantity = stoi(quantityString);
+			}
+
+		}
+		catch (const char *e) {
+			throw e;
+		}
+
+		if (quantity != NULL) {
+			Inventory *inventory = DatabaseManager::shared()->updateInventory(storeId, itemId, quantity);
+
+			if (inventory) {
+				cout << "Inventory successfully updated." << endl;
+			}
+			else {
+				cout << "Inventory not found" << endl;
+			}
+		}
+		else {
+			cout << "Quantity not valid." << endl;
 		}
 	}
 };

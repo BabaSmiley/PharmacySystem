@@ -29,6 +29,7 @@ void printHelp(UserType type) {
 		cout << "\t'manage store {store ID}' : Update the attributes of an existing store. Specify the store ID to make modifications." << endl;
 		cout << "\t'reorder item' : Will begin process to reorder an item from a store." << endl;
 		cout << "\t'add inventory {item ID} {store ID}' : Will begin process to add an item to a store's inventory." << endl;
+		cout << "\t'manage inventory {item ID} {store ID}' : Will begin process to update an inventory item in a store." << endl;
 		cout << "\t'add item' : Will begin process to add an item to the company." << endl;
 		cout << "\t'manage item {item ID}' : Update the attributes of an existing item. Specify the item ID to make modifications." << endl;
 		cout << "\t'delete item {item ID}' : Will begin process to mark an item as inactive in the company." << endl;
@@ -302,6 +303,16 @@ int main() {
 				if (inventory != nullptr) {
 					ManageInventory manageInventoryCtrl;
 					manageInventoryCtrl.deleteInventory(stoi(input.at(2)), stoi(input.at(3)), inventory->getItemLevel());
+				}
+				else {
+					cout << "Inventory not found." << endl;
+				}
+			}
+			else if (user->isEmployee() && "manage inventory" == input.at(0) + " " + input.at(1) && stoi(input.at(2)) && stoi(input.at(3))) {
+				Inventory *inventory = dbm->getInventory(stoi(input.at(3)), stoi(input.at(2)));
+				if (inventory != nullptr) {
+					ManageInventory manageInventoryCtrl;
+					manageInventoryCtrl.promptForUpdateInput(stoi(input.at(2)), stoi(input.at(3)));
 				}
 				else {
 					cout << "Inventory not found." << endl;
